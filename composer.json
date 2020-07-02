@@ -1,0 +1,16 @@
+{
+  "name": "ec-cube/api",
+  "version": "1.0.0",
+  "description": "Web API",
+  "type": "eccube-plugin",
+  "require": {
+    "ec-cube/plugin-installer": "~0.0.6",
+    "trikoder/oauth2-bundle": "^2.1",
+    "nyholm/psr7": "^1.2",
+    "webonyx/graphql-php": "^14.0"
+  },
+  "extra": {
+    "code": "Api",
+    "entity-namespaces": ["Trikoder\\Bundle\\OAuth2Bundle\\Model"]
+  }
+}

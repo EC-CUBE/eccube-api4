@@ -1,0 +1,48 @@
+parameters:
+    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/var/oauth/private.key'
+    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/var/oauth/public.key'
+    env(ECCUBE_OAUTH2_ENCRYPTION_KEY): '<change.me>'
+
+trikoder_oauth2:
+
+    authorization_server:
+        private_key: '%env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY)%'
+        private_key_passphrase: null
+        encryption_key: '%env(ECCUBE_OAUTH2_ENCRYPTION_KEY)%'
+
+    resource_server:
+        public_key: '%env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY)%'
+
+    scopes: ['read', 'write']
+
+    persistence:
+        doctrine: null
+
+services:
+    Plugin\Api\EventListener\UserResolveListener:
+        arguments:
+            - '@Eccube\Security\Core\User\MemberProvider'
+            - '@Plugin\Api\Security\Core\Encoder\UserPasswordEncoder'
+        tags:
+            - { name: kernel.event_listener, event: trikoder.oauth2.user_resolve, method: onUserResolve }
+
+    # Register nyholm/psr7 services for autowiring with PSR-17 (HTTP factories)
+    Psr\Http\Message\RequestFactoryInterface: '@nyholm.psr7.psr17_factory'
+    Psr\Http\Message\ResponseFactoryInterface: '@nyholm.psr7.psr17_factory'
+    Psr\Http\Message\ServerRequestFactoryInterface: '@nyholm.psr7.psr17_factory'
+    Psr\Http\Message\StreamFactoryInterface: '@nyholm.psr7.psr17_factory'
+    Psr\Http\Message\UploadedFileFactoryInterface: '@nyholm.psr7.psr17_factory'
+    Psr\Http\Message\UriFactoryInterface: '@nyholm.psr7.psr17_factory'
+
+    # Register nyholm/psr7 services for autowiring with HTTPlug factories
+    Http\Message\MessageFactory: '@nyholm.psr7.httplug_factory'
+    Http\Message\RequestFactory: '@nyholm.psr7.httplug_factory'
+    Http\Message\ResponseFactory: '@nyholm.psr7.httplug_factory'
+    Http\Message\StreamFactory: '@nyholm.psr7.httplug_factory'
+    Http\Message\UriFactory: '@nyholm.psr7.httplug_factory'
+
+    nyholm.psr7.psr17_factory:
+        class: Nyholm\Psr7\Factory\Psr17Factory
+
+    nyholm.psr7.httplug_factory:
+        class: Nyholm\Psr7\Factory\HttplugFactory
