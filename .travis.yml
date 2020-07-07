@@ -39,6 +39,7 @@ install_eccube: &install_eccube |
   git fetch origin pull/4614/head:experimental/plugin_bundle
   git checkout experimental/plugin_bundle
   composer selfupdate
+  composer require trikoder/oauth2-bundle:"^2.1" nyholm/psr7 -n
   composer install --dev --no-interaction -o --apcu-autoloader
 
 eccube_setup: &eccube_setup |
