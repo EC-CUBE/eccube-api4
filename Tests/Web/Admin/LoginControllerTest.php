@@ -14,6 +14,7 @@
 namespace Plugin\Api\Tests\Web\Admin;
 
 use Eccube\Tests\Web\AbstractWebTestCase;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class LoginControllerTest extends AbstractWebTestCase
 {
@@ -43,15 +44,13 @@ class LoginControllerTest extends AbstractWebTestCase
         $this->assertNotNull($this->container->get('security.token_storage')->getToken(), 'ログインしているかどうか');
     }
 
-    public function testRoutingAdminLogin_ログインしていない場合は401エラーがかえる()
+    public function testRoutingAdminLogin_ログインしていない場合はログイン画面を表示()
     {
         $this->client->request('GET', $this->generateUrl('admin_homepage'));
 
         // ログイン
-        $this->assertEquals(
-            302,
-            $this->client->getResponse()->getStatusCode()
-        );
+        self::assertTrue($this->client->getResponse()->isRedirect(
+            $this->generateUrl('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL)));
     }
 
     public function testRoutingAdminOauth2Authorize_ログインしていない場合はログイン画面を表示()
@@ -59,10 +58,8 @@ class LoginControllerTest extends AbstractWebTestCase
         $this->client->request('GET', $this->generateUrl('admin_oauth2_authorize'));
 
         // ログイン
-        $this->assertEquals(
-            302,
-            $this->client->getResponse()->getStatusCode()
-        );
+        self::assertTrue($this->client->getResponse()->isRedirect(
+            $this->generateUrl('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL)));
     }
 
     public function testRoutingOauth2Authorize_ログインしていない場合はログイン画面を表示()
@@ -70,9 +67,7 @@ class LoginControllerTest extends AbstractWebTestCase
         $this->client->request('GET', $this->generateUrl('oauth2_authorize'));
 
         // ログイン
-        $this->assertEquals(
-            302,
-            $this->client->getResponse()->getStatusCode()
-        );
+        self::assertTrue($this->client->getResponse()->isRedirect(
+            $this->generateUrl('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL)));
     }
 }

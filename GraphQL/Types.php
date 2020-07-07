@@ -15,6 +15,9 @@ namespace Plugin\Api\GraphQL;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Eccube\Entity\BaseInfo;
+use Eccube\Entity\Customer;
+use Eccube\Entity\Member;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
@@ -28,10 +31,14 @@ class Types
 
     private $types = [];
 
+    private const EXCLUDE_FIELDS = [
+        BaseInfo::class => ['authentication_key'],
+        Customer::class => ['password', 'reset_key', 'salt', 'secret_key'],
+        Member::class => ['password', 'salt'],
+    ];
+
     /**
      * Types constructor.
-     *
-     * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
     {
@@ -42,6 +49,7 @@ class Types
      * Entityに対応するObjectTypeを返す.
      *
      * @param $className string Entityクラス名
+     *
      * @return ObjectType
      */
     public function get($className)
@@ -59,11 +67,13 @@ class Types
             'name' => (new \ReflectionClass($className))->getShortName(),
             'fields' => function () use ($className) {
                 $classMetadata = $this->entityManager->getClassMetadata($className);
-                $fields = array_reduce($classMetadata->fieldMappings, function ($acc, $mapping) {
+                $fields = array_reduce($classMetadata->fieldMappings, function ($acc, $mapping) use ($classMetadata) {
                     $type = $this->convertFieldMappingToType($mapping);
+                    $fieldName = $mapping['fieldName'];
+                    $excludes = self::EXCLUDE_FIELDS[$classMetadata->name] ?? [];
 
-                    if ($type) {
-                        $acc[$mapping['fieldName']] = $type;
+                    if (!in_array($fieldName, $excludes) && $type) {
+                        $acc[$fieldName] = $type;
                     }
 
                     return $acc;
@@ -73,6 +83,7 @@ class Types
                     $acc[$mapping['fieldName']] = [
                         'type' => $this->convertAssociationMappingToType($mapping),
                     ];
+
                     return $acc;
                 }, $fields);
 

@@ -10,6 +10,21 @@ trikoder_oauth2:
         private_key_passphrase: null
         encryption_key: '%env(ECCUBE_OAUTH2_ENCRYPTION_KEY)%'
 
+      # Whether to enable the client credentials grant
+        enable_client_credentials_grant: false
+
+      # Whether to enable the password grant
+        enable_password_grant: false
+
+      # Whether to enable the refresh token grant
+        enable_refresh_token_grant: true
+
+      # Whether to enable the authorization code grant
+        enable_auth_code_grant: true
+
+      # Whether to enable the implicit grant
+        enable_implicit_grant: false
+
     resource_server:
         public_key: '%env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY)%'
 
@@ -25,6 +40,11 @@ services:
             - '@Plugin\Api\Security\Core\Encoder\UserPasswordEncoder'
         tags:
             - { name: kernel.event_listener, event: trikoder.oauth2.user_resolve, method: onUserResolve }
+
+    Plugin\Api\GraphQL\Types:
+        class: Plugin\Api\GraphQL\Types
+        arguments: ["@doctrine.orm.entity_manager"]
+        lazy: true
 
     # Register nyholm/psr7 services for autowiring with PSR-17 (HTTP factories)
     Psr\Http\Message\RequestFactoryInterface: '@nyholm.psr7.psr17_factory'
