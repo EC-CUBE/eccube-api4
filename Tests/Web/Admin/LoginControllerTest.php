@@ -49,7 +49,7 @@ class LoginControllerTest extends AbstractWebTestCase
 
         // ログイン
         $this->assertEquals(
-            401,
+            302,
             $this->client->getResponse()->getStatusCode()
         );
     }
@@ -60,7 +60,7 @@ class LoginControllerTest extends AbstractWebTestCase
 
         // ログイン
         $this->assertEquals(
-            401,
+            302,
             $this->client->getResponse()->getStatusCode()
         );
     }
@@ -71,7 +71,7 @@ class LoginControllerTest extends AbstractWebTestCase
 
         // ログイン
         $this->assertEquals(
-            401,
+            302,
             $this->client->getResponse()->getStatusCode()
         );
     }
