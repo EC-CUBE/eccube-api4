@@ -26,6 +26,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: trikoder.oauth2.user_resolve, method: onUserResolve }
 
+    Plugin\Api\GraphQL\Types:
+        class: Plugin\Api\GraphQL\Types
+        arguments: ["@doctrine.orm.entity_manager"]
+        lazy: true
+
     # Register nyholm/psr7 services for autowiring with PSR-17 (HTTP factories)
     Psr\Http\Message\RequestFactoryInterface: '@nyholm.psr7.psr17_factory'
     Psr\Http\Message\ResponseFactoryInterface: '@nyholm.psr7.psr17_factory'
