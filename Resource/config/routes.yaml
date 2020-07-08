@@ -1,5 +1,5 @@
 oauth2_authorize:
-  path: /%eccube_admin_route%/authorize2
+  path: /%eccube_admin_route%/authorize
   defaults: { _controller: Trikoder\Bundle\OAuth2Bundle\Controller\AuthorizationController::indexAction }
 
 oauth2_token:

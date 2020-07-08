@@ -3,18 +3,44 @@
 
 namespace Plugin\Api\EventListener;
 
+use Eccube\Entity\Master\Authority;
 use Eccube\Entity\Member;
+use Plugin\Api\Form\Type\Admin\OAuth2AuthorizationType;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Trikoder\Bundle\OAuth2Bundle\Event\AuthorizationRequestResolveEvent;
 use Trikoder\Bundle\OAuth2Bundle\OAuth2Events;
+use Twig\Environment as Twig;
 
 final class AuthorizationRequestResolveListener implements EventSubscriberInterface
 {
-    /**
-     * 承認する authority_id
-     * @var int
-     */
-    const APPROVE_AUTHORITY_ID = 0; //  システム管理者
+    /** @var Twig */
+    protected $twig;
+
+    /** @var PsrHttpFactory */
+    protected $psr7Factory;
+
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+
+    /** @var RequestStack */
+    protected $requestStack;
+
+    public function __construct(
+        Twig $twig,
+        PsrHttpFactory $psr7Factory,
+        FormFactoryInterface $formFactory,
+        RequestStack $requestStack
+    )
+    {
+        $this->twig = $twig;
+        $this->psr7Factory = $psr7Factory;
+        $this->formFactory = $formFactory;
+        $this->requestStack = $requestStack;
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -26,11 +52,42 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
     public function onAuthorizationRequestResolve(AuthorizationRequestResolveEvent $event): void
     {
         $user = $event->getUser();
+        $request = $this->requestStack->getMasterRequest();
 
-        if ($user instanceof Member && $user->getAuthority()->getId() === self::APPROVE_AUTHORITY_ID) {
-            $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
-        } else {
+        // システム管理者以外は承認しない
+        if (!$user instanceof Member || $user->getAuthority()->getId() !== Authority::ADMIN) {
             $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_DENIED);
+            return;
+        }
+
+        if (!$event->isAuthorizationApproved()) {
+            $builder = $this->formFactory->createBuilder(OAuth2AuthorizationType::class);
+            $form = $builder->getForm();
+
+            $form['client_id']->setData($event->getClient()->getIdentifier());
+            $form['client_secret']->setData($event->getClient()->getSecret());
+            $form['redirect_uri']->setData($event->getRedirectUri());
+            $form['state']->setData($event->getState());
+            $form['scope']->setData(join(' ', $event->getScopes()));
+            $content = $this->twig->render(
+                '@Api/admin/OAuth2/authorization.twig',
+                [
+                    'scope' => join(' ', $event->getScopes()),
+                    'form' => $form->createView()
+                ]
+            );
+
+            if ('POST' === $request->getMethod()) {
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
+                } else {
+                    $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_DENIED);
+                }
+            } else {
+                $Response = $this->psr7Factory->createResponse(Response::create($content));
+                $event->setResponse($Response);
+            }
         }
     }
 }
