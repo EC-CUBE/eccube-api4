@@ -28,20 +28,26 @@ class Types
 
     private $types = [];
 
+    private $allowLists = [];
+
     /**
      * Types constructor.
-     *
-     * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
+    public function addAllowList(AllowList $allowList)
+    {
+        $this->allowLists[] = $allowList;
+    }
+
     /**
      * Entityに対応するObjectTypeを返す.
      *
      * @param $className string Entityクラス名
+     *
      * @return ObjectType
      */
     public function get($className)
@@ -59,20 +65,34 @@ class Types
             'name' => (new \ReflectionClass($className))->getShortName(),
             'fields' => function () use ($className) {
                 $classMetadata = $this->entityManager->getClassMetadata($className);
-                $fields = array_reduce($classMetadata->fieldMappings, function ($acc, $mapping) {
+                $fields = array_reduce($classMetadata->fieldMappings, function ($acc, $mapping) use ($classMetadata) {
                     $type = $this->convertFieldMappingToType($mapping);
+                    $fieldName = $mapping['fieldName'];
 
-                    if ($type) {
-                        $acc[$mapping['fieldName']] = $type;
+                    $allowed = array_filter($this->allowLists, function (AllowList $al) use ($classMetadata, $fieldName) {
+                        return $al->isAllowed($classMetadata->name, $fieldName);
+                    });
+
+                    if ($allowed && $type) {
+                        $acc[$fieldName] = $type;
                     }
 
                     return $acc;
                 }, []);
 
-                $fields = array_reduce($classMetadata->associationMappings, function ($acc, $mapping) {
-                    $acc[$mapping['fieldName']] = [
-                        'type' => $this->convertAssociationMappingToType($mapping),
-                    ];
+                $fields = array_reduce($classMetadata->associationMappings, function ($acc, $mapping) use ($classMetadata) {
+                    $fieldName = $mapping['fieldName'];
+
+                    $allowed = array_filter($this->allowLists, function (AllowList $al) use ($classMetadata, $fieldName) {
+                        return $al->isAllowed($classMetadata->name, $fieldName);
+                    });
+
+                    if ($allowed) {
+                        $acc[$fieldName] = [
+                            'type' => $this->convertAssociationMappingToType($mapping),
+                        ];
+                    }
+
                     return $acc;
                 }, $fields);
 
