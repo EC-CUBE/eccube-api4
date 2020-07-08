@@ -49,6 +49,7 @@ eccube_setup: &eccube_setup |
   bin/console eccube:fixtures:load
   bin/console eccube:plugin:install --path=${HOME}/${PLUGIN_CODE}.tar.gz
   bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
+  bin/console doctrine:schema:update --force
 
 install:
   - *install_eccube
