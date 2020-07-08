@@ -15,9 +15,6 @@ namespace Plugin\Api\GraphQL;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Eccube\Entity\BaseInfo;
-use Eccube\Entity\Customer;
-use Eccube\Entity\Member;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
@@ -31,11 +28,7 @@ class Types
 
     private $types = [];
 
-    private const EXCLUDE_FIELDS = [
-        BaseInfo::class => ['authentication_key'],
-        Customer::class => ['password', 'reset_key', 'salt', 'secret_key'],
-        Member::class => ['password', 'salt'],
-    ];
+    private $allowLists = [];
 
     /**
      * Types constructor.
@@ -43,6 +36,11 @@ class Types
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
+    }
+
+    public function addAllowList(AllowList $allowList)
+    {
+        $this->allowLists[] = $allowList;
     }
 
     /**
@@ -70,19 +68,30 @@ class Types
                 $fields = array_reduce($classMetadata->fieldMappings, function ($acc, $mapping) use ($classMetadata) {
                     $type = $this->convertFieldMappingToType($mapping);
                     $fieldName = $mapping['fieldName'];
-                    $excludes = self::EXCLUDE_FIELDS[$classMetadata->name] ?? [];
 
-                    if (!in_array($fieldName, $excludes) && $type) {
+                    $allowed = array_filter($this->allowLists, function (AllowList $al) use ($classMetadata, $fieldName) {
+                        return $al->isAllowed($classMetadata->name, $fieldName);
+                    });
+
+                    if ($allowed && $type) {
                         $acc[$fieldName] = $type;
                     }
 
                     return $acc;
                 }, []);
 
-                $fields = array_reduce($classMetadata->associationMappings, function ($acc, $mapping) {
-                    $acc[$mapping['fieldName']] = [
-                        'type' => $this->convertAssociationMappingToType($mapping),
-                    ];
+                $fields = array_reduce($classMetadata->associationMappings, function ($acc, $mapping) use ($classMetadata) {
+                    $fieldName = $mapping['fieldName'];
+
+                    $allowed = array_filter($this->allowLists, function (AllowList $al) use ($classMetadata, $fieldName) {
+                        return $al->isAllowed($classMetadata->name, $fieldName);
+                    });
+
+                    if ($allowed) {
+                        $acc[$fieldName] = [
+                            'type' => $this->convertAssociationMappingToType($mapping),
+                        ];
+                    }
 
                     return $acc;
                 }, $fields);

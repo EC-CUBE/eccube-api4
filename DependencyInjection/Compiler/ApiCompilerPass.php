@@ -14,12 +14,32 @@
 namespace Plugin\Api\DependencyInjection\Compiler;
 
 use League\OAuth2\Server\CryptKey;
+use Plugin\Api\GraphQL\AllowList;
+use Plugin\Api\GraphQL\Types;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class ApiCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
+    {
+        $this->configureAllowList($container);
+        $this->configureKeyPair($container);
+    }
+
+    private function configureAllowList(ContainerBuilder $container)
+    {
+        $ids = $container->findTaggedServiceIds('eccube.api.allow_list');
+        $typesDef = $container->getDefinition(Types::class);
+        foreach ($ids as $id => $tags) {
+            $definition = $container->getDefinition($id);
+            $definition->setClass(AllowList::class);
+            $typesDef->addMethodCall('addAllowList', [new Reference($id)]);
+        }
+    }
+
+    private function configureKeyPair(ContainerBuilder $container)
     {
         $projectDir = $container->getParameter('kernel.project_dir');
         $oauthConfig = $container->getExtensionConfig('trikoder_oauth2');

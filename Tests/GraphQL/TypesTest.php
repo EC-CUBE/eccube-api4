@@ -45,6 +45,7 @@ class TypesTest extends EccubeTestCase
     {
         return [
             [Product::class, 'name', true],
+            [Product::class, 'Creator', true],
             [Customer::class, 'name01', true],
             [Customer::class, 'password', false],
             [Customer::class, 'reset_key', false],
