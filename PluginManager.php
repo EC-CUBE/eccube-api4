@@ -49,13 +49,9 @@ class PluginManager extends AbstractPluginManager
         /** @var Authority $Authority */
         $Authority = $entityManager->find(Authority::class, Authority::OWNER);
 
-        /** @var Member $Member */
-        $Member = $entityManager->find(Member::class, 1);
-
         $AuthorityRole = new AuthorityRole();
         $AuthorityRole->setAuthority($Authority);
         $AuthorityRole->setDenyUrl($this->denyUrl);
-        $AuthorityRole->setCreator($Member);
 
         $entityManager->persist($AuthorityRole);
         $entityManager->flush($AuthorityRole);
