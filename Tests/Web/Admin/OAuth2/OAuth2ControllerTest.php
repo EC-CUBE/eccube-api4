@@ -25,7 +25,7 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
 
     public function testRoutingAdminOauth2Authorize_ログインしている場合は権限移譲確認画面を表示()
     {
-        $this->client->request('GET', $this->generateUrl('admin_oauth2_authorize'));
+        $this->client->request('GET', $this->generateUrl('oauth2_authorize'));
 
         // ログイン
         $this->assertEquals(
@@ -49,7 +49,7 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
         ];
 
         $this->client->request(
-            'POST', $this->generateUrl('admin_oauth2_authorize'),
+            'POST', $this->generateUrl('oauth2_authorize'),
             $parameters
         );
 
@@ -71,7 +71,7 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
         ];
 
         $this->client->request(
-            'POST', $this->generateUrl('admin_oauth2_authorize'),
+            'POST', $this->generateUrl('oauth2_authorize'),
             $parameters
         );
 

@@ -56,7 +56,7 @@ class LoginControllerTest extends AbstractWebTestCase
 
     public function testRoutingAdminOauth2Authorize_ログインしていない場合はログイン画面を表示()
     {
-        $this->client->request('GET', $this->generateUrl('admin_oauth2_authorize'));
+        $this->client->request('GET', $this->generateUrl('oauth2_authorize'));
 
         // ログイン
         $this->assertEquals(
