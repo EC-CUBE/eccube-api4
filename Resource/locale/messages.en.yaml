@@ -1,0 +1,14 @@
+#------------------------------------------------------------------------------------
+# Settings : System : OAuth
+#------------------------------------------------------------------------------------
+
+api.admin.setting.system.oauth_management: OAuth
+api.admin.setting.system.oauth.identifier: Client ID
+api.admin.setting.system.oauth.secret: Client Secret
+api.admin.setting.system.oauth.scope: Scope
+api.admin.setting.system.oauth.redirect_uri: Redirect URI
+api.admin.setting.system.oauth.grant_type: Grant Type
+api.admin.setting.system.oauth.client_registration: Client Registration
+api.admin.setting.system.oauth.delete__confirm_title: Delete a Client
+api.admin.setting.system.oauth.delete__confirm_message: Are you sure to delete this Client?
+api.admin.setting.system.oauth.clear_expired_tokens: Clears all expired access and/or refresh tokens
