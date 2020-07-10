@@ -55,7 +55,7 @@ class OAuth2AuthorizationType extends AbstractType
             ])
             ->add('response_type', HiddenType::class, [
                 'constraints' => [
-                    new Assert\NotBlank(),
+                    // new Assert\NotBlank(),
                 ],
             ])
             ->add('state', HiddenType::class, [

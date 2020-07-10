@@ -15,6 +15,7 @@ namespace Plugin\Api\Tests\Web\Admin\OAuth2;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
+use Trikoder\Bundle\OAuth2Bundle\Model\Client;
 
 class OAuth2ControllerTest extends AbstractAdminWebTestCase
 {
@@ -25,7 +26,21 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
 
     public function testRoutingAdminOauth2Authorize_ログインしている場合は権限移譲確認画面を表示()
     {
-        $this->client->request('GET', $this->generateUrl('admin_oauth2_authorize'));
+        /** @var Client $Client */
+        $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
+
+        $this->client->request('GET',
+                               $this->generateUrl(
+                                   'oauth2_authorize',
+                                   [
+                                       'client_id' => $Client->getIdentifier(),
+                                       'redirect_uri' => current($Client->getRedirectUris()),
+                                       'response_type' => 'code',
+                                       'scope' => 'read',
+                                       'state' => 'xxx'
+                                   ]
+                               )
+        );
 
         // ログイン
         $this->assertEquals(
@@ -36,20 +51,35 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
 
     public function testRoutingAdminOauth2Authorize_権限移譲を許可()
     {
+        /** @var Client $Client */
+        $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
+        $authorize_url = $this->generateUrl(
+            'oauth2_authorize',
+            [
+                'client_id' => $Client->getIdentifier(),
+                'redirect_uri' => current($Client->getRedirectUris()),
+                'response_type' => 'code',
+                'scope' => 'read',
+                'state' => 'xxx'
+            ]
+        );
+
+        $this->client->request('GET', $authorize_url);
+
         $parameters = [
             'oauth_authorization' => [
-                'client_id' => 'dummy',
-                'client_secret' => 'dummy',
-                'redirect_uri' => 'dummy',
-                'response_type' => 'dummy',
-                'state' => 'dummy',
-                'scope' => 'dummy',
+                'client_id' => $Client->getIdentifier(),
+                'client_secret' => $Client->getSecret(),
+                'redirect_uri' => current($Client->getRedirectUris()),
+                'response_type' => 'code',
+                'scope' => 'read',
+                'state' => 'xxx',
                 Constant::TOKEN_NAME => 'dummy',
             ],
         ];
 
-        $this->client->request(
-            'POST', $this->generateUrl('admin_oauth2_authorize'),
+        $crawler = $this->client->request(
+            'POST', $authorize_url,
             $parameters
         );
 
@@ -71,7 +101,7 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
         ];
 
         $this->client->request(
-            'POST', $this->generateUrl('admin_oauth2_authorize'),
+            'POST', $this->generateUrl('oauth2_authorize'),
             $parameters
         );
 

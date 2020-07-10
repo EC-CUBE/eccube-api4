@@ -49,7 +49,8 @@ eccube_setup: &eccube_setup |
   bin/console eccube:fixtures:load
   bin/console eccube:plugin:install --path=${HOME}/${PLUGIN_CODE}.tar.gz
   bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
-  bin/console doctrine:schema:update --force
+  bin/console doctrine:schema:update --force --dump-sql
+  bin/console trikoder:oauth2:create-client --redirect-uri=http://127.0.0.1:8000/ --grant-type=authorization_code --grant-type=client_credentials --grant-type=implicit --grant-type=password --grant-type=refresh_token --scope=read --scope=write
 
 install:
   - *install_eccube
