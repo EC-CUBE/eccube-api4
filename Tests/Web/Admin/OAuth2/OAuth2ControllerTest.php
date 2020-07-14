@@ -34,7 +34,7 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
                                    'oauth2_authorize',
                                    [
                                        'client_id' => $Client->getIdentifier(),
-                                       'redirect_uri' => current($Client->getRedirectUris()),
+                                       'redirect_uri' => (string) current($Client->getRedirectUris()),
                                        'response_type' => 'code',
                                        'scope' => 'read',
                                        'state' => 'xxx'
@@ -57,7 +57,7 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
             'oauth2_authorize',
             [
                 'client_id' => $Client->getIdentifier(),
-                'redirect_uri' => current($Client->getRedirectUris()),
+                'redirect_uri' => (string) current($Client->getRedirectUris()),
                 'response_type' => 'code',
                 'scope' => 'read',
                 'state' => 'xxx'

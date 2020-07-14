@@ -5,6 +5,7 @@ namespace Plugin\Api\EventListener;
 
 use Eccube\Entity\Master\Authority;
 use Eccube\Entity\Member;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use Plugin\Api\Form\Type\Admin\OAuth2AuthorizationType;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -58,6 +59,12 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
         if (!$user instanceof Member || $user->getAuthority()->getId() !== Authority::ADMIN) {
             $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_DENIED);
             return;
+        }
+
+        if (!$request->query->has('redirect_uri')) {
+            // redirect_uri_mismatch を返すべきだが OAuthServerException ではサポートされていない
+            // http://openid-foundation-japan.github.io/draft-ietf-oauth-v2.ja.html#auth-error-codes
+            throw OAuthServerException::invalidRequest('redirect_uri');
         }
 
         if (!$event->isAuthorizationApproved()) {
