@@ -16,8 +16,8 @@ namespace Plugin\Api\DependencyInjection\Compiler;
 use League\OAuth2\Server\CryptKey;
 use Plugin\Api\GraphQL\AllowList;
 use Plugin\Api\GraphQL\Types;
+use Plugin\Api\Service\WebHookEvents;
 use Plugin\Api\Service\WebHookService;
-use Plugin\Api\Service\WebHookTrigger;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -35,7 +35,7 @@ class ApiCompilerPass implements CompilerPassInterface
     {
         $serviceDef = $container->getDefinition(WebHookService::class);
         foreach ($container->getDefinitions() as $definition) {
-            if (is_subclass_of($definition->getClass(), WebHookTrigger::class)) {
+            if (is_subclass_of($definition->getClass(), WebHookEvents::class)) {
                 $serviceDef->addMethodCall('addTrigger', [$definition]);
             }
         }

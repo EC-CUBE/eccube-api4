@@ -11,27 +11,27 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\EventListener;
+namespace Plugin\Api\Doctrine\EventSubscriber;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Plugin\Api\Service\WebHookService;
+use Plugin\Api\Service\WebHookEvents;
 
 class EntityListener implements EventSubscriber
 {
     /**
-     * @var WebHookService
+     * @var WebHookEvents
      */
-    private $webHookService;
+    private $webHookEvents;
 
     /**
      * EntityListener constructor.
-     * @param WebHookService $webHookService
+     * @param WebHookEvents $webHookEvents
      */
-    public function __construct(WebHookService $webHookService)
+    public function __construct(WebHookEvents $webHookEvents)
     {
-        $this->webHookService = $webHookService;
+        $this->webHookEvents = $webHookEvents;
     }
 
     public function getSubscribedEvents()
@@ -45,16 +45,16 @@ class EntityListener implements EventSubscriber
 
     public function postPersist(LifecycleEventArgs $args)
     {
-        $this->webHookService->onCreated($args->getObject());
+        $this->webHookEvents->onCreated($args->getObject());
     }
 
     public function postUpdate(LifecycleEventArgs $args)
     {
-        $this->webHookService->onUpdated($args->getObject());
+        $this->webHookEvents->onUpdated($args->getObject());
     }
 
     public function preRemove(LifecycleEventArgs $args)
     {
-        $this->webHookService->onDeleted($args->getObject());
+        $this->webHookEvents->onDeleted($args->getObject());
     }
 }
