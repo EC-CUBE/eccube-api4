@@ -26,6 +26,12 @@ class ApiCompilerPass implements CompilerPassInterface
     {
         $this->configureAllowList($container);
         $this->configureKeyPair($container);
+
+        $plugins = $container->getParameter('eccube.plugins.enabled');
+        if (!in_array('Api', $plugins)) {
+            $def = $container->getDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener');
+            $def->clearTags();
+        }
     }
 
     private function configureAllowList(ContainerBuilder $container)
