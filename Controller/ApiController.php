@@ -88,7 +88,9 @@ class ApiController extends AbstractController
     {
         $body = json_decode($request->getContent(), true);
         $schema = $this->getSchema();
-        $result = GraphQL::executeQuery($schema, $body['query']);
+        $query = $body['query'];
+        $variableValues = isset($body['variables']) ? $body['variables'] : null;
+        $result = GraphQL::executeQuery($schema, $query, null, null, $variableValues);
 
         if ($this->kernel->isDebug()) {
             $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE;
@@ -98,6 +100,9 @@ class ApiController extends AbstractController
         return $this->json($result);
     }
 
+    /**
+     * @return Schema
+     */
     private function getSchema()
     {
         return new Schema([
@@ -105,30 +110,18 @@ class ApiController extends AbstractController
                 'name' => 'Query',
                 'fields' => [
                     'products' => $this->createQuery(Product::class, SearchProductType::class, function ($searchData) {
-                        return $this->paginator->paginate(
-                            $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData),
-                            $searchData['page'],
-                            $searchData['limit']
-                        );
+                        return $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);
                     }),
                     'orders' => $this->createQuery(Order::class, SearchOrderType::class, function ($searchData) {
-                        return $this->paginator->paginate(
-                            $this->orderRepository->getQueryBuilderBySearchDataForAdmin($searchData),
-                            $searchData['page'],
-                            $searchData['limit']
-                        );
+                        return $this->orderRepository->getQueryBuilderBySearchDataForAdmin($searchData);
                     }),
                     'customers' => $this->createQuery(Customer::class, SearchCustomerType::class, function ($searchData) {
-                        return $this->paginator->paginate(
-                            $this->customerRepository->getQueryBuilderBySearchData($searchData),
-                            $searchData['page'],
-                            $searchData['limit']
-                        );
+                        return $this->customerRepository->getQueryBuilderBySearchData($searchData);
                     }),
                 ],
-//                'typeLoader' => function ($name) {
-//                    return $this->types->get($name);
-//                },
+                'typeLoader' => function ($name) {
+                    return $this->types->get($name);
+                },
             ]),
         ]);
     }
@@ -171,12 +164,11 @@ class ApiController extends AbstractController
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
 
-                $data = FormUtil::submitAndGetData($form, $args);
-
-                $data['page'] = $args['page'];
-                $data['limit'] = $args['limit'];
-
-                return $resolver($data);
+                return $this->paginator->paginate(
+                    $resolver(FormUtil::submitAndGetData($form, $args)),
+                    $args['page'],
+                    $args['limit']
+                );
             },
         ];
     }
