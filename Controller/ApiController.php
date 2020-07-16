@@ -147,15 +147,16 @@ class ApiController extends AbstractController
             return $acc;
         }, []);
 
+        // paging のための引数を定義
         $args['page'] = [
             'type' => Type::int(),
             'defaultValue' => 1,
-            'description' => 'ページ番号',
+            'description' => trans('api.args.page.description'),
         ];
         $args['limit'] = [
             'type' => Type::int(),
-            'defaultValue' => $this->eccubeConfig->get('api_default_paginator_limit'), // paginator->paginate() で無制限にできない
-            'description' => '表示数',
+            'defaultValue' => null,
+            'description' => trans('api.args.limit.description'),
         ];
 
         return [
@@ -163,12 +164,15 @@ class ApiController extends AbstractController
             'args' => $args,
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
+                $data = FormUtil::submitAndGetData($form, $args);
 
-                return $this->paginator->paginate(
-                    $resolver(FormUtil::submitAndGetData($form, $args)),
-                    $args['page'],
-                    $args['limit']
-                );
+                if (is_null($args['limit'])) {
+                    // limit が指定されていなければ全件返す
+                    return $resolver($data)->getQuery()->getResult();
+                } else {
+                    // limit が指定されていればその件数返す
+                    return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
+                }
             },
         ];
     }

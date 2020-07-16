@@ -2,7 +2,6 @@ parameters:
     env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/var/oauth/private.key'
     env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/var/oauth/public.key'
     env(ECCUBE_OAUTH2_ENCRYPTION_KEY): '<change.me>'
-    api_default_paginator_limit: 1000
 
 trikoder_oauth2:
 

@@ -12,3 +12,10 @@ api.admin.setting.system.oauth.client_registration: Client Registration
 api.admin.setting.system.oauth.delete__confirm_title: Delete a Client
 api.admin.setting.system.oauth.delete__confirm_message: Are you sure to delete this Client?
 api.admin.setting.system.oauth.clear_expired_tokens: Clears all expired access and/or refresh tokens
+
+#------------------------------------------------------------------------------------
+# API : Description
+#------------------------------------------------------------------------------------
+
+api.args.page.description: Page number
+api.args.limit.description: Limit number of acquisitions
