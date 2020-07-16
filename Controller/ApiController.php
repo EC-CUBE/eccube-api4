@@ -20,18 +20,21 @@ use Eccube\Entity\Product;
 use Eccube\Form\Type\Admin\SearchCustomerType;
 use Eccube\Form\Type\Admin\SearchOrderType;
 use Eccube\Form\Type\Admin\SearchProductType;
-use Plugin\Api\GraphQL\Types;
 use Eccube\Repository\CustomerRepository;
 use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
 use Eccube\Util\FormUtil;
+use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Knp\Component\Pager\Paginator;
+use Plugin\Api\GraphQL\Types;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
@@ -52,13 +55,29 @@ class ApiController extends AbstractController
      * @var CustomerRepository
      */
     private $customerRepository;
+    /**
+     * @var KernelInterface
+     */
+    private $kernel;
+    /**
+     * @var Paginator
+     */
+    private $paginator;
 
-    public function __construct(Types $types, ProductRepository $productRepository, OrderRepository $orderRepository, CustomerRepository $customerRepository)
-    {
+    public function __construct(
+        Types $types,
+        ProductRepository $productRepository,
+        OrderRepository $orderRepository,
+        CustomerRepository $customerRepository,
+        KernelInterface $kernel,
+        Paginator $paginator
+    ) {
         $this->types = $types;
         $this->productRepository = $productRepository;
         $this->orderRepository = $orderRepository;
         $this->customerRepository = $customerRepository;
+        $this->kernel = $kernel;
+        $this->paginator = $paginator;
     }
 
     /**
@@ -71,6 +90,11 @@ class ApiController extends AbstractController
         $schema = $this->getSchema();
         $result = GraphQL::executeQuery($schema, $body['query']);
 
+        if ($this->kernel->isDebug()) {
+            $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE;
+            $result = $result->toArray($debug);
+        }
+
         return $this->json($result);
     }
 
@@ -81,18 +105,30 @@ class ApiController extends AbstractController
                 'name' => 'Query',
                 'fields' => [
                     'products' => $this->createQuery(Product::class, SearchProductType::class, function ($searchData) {
-                        return $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData)->getQuery()->getResult();
+                        return $this->paginator->paginate(
+                            $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData),
+                            $searchData['page'],
+                            $searchData['limit']
+                        );
                     }),
                     'orders' => $this->createQuery(Order::class, SearchOrderType::class, function ($searchData) {
-                        return $this->orderRepository->getQueryBuilderBySearchDataForAdmin($searchData)->getQuery()->getResult();
+                        return $this->paginator->paginate(
+                            $this->orderRepository->getQueryBuilderBySearchDataForAdmin($searchData),
+                            $searchData['page'],
+                            $searchData['limit']
+                        );
                     }),
                     'customers' => $this->createQuery(Customer::class, SearchCustomerType::class, function ($searchData) {
-                        return $this->customerRepository->getQueryBuilderBySearchData($searchData)->getQuery()->getResult();
+                        return $this->paginator->paginate(
+                            $this->customerRepository->getQueryBuilderBySearchData($searchData),
+                            $searchData['page'],
+                            $searchData['limit']
+                        );
                     }),
                 ],
-                'typeLoader' => function ($name) {
-                    return $this->types->get($name);
-                },
+//                'typeLoader' => function ($name) {
+//                    return $this->types->get($name);
+//                },
             ]),
         ]);
     }
@@ -118,14 +154,29 @@ class ApiController extends AbstractController
             return $acc;
         }, []);
 
+        $args['page'] = [
+            'type' => Type::int(),
+            'defaultValue' => 1,
+            'description' => 'ページ番号',
+        ];
+        $args['limit'] = [
+            'type' => Type::int(),
+            'defaultValue' => $this->eccubeConfig->get('api_default_paginator_limit'), // paginator->paginate() で無制限にできない
+            'description' => '表示数',
+        ];
+
         return [
             'type' => Type::listOf($this->types->get($entityClass)),
             'args' => $args,
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
-                FormUtil::submitAndGetData($form, $args);
 
-                return $resolver($form->getData());
+                $data = FormUtil::submitAndGetData($form, $args);
+
+                $data['page'] = $args['page'];
+                $data['limit'] = $args['limit'];
+
+                return $resolver($data);
             },
         ];
     }
