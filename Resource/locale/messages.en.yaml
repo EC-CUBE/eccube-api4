@@ -18,4 +18,4 @@ api.admin.setting.system.oauth.clear_expired_tokens: Clears all expired access a
 #------------------------------------------------------------------------------------
 
 api.args.page.description: Page number
-api.args.limit.description: Limit number of acquisitions
+api.args.limit.description: Limit number per page

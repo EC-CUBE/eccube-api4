@@ -18,4 +18,4 @@ api.admin.setting.system.oauth.clear_expired_tokens: 期限切れのアクセス
 #------------------------------------------------------------------------------------
 
 api.args.page.description: ページ番号
-api.args.limit.description: 取得件数
+api.args.limit.description: ページあたりの取得数の上限

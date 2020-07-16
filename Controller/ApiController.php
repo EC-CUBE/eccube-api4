@@ -155,7 +155,7 @@ class ApiController extends AbstractController
         ];
         $args['limit'] = [
             'type' => Type::int(),
-            'defaultValue' => null,
+            'defaultValue' => $this->eccubeConfig->get('eccube_default_page_count'),
             'description' => trans('api.args.limit.description'),
         ];
 
@@ -166,13 +166,7 @@ class ApiController extends AbstractController
                 $form = $builder->getForm();
                 $data = FormUtil::submitAndGetData($form, $args);
 
-                if (is_null($args['limit'])) {
-                    // limit が指定されていなければ全件返す
-                    return $resolver($data)->getQuery()->getResult();
-                } else {
-                    // limit が指定されていればその件数返す
-                    return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
-                }
+                return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
             },
         ];
     }
