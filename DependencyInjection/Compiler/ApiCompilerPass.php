@@ -29,8 +29,10 @@ class ApiCompilerPass implements CompilerPassInterface
 
         $plugins = $container->getParameter('eccube.plugins.enabled');
         if (!in_array('Api', $plugins)) {
-            $def = $container->getDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener');
-            $def->clearTags();
+            if ($container->hasDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener')) {
+                $def = $container->getDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener');
+                $def->clearTags();
+            }
         }
     }
 
