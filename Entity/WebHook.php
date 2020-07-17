@@ -55,7 +55,7 @@ class WebHook
      *
      * @ORM\Column(name="enabled", type="boolean")
      */
-    private $enabled;
+    private $enabled = false;
 
     /**
      * @var DateTime
@@ -74,7 +74,7 @@ class WebHook
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -82,7 +82,7 @@ class WebHook
     /**
      * @param int $id
      */
-    public function setId(int $id): void
+    public function setId(int $id)
     {
         $this->id = $id;
     }
@@ -90,7 +90,7 @@ class WebHook
     /**
      * @return string
      */
-    public function getPayloadUrl(): string
+    public function getPayloadUrl()
     {
         return $this->payloadUrl;
     }
@@ -98,7 +98,7 @@ class WebHook
     /**
      * @param string $payloadUrl
      */
-    public function setPayloadUrl(string $payloadUrl): void
+    public function setPayloadUrl(string $payloadUrl)
     {
         $this->payloadUrl = $payloadUrl;
     }
@@ -106,7 +106,7 @@ class WebHook
     /**
      * @return string
      */
-    public function getSecret(): string
+    public function getSecret()
     {
         return $this->secret;
     }
@@ -114,7 +114,7 @@ class WebHook
     /**
      * @param string $secret
      */
-    public function setSecret(string $secret): void
+    public function setSecret(string $secret)
     {
         $this->secret = $secret;
     }
@@ -122,7 +122,7 @@ class WebHook
     /**
      * @return bool
      */
-    public function isEnabled(): bool
+    public function isEnabled()
     {
         return $this->enabled;
     }
@@ -130,7 +130,7 @@ class WebHook
     /**
      * @param bool $enabled
      */
-    public function setEnabled(bool $enabled): void
+    public function setEnabled(bool $enabled)
     {
         $this->enabled = $enabled;
     }
@@ -138,7 +138,7 @@ class WebHook
     /**
      * @return DateTime
      */
-    public function getCreateDate(): DateTime
+    public function getCreateDate()
     {
         return $this->createDate;
     }
@@ -146,7 +146,7 @@ class WebHook
     /**
      * @param DateTime $createDate
      */
-    public function setCreateDate(DateTime $createDate): void
+    public function setCreateDate(DateTime $createDate)
     {
         $this->createDate = $createDate;
     }
@@ -154,7 +154,7 @@ class WebHook
     /**
      * @return DateTime
      */
-    public function getUpdateDate(): DateTime
+    public function getUpdateDate()
     {
         return $this->updateDate;
     }
@@ -162,7 +162,7 @@ class WebHook
     /**
      * @param DateTime $updateDate
      */
-    public function setUpdateDate(DateTime $updateDate): void
+    public function setUpdateDate(DateTime $updateDate)
     {
         $this->updateDate = $updateDate;
     }

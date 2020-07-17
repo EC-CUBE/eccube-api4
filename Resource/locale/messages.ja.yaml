@@ -2,13 +2,29 @@
 # 設定：システム設定：OAuth管理
 #------------------------------------------------------------------------------------
 
-api.admin.setting.system.oauth_management: OAuth管理
-api.admin.setting.system.oauth.identifier: クライアントID
-api.admin.setting.system.oauth.secret: クライアントシークレット
-api.admin.setting.system.oauth.scope: スコープ
-api.admin.setting.system.oauth.redirect_uri: リダイレクトURI
-api.admin.setting.system.oauth.grant_type: グラントタイプ
-api.admin.setting.system.oauth.client_registration: OAuthクライアント登録
-api.admin.setting.system.oauth.delete__confirm_title: OAuthクライアントを削除します。
-api.admin.setting.system.oauth.delete__confirm_message: OAuthクライアントを削除してよろしいですか？
-api.admin.setting.system.oauth.clear_expired_tokens: 期限切れのアクセストークンとリフレッシュトークンを削除する
+api:
+  admin:
+    management: API管理
+    setting:
+      system:
+        oauth_management: OAuth管理
+        oauth:
+          identifier: クライアントID
+          secret: クライアントシークレット
+          scope: スコープ
+          redirect_uri: リダイレクトURI
+          grant_type: グラントタイプ
+          client_registration: OAuthクライアント登録
+          delete__confirm_title: OAuthクライアントを削除します。
+          delete__confirm_message: OAuthクライアントを削除してよろしいですか？
+          clear_expired_tokens: 期限切れのアクセストークンとリフレッシュトークンを削除する
+    webhook:
+      management:  WebHook管理
+      registration: WebHook登録
+      payload_url: Payload URL
+      secret: シークレット
+      enabled: 有効/無効
+      search_no_result_message: WebHookが登録されていません
+      delete__confirm_title: WebHookを削除します
+      delete__confirm_message: WebHookを削除してもよろしいですか？
+
