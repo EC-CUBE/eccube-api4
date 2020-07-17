@@ -13,9 +13,12 @@
 
 namespace Plugin\Api\Service;
 
+use Eccube\Util\StringUtil;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
+use Nyholm\Psr7\Response;
 use Plugin\Api\Entity\WebHook;
 use Plugin\Api\Repository\WebHookRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -42,9 +45,6 @@ class WebHookService implements EventSubscriberInterface
 
     /**
      * WebHookService constructor.
-     * @param RouterInterface $router
-     * @param WebHookRepository $webHookRepository
-     * @param WebHookEvents $webHookEvents
      */
     public function __construct(RouterInterface $router, WebHookRepository $webHookRepository, WebHookEvents $webHookEvents)
     {
@@ -65,23 +65,45 @@ class WebHookService implements EventSubscriberInterface
         $events = $this->webHookEvents->toArray();
 
         if ($events) {
+            $payload = json_encode($events);
+
+            /** @var WebHook[] $availableWebHooks */
+            $availableWebHooks = $this->webHookRepository->findBy(['enabled' => true]);
+
+            $requests = array_map(function (WebHook $WebHook) use ($payload) {
+                return $this->createRequest($payload, $WebHook);
+            }, $availableWebHooks);
+
             $client = new Client();
-            $pool = new Pool($client, $this->createRequests($events), [
+            $pool = new Pool($client, $requests, [
                 'concurrency' => 5,
+                'options' => [
+                    'connect_timeout' => 1,
+                    'timeout' => 5,
+                    'allow_redirects' => false,
+                ],
+                'fulfilled' => function (Response $reason, $index) use ($availableWebHooks) {
+                    log_info('WebHook request successful.', ['Payload URL' => $availableWebHooks[$index]->getPayloadUrl()]);
+                },
+                'rejected' => function (RequestException $e, $index) use ($availableWebHooks) {
+                    log_error($e->getMessage(), ['Payload URL' => $availableWebHooks[$index]->getPayloadUrl()]);
+                },
             ]);
-            $pool->promise()->wait();
+            $p = $pool->promise();
+            $p->wait();
         }
     }
 
-    private function createRequests($events)
+    private function createRequest($payload, $WebHook)
     {
-        $payload = json_encode($events);
-        /** @var WebHook $webHook */
-        foreach ($this->webHookRepository->findAll() as $webHook) {
-            yield new Request('POST', $webHook->getPayloadUrl(), [
-                'Content-Type' => 'application/json',
-                'X-ECCUBE-URL' => $this->router->generate('homepage', null, RouterInterface::ABSOLUTE_URL),
-            ], $payload);
+        $headers = [
+            'Content-Type' => 'application/json',
+            'X-ECCUBE-URL' => $this->router->generate('homepage', [], RouterInterface::ABSOLUTE_URL),
+        ];
+        if (StringUtil::isNotBlank($WebHook->getSecret())) {
+            $headers['X-ECCUBE-Signature'] = hash_hmac('sha256', $payload, $WebHook->getSecret());
         }
+
+        return new Request('POST', $WebHook->getPayloadUrl(), $headers, $payload);
     }
 }

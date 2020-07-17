@@ -82,7 +82,7 @@ class WebHook
     /**
      * @param int $id
      */
-    public function setId(int $id)
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -98,7 +98,7 @@ class WebHook
     /**
      * @param string $payloadUrl
      */
-    public function setPayloadUrl(string $payloadUrl)
+    public function setPayloadUrl($payloadUrl)
     {
         $this->payloadUrl = $payloadUrl;
     }
@@ -114,7 +114,7 @@ class WebHook
     /**
      * @param string $secret
      */
-    public function setSecret(string $secret)
+    public function setSecret($secret)
     {
         $this->secret = $secret;
     }
@@ -130,7 +130,7 @@ class WebHook
     /**
      * @param bool $enabled
      */
-    public function setEnabled(bool $enabled)
+    public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
     }

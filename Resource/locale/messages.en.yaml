@@ -2,13 +2,29 @@
 # Settings : System : OAuth
 #------------------------------------------------------------------------------------
 
-api.admin.setting.system.oauth_management: OAuth
-api.admin.setting.system.oauth.identifier: Client ID
-api.admin.setting.system.oauth.secret: Client Secret
-api.admin.setting.system.oauth.scope: Scope
-api.admin.setting.system.oauth.redirect_uri: Redirect URI
-api.admin.setting.system.oauth.grant_type: Grant Type
-api.admin.setting.system.oauth.client_registration: Client Registration
-api.admin.setting.system.oauth.delete__confirm_title: Delete a Client
-api.admin.setting.system.oauth.delete__confirm_message: Are you sure to delete this Client?
-api.admin.setting.system.oauth.clear_expired_tokens: Clears all expired access and/or refresh tokens
+api:
+  admin:
+    management: API
+    setting:
+      system:
+        oauth_management: OAuth
+        oauth:
+          identifier: Client ID
+          secret: Client Secret
+          scope: Scope
+          redirect_uri: Redirect URI
+          grant_type: Grant Type
+          client_registration: Client Registration
+          delete__confirm_title: Delete a Client
+          delete__confirm_message: Are you sure to delete this Client?
+          clear_expired_tokens: Clears all expired access and/or refresh tokens
+    webhook:
+      management:  WebHook
+      registration: WebHook Registration
+      payload_url: Payload URL
+      secret: Secret
+      secret.tooltip: The payload is signed by HMAC-SHA256 with the entered value as a key in the X-ECCUBE-Signature header.
+      enabled: Enable / Disable
+      search_no_result_message: No WebHooks.
+      delete__confirm_title: Delete a WebHook
+      delete__confirm_message: Are you sure to delete this WebHook?

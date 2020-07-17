@@ -23,8 +23,8 @@ api:
       registration: WebHook登録
       payload_url: Payload URL
       secret: シークレット
+      secret.tooltip: 入力された値をキーにしてペイロードをHMAC-SHA256により署名した値をX-ECCUBE-Signatureヘッダーに設定します
       enabled: 有効/無効
       search_no_result_message: WebHookが登録されていません
       delete__confirm_title: WebHookを削除します
       delete__confirm_message: WebHookを削除してもよろしいですか？
-
