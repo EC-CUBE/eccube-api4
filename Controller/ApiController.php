@@ -30,6 +30,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use Knp\Component\Pager\Paginator;
+use Plugin\Api\GraphQL\Type\EdgesType;
 use Plugin\Api\GraphQL\Types;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -175,7 +176,7 @@ class ApiController extends AbstractController
         }, []);
 
         return [
-            'type' => Type::listOf($this->types->get($entityClass)),
+            'type' => new EdgesType($entityClass, $this->types),
             'args' => $args,
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
