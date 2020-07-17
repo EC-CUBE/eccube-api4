@@ -23,8 +23,8 @@ use Eccube\Form\Type\Admin\SearchProductType;
 use Eccube\Repository\CustomerRepository;
 use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
-use Eccube\Util\FormUtil;
 use GraphQL\Error\DebugFlag;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -32,10 +32,12 @@ use GraphQL\Type\Schema;
 use Knp\Component\Pager\Paginator;
 use Plugin\Api\GraphQL\Types;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ApiController extends AbstractController
 {
@@ -129,6 +131,30 @@ class ApiController extends AbstractController
     private function createQuery($entityClass, $searchFormType, $resolver)
     {
         $builder = $this->formFactory->createBuilder($searchFormType, null, ['csrf_protection' => false]);
+
+        // paging のためのフォームを追加
+        $builder->add('page', TextType::class, [
+            'label' => 'api.args.page.description',
+            'required' => false,
+            'data' => 1,
+            'constraints' => [
+                new Assert\Regex([
+                    'pattern' => "/^\d+$/u",
+                    'message' => 'form_error.numeric_only',
+                ]),
+            ],
+        ])->add('limit', TextType::class, [
+            'label' => 'api.args.limit.description',
+            'required' => false,
+            'data' => $this->eccubeConfig->get('eccube_default_page_count'),
+            'constraints' => [
+                new Assert\Regex([
+                    'pattern' => "/^\d+$/u",
+                    'message' => 'form_error.numeric_only',
+                ]),
+            ],
+        ]);
+
         $args = array_reduce($builder->getForm()->all(), function ($acc, $form) {
             /* @var FormInterface $form */
             $formConfig = $form->getConfig();
@@ -141,30 +167,28 @@ class ApiController extends AbstractController
             }
             $acc[$form->getName()] = [
                 'type' => $type,
+                'defaultValue' => $form->getViewData(),
                 'description' => $formConfig->getOption('label') ? trans($formConfig->getOption('label')) : null,
             ];
 
             return $acc;
         }, []);
 
-        // paging のための引数を定義
-        $args['page'] = [
-            'type' => Type::int(),
-            'defaultValue' => 1,
-            'description' => trans('api.args.page.description'),
-        ];
-        $args['limit'] = [
-            'type' => Type::int(),
-            'defaultValue' => $this->eccubeConfig->get('eccube_default_page_count'),
-            'description' => trans('api.args.limit.description'),
-        ];
-
         return [
             'type' => Type::listOf($this->types->get($entityClass)),
             'args' => $args,
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
-                $data = FormUtil::submitAndGetData($form, $args);
+                $form->submit($args);
+                if (!$form->isValid()) {
+                    $message = 'Invalid error: ';
+                    foreach ($form->getErrors(true) as $error) {
+                        $message .= sprintf('%s: %s;', $error->getOrigin()->getName(), $error->getMessage());
+                    }
+
+                    throw new InvariantViolation($message);
+                }
+                $data = $form->getData();
 
                 return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
             },
