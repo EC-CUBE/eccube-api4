@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use Plugin\Api\GraphQL\Type\Definition\DateTimeType;
 
 /**
  * DoctrineのEntityからGraphQLのObjectTypeを変換するクラス.
@@ -108,7 +109,7 @@ class Types
             'text' => Type::string(),
             'integer' => Type::int(),
             'decimal' => Type::float(),
-            'datetimetz' => Type::int(),
+            'datetimetz' => DateTimeType::DateTime(),
             'smallint' => Type::int(),
             'boolean' => Type::boolean(),
         ][$fieldMapping['type']];
