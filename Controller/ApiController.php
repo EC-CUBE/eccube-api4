@@ -24,7 +24,6 @@ use Eccube\Repository\CustomerRepository;
 use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
 use GraphQL\Error\DebugFlag;
-use GraphQL\Error\InvariantViolation;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -181,14 +180,6 @@ class ApiController extends AbstractController
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
                 $form->submit($args);
-                if (!$form->isValid()) {
-                    $message = 'Invalid error: ';
-                    foreach ($form->getErrors(true) as $error) {
-                        $message .= sprintf('%s: %s;', $error->getOrigin()->getName(), $error->getMessage());
-                    }
-
-                    throw new InvariantViolation($message);
-                }
                 $data = $form->getData();
 
                 return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
