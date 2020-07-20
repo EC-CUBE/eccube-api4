@@ -24,11 +24,13 @@ use Eccube\Repository\CustomerRepository;
 use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
 use GraphQL\Error\DebugFlag;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use Knp\Component\Pager\Paginator;
+use Plugin\Api\GraphQL\Error\FormInvalidException;
 use Plugin\Api\GraphQL\Type\ConnectionType;
 use Plugin\Api\GraphQL\Types;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -180,6 +182,16 @@ class ApiController extends AbstractController
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
                 $form->submit($args);
+
+                if (!$form->isValid()) {
+                    $message = 'Invalid error: ';
+                    foreach ($form->getErrors(true) as $error) {
+                        $message .= sprintf('%s: %s;', $error->getOrigin()->getName(), $error->getMessage());
+                    }
+
+                    throw new FormInvalidException($message);
+                }
+
                 $data = $form->getData();
 
                 return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
