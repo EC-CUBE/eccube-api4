@@ -1,28 +1,31 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\Api\GraphQL\Type;
-
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Plugin\Api\GraphQL\Types;
 
-class EdgesType extends ObjectType
+class EdgeType extends ObjectType
 {
     public function __construct(string $className, Types $types)
     {
         $config = [
-            'name' => $className,
+            'name' => $className.'Edge',
             'fields' => [
-                'edges' => [
-                    'type' => Type::listOf($types->get($className)),
-                    'resolve' => function ($root) {
-                        return $root;
-                    },
-                ],
-                'pageInfo' => [
-                    'type' => new PageInfoType($className),
+                'node' => [
+                    'type' => $types->get($className),
                     'resolve' => function ($root) {
                         return $root;
                     },

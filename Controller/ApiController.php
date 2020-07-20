@@ -30,10 +30,10 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use Knp\Component\Pager\Paginator;
-use Plugin\Api\GraphQL\Type\EdgesType;
+use Plugin\Api\GraphQL\Type\ConnectionType;
 use Plugin\Api\GraphQL\Types;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -134,7 +134,7 @@ class ApiController extends AbstractController
         $builder = $this->formFactory->createBuilder($searchFormType, null, ['csrf_protection' => false]);
 
         // paging のためのフォームを追加
-        $builder->add('page', TextType::class, [
+        $builder->add('page', IntegerType::class, [
             'label' => 'api.args.page.description',
             'required' => false,
             'data' => 1,
@@ -144,7 +144,7 @@ class ApiController extends AbstractController
                     'message' => 'form_error.numeric_only',
                 ]),
             ],
-        ])->add('limit', TextType::class, [
+        ])->add('limit', IntegerType::class, [
             'label' => 'api.args.limit.description',
             'required' => false,
             'data' => $this->eccubeConfig->get('eccube_default_page_count'),
@@ -159,7 +159,7 @@ class ApiController extends AbstractController
         $args = array_reduce($builder->getForm()->all(), function ($acc, $form) {
             /* @var FormInterface $form */
             $formConfig = $form->getConfig();
-            $type = Type::string();
+            $type = $formConfig->getType()->getInnerType() instanceof IntegerType ? Type::int() : Type::string();
             if ($formConfig->getOption('multiple')) {
                 $type = Type::listOf($type);
             }
@@ -176,7 +176,7 @@ class ApiController extends AbstractController
         }, []);
 
         return [
-            'type' => new EdgesType($entityClass, $this->types),
+            'type' => new ConnectionType($entityClass, $this->types),
             'args' => $args,
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();

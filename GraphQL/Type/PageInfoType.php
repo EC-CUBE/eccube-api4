@@ -25,20 +25,14 @@ class PageInfoType extends ObjectType
             'name' => $className.'PageInfo',
             'fields' => function () {
                 return [
-                    'totalCount' => [
-                        'type' => Type::int(),
-                        'resolve' => function (PaginationInterface $pagination) {
-                            return $pagination->getTotalItemCount();
-                        },
-                    ],
                     'hasNextPage' => [
-                        'type' => Type::boolean(),
+                        'type' => Type::nonNull(Type::boolean()),
                         'resolve' => function (PaginationInterface $pagination) {
                             return isset($pagination->getPaginationData()['next']);
                         },
                     ],
                     'hasPreviousPage' => [
-                        'type' => Type::boolean(),
+                        'type' => Type::nonNull(Type::boolean()),
                         'resolve' => function (PaginationInterface $pagination) {
                             return isset($pagination->getPaginationData()['previous']);
                         },
