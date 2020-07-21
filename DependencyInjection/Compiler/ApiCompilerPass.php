@@ -29,6 +29,14 @@ class ApiCompilerPass implements CompilerPassInterface
         $this->configureTrigger($container);
         $this->configureAllowList($container);
         $this->configureKeyPair($container);
+
+        $plugins = $container->getParameter('eccube.plugins.enabled');
+        if (!in_array('Api', $plugins)) {
+            if ($container->hasDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener')) {
+                $def = $container->getDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener');
+                $def->clearTags();
+            }
+        }
     }
 
     private function configureTrigger(ContainerBuilder $container)
@@ -73,6 +81,10 @@ class ApiCompilerPass implements CompilerPassInterface
 
     private function generateKeys($privateKeyPath, $publicKeyPath)
     {
+        if (false === function_exists('openssl_pkey_new')) {
+            throw new \RuntimeException('OpenSSL extension not available');
+        }
+
         $res = openssl_pkey_new([
             'digest_alg' => 'sha512',
             'private_key_bits' => 4096,
@@ -85,11 +97,17 @@ class ApiCompilerPass implements CompilerPassInterface
 
         foreach ([$privateKeyPath, $publicKeyPath] as $file) {
             $dir = dirname($file);
-            if (!file_exists($dir)) {
-                mkdir($dir, 0755, true);
+            if (!file_exists($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
             }
         }
-        file_put_contents($privateKeyPath, $privateKey);
-        file_put_contents($publicKeyPath, $publicKey);
+
+        if (false === file_put_contents($privateKeyPath, $privateKey)) {
+            throw new \RuntimeException('File "%s" was not created', $privateKeyPath);
+        }
+
+        if (false === file_put_contents($publicKeyPath, $publicKey)) {
+            throw new \RuntimeException('File "%s" was not created', $publicKeyPath);
+        }
     }
 }

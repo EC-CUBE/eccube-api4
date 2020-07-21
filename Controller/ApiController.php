@@ -20,19 +20,24 @@ use Eccube\Entity\Product;
 use Eccube\Form\Type\Admin\SearchCustomerType;
 use Eccube\Form\Type\Admin\SearchOrderType;
 use Eccube\Form\Type\Admin\SearchProductType;
-use Plugin\Api\GraphQL\Types;
 use Eccube\Repository\CustomerRepository;
 use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
-use Eccube\Util\FormUtil;
+use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Knp\Component\Pager\Paginator;
+use Plugin\Api\GraphQL\Type\ConnectionType;
+use Plugin\Api\GraphQL\Types;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ApiController extends AbstractController
 {
@@ -52,13 +57,29 @@ class ApiController extends AbstractController
      * @var CustomerRepository
      */
     private $customerRepository;
+    /**
+     * @var KernelInterface
+     */
+    private $kernel;
+    /**
+     * @var Paginator
+     */
+    private $paginator;
 
-    public function __construct(Types $types, ProductRepository $productRepository, OrderRepository $orderRepository, CustomerRepository $customerRepository)
-    {
+    public function __construct(
+        Types $types,
+        ProductRepository $productRepository,
+        OrderRepository $orderRepository,
+        CustomerRepository $customerRepository,
+        KernelInterface $kernel,
+        Paginator $paginator
+    ) {
         $this->types = $types;
         $this->productRepository = $productRepository;
         $this->orderRepository = $orderRepository;
         $this->customerRepository = $customerRepository;
+        $this->kernel = $kernel;
+        $this->paginator = $paginator;
     }
 
     /**
@@ -69,11 +90,21 @@ class ApiController extends AbstractController
     {
         $body = json_decode($request->getContent(), true);
         $schema = $this->getSchema();
-        $result = GraphQL::executeQuery($schema, $body['query']);
+        $query = $body['query'];
+        $variableValues = isset($body['variables']) ? $body['variables'] : null;
+        $result = GraphQL::executeQuery($schema, $query, null, null, $variableValues);
+
+        if ($this->kernel->isDebug()) {
+            $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE;
+            $result = $result->toArray($debug);
+        }
 
         return $this->json($result);
     }
 
+    /**
+     * @return Schema
+     */
     private function getSchema()
     {
         return new Schema([
@@ -81,13 +112,13 @@ class ApiController extends AbstractController
                 'name' => 'Query',
                 'fields' => [
                     'products' => $this->createQuery(Product::class, SearchProductType::class, function ($searchData) {
-                        return $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData)->getQuery()->getResult();
+                        return $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);
                     }),
                     'orders' => $this->createQuery(Order::class, SearchOrderType::class, function ($searchData) {
-                        return $this->orderRepository->getQueryBuilderBySearchDataForAdmin($searchData)->getQuery()->getResult();
+                        return $this->orderRepository->getQueryBuilderBySearchDataForAdmin($searchData);
                     }),
                     'customers' => $this->createQuery(Customer::class, SearchCustomerType::class, function ($searchData) {
-                        return $this->customerRepository->getQueryBuilderBySearchData($searchData)->getQuery()->getResult();
+                        return $this->customerRepository->getQueryBuilderBySearchData($searchData);
                     }),
                 ],
                 'typeLoader' => function ($name) {
@@ -100,10 +131,34 @@ class ApiController extends AbstractController
     private function createQuery($entityClass, $searchFormType, $resolver)
     {
         $builder = $this->formFactory->createBuilder($searchFormType, null, ['csrf_protection' => false]);
+
+        // paging のためのフォームを追加
+        $builder->add('page', IntegerType::class, [
+            'label' => 'api.args.page.description',
+            'required' => false,
+            'data' => 1,
+            'constraints' => [
+                new Assert\Regex([
+                    'pattern' => "/^\d+$/u",
+                    'message' => 'form_error.numeric_only',
+                ]),
+            ],
+        ])->add('limit', IntegerType::class, [
+            'label' => 'api.args.limit.description',
+            'required' => false,
+            'data' => $this->eccubeConfig->get('eccube_default_page_count'),
+            'constraints' => [
+                new Assert\Regex([
+                    'pattern' => "/^\d+$/u",
+                    'message' => 'form_error.numeric_only',
+                ]),
+            ],
+        ]);
+
         $args = array_reduce($builder->getForm()->all(), function ($acc, $form) {
             /* @var FormInterface $form */
             $formConfig = $form->getConfig();
-            $type = Type::string();
+            $type = $formConfig->getType()->getInnerType() instanceof IntegerType ? Type::int() : Type::string();
             if ($formConfig->getOption('multiple')) {
                 $type = Type::listOf($type);
             }
@@ -112,6 +167,7 @@ class ApiController extends AbstractController
             }
             $acc[$form->getName()] = [
                 'type' => $type,
+                'defaultValue' => $form->getViewData(),
                 'description' => $formConfig->getOption('label') ? trans($formConfig->getOption('label')) : null,
             ];
 
@@ -119,13 +175,14 @@ class ApiController extends AbstractController
         }, []);
 
         return [
-            'type' => Type::listOf($this->types->get($entityClass)),
+            'type' => new ConnectionType($entityClass, $this->types),
             'args' => $args,
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
-                FormUtil::submitAndGetData($form, $args);
+                $form->submit($args);
+                $data = $form->getData();
 
-                return $resolver($form->getData());
+                return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
             },
         ];
     }

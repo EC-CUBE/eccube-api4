@@ -82,7 +82,7 @@ class ClientType extends AbstractType
             ])
             ->add('grants', TextType::class, [
                 'mapped' => false,
-                'data' => 'authorization_code',
+                'data' => 'authorization_code,refresh_token',
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),
