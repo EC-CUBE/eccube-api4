@@ -184,7 +184,7 @@ class ApiController extends AbstractController
                 $form->submit($args);
 
                 if (!$form->isValid()) {
-                    $message = 'Invalid error: ';
+                    $message = '';
                     foreach ($form->getErrors(true) as $error) {
                         $message .= sprintf('%s: %s;', $error->getOrigin()->getName(), $error->getMessage());
                     }
