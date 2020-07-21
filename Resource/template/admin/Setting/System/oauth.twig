@@ -12,8 +12,8 @@ file that was distributed with this source code.
 
 {% set menus = ['setting', 'system', 'api_oauth'] %}
 
-{% block title %}{{ 'api.admin.setting.system.oauth_management'|trans }}{% endblock %}
-{% block sub_title %}{{ 'admin.setting.system'|trans }}{% endblock %}
+{% block title %}{{ 'api.admin.oauth.management'|trans }}{% endblock %}
+{% block sub_title %}{{ 'api.admin.management'|trans }}{% endblock %}
 
 {% block main %}
     <div class="c-contentsArea__cols">
@@ -28,19 +28,19 @@ file that was distributed with this source code.
                             <thead>
                             <tr>
                                 <th class="border-top-0 pt-2 pb-2 text-center" style="width:300px;">
-                                    {{ 'api.admin.setting.system.oauth.identifier'|trans }}
+                                    {{ 'api.admin.oauth.identifier'|trans }}
                                 </th>
                                 <th class="border-top-0 pt-2 pb-2 text-center" style="width:400px;">
-                                    {{ 'api.admin.setting.system.oauth.secret'|trans }}
+                                    {{ 'api.admin.oauth.secret'|trans }}
                                 </th>
                                 <th class="border-top-0 pt-2 pb-2 text-center">
-                                    {{ 'api.admin.setting.system.oauth.scope'|trans }}
+                                    {{ 'api.admin.oauth.scope'|trans }}
                                 </th>
                                 <th class="border-top-0 pt-2 pb-2 text-center">
-                                    {{ 'api.admin.setting.system.oauth.redirect_uri'|trans }}
+                                    {{ 'api.admin.oauth.redirect_uri'|trans }}
                                 </th>
                                 <th class="border-top-0 pt-2 pb-2 text-center">
-                                    {{ 'api.admin.setting.system.oauth.grant_type'|trans }}
+                                    {{ 'api.admin.oauth.grant_type'|trans }}
                                 </th>
                                 <th class="border-top-0 pt-2 pb-2 text-center"></th>
                             </tr>
@@ -85,14 +85,14 @@ file that was distributed with this source code.
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title font-weight-bold">
-                                                                    {{ 'api.admin.setting.system.oauth.delete__confirm_title'|trans }}
+                                                                    {{ 'api.admin.oauth.delete__confirm_title'|trans }}
                                                                 </h5>
                                                                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">×</span>
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body text-left">
-                                                                <p class="text-left">{{ 'api.admin.setting.system.oauth.delete__confirm_message'|trans }}</p>
+                                                                <p class="text-left">{{ 'api.admin.oauth.delete__confirm_message'|trans }}</p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button class="btn btn-ec-sub" type="button" data-dismiss="modal">
@@ -118,7 +118,7 @@ file that was distributed with this source code.
                 <div class="card rounded border-0 mb-4">
                     <a class="btn btn-ec-conversion ladda-button" href="{{ url('api_admin_setting_oauth_clear_expired_tokens') }}"
                         {{ csrf_token_for_anchor() }} data-method="delete" data-confirm="false">
-                        {{ 'api.admin.setting.system.oauth.clear_expired_tokens'|trans }}
+                        {{ 'api.admin.oauth.clear_expired_tokens'|trans }}
                     </a>
                 </div>
             </div>

@@ -1,23 +1,21 @@
 #------------------------------------------------------------------------------------
-# Settings : System : OAuth
+# Settings : API
 #------------------------------------------------------------------------------------
 
 api:
   admin:
     management: API
-    setting:
-      system:
-        oauth_management: OAuth
-        oauth:
-          identifier: Client ID
-          secret: Client Secret
-          scope: Scope
-          redirect_uri: Redirect URI
-          grant_type: Grant Type
-          client_registration: Client Registration
-          delete__confirm_title: Delete a Client
-          delete__confirm_message: Are you sure to delete this Client?
-          clear_expired_tokens: Clears all expired access and/or refresh tokens
+    oauth:
+      management: OAuth
+      identifier: Client ID
+      secret: Client Secret
+      scope: Scope
+      redirect_uri: Redirect URI
+      grant_type: Grant Type
+      client_registration: Client Registration
+      delete__confirm_title: Delete a Client
+      delete__confirm_message: Are you sure to delete this Client?
+      clear_expired_tokens: Clears all expired access and/or refresh tokens
     webhook:
       management:  WebHook
       registration: WebHook Registration
@@ -30,7 +28,7 @@ api:
       delete__confirm_message: Are you sure to delete this WebHook?
 
 #------------------------------------------------------------------------------------
-# API : Description
+# API
 #------------------------------------------------------------------------------------
 
 api.args.page.description: Page number

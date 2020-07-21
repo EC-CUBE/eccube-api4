@@ -1,23 +1,21 @@
 #------------------------------------------------------------------------------------
-# 設定：システム設定：OAuth管理
+# 設定：API管理
 #------------------------------------------------------------------------------------
 
 api:
   admin:
     management: API管理
-    setting:
-      system:
-        oauth_management: OAuth管理
-        oauth:
-          identifier: クライアントID
-          secret: クライアントシークレット
-          scope: スコープ
-          redirect_uri: リダイレクトURI
-          grant_type: グラントタイプ
-          client_registration: OAuthクライアント登録
-          delete__confirm_title: OAuthクライアントを削除します。
-          delete__confirm_message: OAuthクライアントを削除してよろしいですか？
-          clear_expired_tokens: 期限切れのアクセストークンとリフレッシュトークンを削除する
+    oauth:
+      management: OAuth管理
+      identifier: クライアントID
+      secret: クライアントシークレット
+      scope: スコープ
+      redirect_uri: リダイレクトURI
+      grant_type: グラントタイプ
+      client_registration: OAuthクライアント登録
+      delete__confirm_title: OAuthクライアントを削除します。
+      delete__confirm_message: OAuthクライアントを削除してよろしいですか？
+      clear_expired_tokens: 期限切れのアクセストークンとリフレッシュトークンを削除する
     webhook:
       management:  WebHook管理
       registration: WebHook登録
@@ -30,7 +28,7 @@ api:
       delete__confirm_message: WebHookを削除してもよろしいですか？
 
 #------------------------------------------------------------------------------------
-# API：説明
+# API
 #------------------------------------------------------------------------------------
 
 api.args.page.description: ページ番号
