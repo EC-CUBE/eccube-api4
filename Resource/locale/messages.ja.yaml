@@ -12,3 +12,10 @@ api.admin.setting.system.oauth.client_registration: OAuthクライアント登�
 api.admin.setting.system.oauth.delete__confirm_title: OAuthクライアントを削除します。
 api.admin.setting.system.oauth.delete__confirm_message: OAuthクライアントを削除してよろしいですか？
 api.admin.setting.system.oauth.clear_expired_tokens: 期限切れのアクセストークンとリフレッシュトークンを削除する
+
+#------------------------------------------------------------------------------------
+# API：説明
+#------------------------------------------------------------------------------------
+
+api.args.page.description: ページ番号
+api.args.limit.description: ページあたりの取得数の上限

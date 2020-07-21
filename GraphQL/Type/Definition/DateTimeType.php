@@ -77,7 +77,7 @@ class DateTimeType extends ScalarType
     /**
      * @api
      */
-    public static function DateTime(): ScalarType
+    public static function dateTime(): ScalarType
     {
         if (static::$DateTimeType === null) {
             static::$DateTimeType = new DateTimeType();

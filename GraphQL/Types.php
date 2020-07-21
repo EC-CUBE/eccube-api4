@@ -109,7 +109,7 @@ class Types
             'text' => Type::string(),
             'integer' => Type::int(),
             'decimal' => Type::float(),
-            'datetimetz' => DateTimeType::DateTime(),
+            'datetimetz' => DateTimeType::dateTime(),
             'smallint' => Type::int(),
             'boolean' => Type::boolean(),
         ][$fieldMapping['type']];
