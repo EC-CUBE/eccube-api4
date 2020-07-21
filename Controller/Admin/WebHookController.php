@@ -96,6 +96,7 @@ class WebHookController extends AbstractController
         try {
             $this->webHookRepository->delete($WebHook);
             $this->entityManager->flush();
+            $this->addSuccess('admin.common.delete_complete', 'admin');
         } catch (Exception $e) {
             $this->addError('admin.common.delete_error', 'admin');
             log_error('WebHook削除エラー', [$WebHook->getId(), $e]);
