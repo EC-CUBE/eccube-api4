@@ -23,7 +23,7 @@ class ConnectionType extends ObjectType
     public function __construct(string $className, Types $types)
     {
         $config = [
-            'name' => $className.'Connection',
+            'name' => (new \ReflectionClass($className))->getShortName().'Connection',
             'fields' => [
                 'edges' => [
                     'type' => Type::listOf(new EdgeType($className, $types)),

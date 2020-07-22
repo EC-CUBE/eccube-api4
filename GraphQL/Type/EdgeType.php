@@ -21,7 +21,7 @@ class EdgeType extends ObjectType
     public function __construct(string $className, Types $types)
     {
         $config = [
-            'name' => $className.'Edge',
+            'name' => (new \ReflectionClass($className))->getShortName().'Edge',
             'fields' => [
                 'node' => [
                     'type' => $types->get($className),
