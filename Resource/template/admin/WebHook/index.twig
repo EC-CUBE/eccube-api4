@@ -1,0 +1,129 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['setting', 'api', 'webhook'] %}
+
+{% block title %}{{ 'api.admin.webhook.management'|trans }}{% endblock %}
+{% block sub_title %}{{ 'api.admin.management'|trans }}{% endblock %}
+
+{% block main %}
+<div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+        <div class="c-primaryCol">
+            {% if webhooks %}
+            <div id="create-webhook" class="d-block mb-3">
+                <a class="btn btn-ec-regular" href="{{ url('admin_api_webhook_new') }}">{{ 'admin.common.registration__new'|trans }}</a>
+            </div>
+            <div class="card rounded border-0 mb-4">
+                <div class="card-body p-0">
+                    <table class="table table-sm" style="table-layout:fixed;">
+                        <thead>
+                        <tr class="d-flex">
+                            <th class="border-top-0 pt-2 pb-2 w-50 text-center">
+                                {{ 'api.admin.webhook.payload_url'|trans }}
+                            </th>
+                            <th class="border-top-0 pt-2 pb-2 w-25 text-center">
+                                {{ 'api.admin.webhook.enabled'|trans }}
+                            </th>
+                            <th class="border-top-0 pt-2 pb-2 w-25 text-center"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for webhook in webhooks %}
+                            <tr id="webhook-{{ webhook.id }}" class="d-flex">
+                                <td class="align-middle text-left pl-3 pt-3 w-50">
+                                    {{ webhook.payloadUrl }}
+                                </td>
+                                <td class="align-middle text-center pl-3 pt-3 w-25">
+                                    {% if webhook.enabled %}
+                                        <span class="text-success">{{ 'common.enabled'|trans }}</span>
+                                    {% else %}
+                                        <span class="text-muted">{{ 'common.disabled'|trans }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle w-25">
+                                    <div class="text-right">
+                                        <div class="d-inline-block">
+                                            <div class="d-inline-block mr-2" data-tooltip="true"
+                                                 data-placement="top" title="{{ 'admin.common.edit'|trans }}">
+                                                <a class="btn btn-ec-actionIcon"
+                                                   href="{{ url('admin_api_webhook_edit', {id: webhook.id}) }}"
+                                                   data-toggle="tooltip" data-placement="top"
+                                                   title="{{ 'admin.common.edit'|trans }}">
+                                                    <i class="fa fa-pencil fa-lg text-secondary"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="px-1 d-inline-block">
+                                            <div class="d-inline-block mr-2" data-tooltip="true"
+                                                 data-placement="top" title="{{ 'admin.common.delete'|trans }}">
+                                                <a class="btn btn-ec-actionIcon action-delete" data-toggle="modal"
+                                                   data-target="#webhook_delete_{{ webhook.id }}">
+                                                    <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                            <div class="modal fade" id="webhook_delete_{{ webhook.id }}" tabindex="-1"
+                                                 role="dialog" aria-labelledby="webhook_delete_{{ webhook.id }}" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title font-weight-bold">
+                                                                {{ 'api.admin.webhook.delete__confirm_title'|trans }}
+                                                            </h5>
+                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body text-left">
+                                                            <p class="text-left">{{ 'api.admin.webhook.delete__confirm_message'|trans }}</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-ec-sub" type="button" data-dismiss="modal">
+                                                                {{ 'admin.common.cancel'|trans }}
+                                                            </button>
+                                                            <a class="btn btn-ec-delete" href="{{ url('admin_api_webhook_delete', {id: webhook.id}) }}"
+                                                                    {{ csrf_token_for_anchor() }} data-method="delete" data-confirm="false">
+                                                                {{ 'admin.common.delete'|trans }}
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+                <div class="c-contentsArea__cols">
+                    <div class="c-contentsArea__primaryCol">
+                        <div class="c-primaryCol">
+                            <div class="card rounded border-0">
+                                <div class="card-body p-4">
+                                    <div class="text-center text-muted mb-4 h5">{{ 'api.admin.webhook.search_no_result_message'|trans }}</div>
+                                    <div class="text-center text-muted mb-4 h5">
+                                        <a class="btn btn-ec-regular" href="{{ url('admin_api_webhook_new') }}">{{ 'admin.common.registration__new'|trans }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
