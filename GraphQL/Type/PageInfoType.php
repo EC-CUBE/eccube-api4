@@ -22,7 +22,7 @@ class PageInfoType extends ObjectType
     public function __construct(string $className)
     {
         $config = [
-            'name' => $className.'PageInfo',
+            'name' => (new \ReflectionClass($className))->getShortName().'PageInfo',
             'fields' => function () {
                 return [
                     'hasNextPage' => [
