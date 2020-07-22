@@ -16,7 +16,6 @@ namespace Plugin\Api;
 use Doctrine\ORM\EntityManager;
 use Eccube\Entity\AuthorityRole;
 use Eccube\Entity\Master\Authority;
-use Eccube\Entity\Member;
 use Eccube\Plugin\AbstractPluginManager;
 use Eccube\Repository\AuthorityRoleRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;

@@ -10,7 +10,7 @@ file that was distributed with this source code.
 #}
 {% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['setting', 'system', 'api_oauth'] %}
+{% set menus = ['setting', 'api', 'oauth'] %}
 
 {% block title %}{{ 'api.admin.oauth.management'|trans }}{% endblock %}
 {% block sub_title %}{{ 'api.admin.management'|trans }}{% endblock %}
@@ -20,7 +20,7 @@ file that was distributed with this source code.
         <div class="c-contentsArea__primaryCol">
             <div class="c-primaryCol">
                 <div id="create-client" class="d-block mb-3">
-                    <a class="btn btn-ec-regular" href="{{ url('api_admin_setting_oauth_create_client') }}">{{ 'admin.common.registration__new'|trans }}</a>
+                    <a class="btn btn-ec-regular" href="{{ url('admin_api_oauth_new') }}">{{ 'admin.common.registration__new'|trans }}</a>
                 </div>
                 <div class="card rounded border-0 mb-4">
                     <div class="card-body p-0">
@@ -98,7 +98,7 @@ file that was distributed with this source code.
                                                                 <button class="btn btn-ec-sub" type="button" data-dismiss="modal">
                                                                     {{ 'admin.common.cancel'|trans }}
                                                                 </button>
-                                                                <a class="btn btn-ec-delete" href="{{ url('api_admin_setting_oauth_delete_client', {identifier: client.identifier}) }}"
+                                                                <a class="btn btn-ec-delete" href="{{ url('admin_api_oauth_delete', {identifier: client.identifier}) }}"
                                                                     {{ csrf_token_for_anchor() }} data-method="delete" data-confirm="false">
                                                                     {{ 'admin.common.delete'|trans }}
                                                                 </a>
@@ -116,7 +116,7 @@ file that was distributed with this source code.
                     </div>
                 </div>
                 <div class="card rounded border-0 mb-4">
-                    <a class="btn btn-ec-conversion ladda-button" href="{{ url('api_admin_setting_oauth_clear_expired_tokens') }}"
+                    <a class="btn btn-ec-conversion ladda-button" href="{{ url('admin_api_oauth_clear_expired_tokens') }}"
                         {{ csrf_token_for_anchor() }} data-method="delete" data-confirm="false">
                         {{ 'api.admin.oauth.clear_expired_tokens'|trans }}
                     </a>

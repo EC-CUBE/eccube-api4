@@ -30,7 +30,7 @@ class ApiNav implements EccubeNav
                         'children' => [
                             'oauth' => [
                                 'name' => 'api.admin.oauth.management',
-                                'url' => 'api_admin_setting_system_oauth',
+                                'url' => 'admin_api_oauth',
                             ],
                             'webhook' => [
                                 'name' => 'api.admin.webhook.management',

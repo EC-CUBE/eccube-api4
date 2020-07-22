@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Controller\Admin\Setting\System;
+namespace Plugin\Api\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Exception;
@@ -31,7 +31,7 @@ use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
 use Trikoder\Bundle\OAuth2Bundle\Model\RedirectUri;
 use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
 
-class OAuth2ClientController extends AbstractController
+class OAuthController extends AbstractController
 {
     /**
      * @var ClientManagerInterface
@@ -64,9 +64,9 @@ class OAuth2ClientController extends AbstractController
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/config", name="api_admin_config")
-     * @Route("/%eccube_admin_route%/api/setting/system/oauth", name="api_admin_setting_system_oauth")
-     * @Template("@Api/admin/Setting/System/oauth.twig")
+     * @Route("/%eccube_admin_route%/api/config", name="admin_api_config")
+     * @Route("/%eccube_admin_route%/api/oauth", name="admin_api_oauth")
+     * @Template("@Api/admin/OAuth/index.twig")
      *
      * @param Request $request
      *
@@ -83,8 +83,8 @@ class OAuth2ClientController extends AbstractController
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/setting/system/oauth/create_client", name="api_admin_setting_oauth_create_client")
-     * @Template("@Api/admin/Setting/System/oauth_edit.twig")
+     * @Route("/%eccube_admin_route%/api/oauth/new", name="admin_api_oauth_new")
+     * @Template("@Api/admin/OAuth/edit.twig")
      *
      * @param Request $request
      *
@@ -112,7 +112,7 @@ class OAuth2ClientController extends AbstractController
 
                 $this->addSuccess('admin.common.save_complete', 'admin');
 
-                return $this->redirectToRoute('api_admin_setting_system_oauth');
+                return $this->redirectToRoute('admin_api_oauth');
             } catch (Exception $e) {
                 dump($e);
                 $this->addError(trans('admin.common.save_error'), 'admin');
@@ -127,9 +127,9 @@ class OAuth2ClientController extends AbstractController
 
     /**
      * @Route(
-     *     "/%eccube_admin_route%/api/setting/system/oauth/delete_client/{identifier}",
+     *     "/%eccube_admin_route%/api/oauth/delete/{identifier}",
      *     requirements={"identifier" = "\w+"},
-     *     name="api_admin_setting_oauth_delete_client",
+     *     name="admin_api_oauth_delete",
      *     methods={"DELETE"}
      * )
      *
@@ -144,7 +144,7 @@ class OAuth2ClientController extends AbstractController
         if (null === $client) {
             $this->addError('admin.common.delete_error_already_deleted', 'admin');
 
-            return $this->redirectToRoute('api_admin_setting_system_oauth');
+            return $this->redirectToRoute('admin_api_oauth');
         }
 
         try {
@@ -158,13 +158,13 @@ class OAuth2ClientController extends AbstractController
             log_error('OAuth2 Client 削除エラー', [$e->getMessage()]);
         }
 
-        return $this->redirectToRoute('api_admin_setting_system_oauth');
+        return $this->redirectToRoute('admin_api_oauth');
     }
 
     /**
      * @Route(
-     *     "/%eccube_admin_route%/api/setting/system/oauth/clear_expired_tokens",
-     *     name="api_admin_setting_oauth_clear_expired_tokens",
+     *     "/%eccube_admin_route%/api/oauth/clear_expired_tokens",
+     *     name="admin_api_oauth_clear_expired_tokens",
      *     methods={"DELETE"}
      * )
      *
@@ -184,7 +184,7 @@ class OAuth2ClientController extends AbstractController
             log_error('OAuth2 Token 削除エラー', [$e->getMessage()]);
         }
 
-        return $this->redirectToRoute('api_admin_setting_system_oauth');
+        return $this->redirectToRoute('admin_api_oauth');
     }
 
     /**

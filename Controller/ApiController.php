@@ -24,7 +24,6 @@ use Eccube\Repository\CustomerRepository;
 use Eccube\Repository\OrderRepository;
 use Eccube\Repository\ProductRepository;
 use GraphQL\Error\DebugFlag;
-use GraphQL\Error\InvariantViolation;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;

@@ -10,7 +10,7 @@ file that was distributed with this source code.
 #}
 {% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['setting', 'system', 'api_oauth'] %}
+{% set menus = ['setting', 'api', 'oauth'] %}
 
 {% block title %}{{ 'api.admin.oauth.client_registration'|trans }}{% endblock %}
 {% block sub_title %}{{ 'api.admin.management'|trans }}{% endblock %}
@@ -125,7 +125,7 @@ file that was distributed with this source code.
                     <div class="col-6">
                         <div class="c-conversionArea__leftBlockItem">
                             <a class="c-baseLink"
-                               href="{{ url('api_admin_setting_system_oauth') }}">
+                               href="{{ url('admin_api_oauth') }}">
                                 <i class="fa fa-backward" aria-hidden="true"></i>
                                 <span>{{ 'api.admin.oauth.management'|trans }}</span>
                             </a>
