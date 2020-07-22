@@ -16,7 +16,6 @@ namespace Plugin\Api\GraphQL\Query;
 use Eccube\Entity\Customer;
 use Eccube\Form\Type\Admin\SearchCustomerType;
 use Eccube\Repository\CustomerRepository;
-use Plugin\Api\GraphQL\SearchFormQuery;
 
 class CustomersQuery extends SearchFormQuery
 {
