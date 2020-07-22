@@ -11,13 +11,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Api\Tests\Web\Admin\Setting\System;
+namespace Plugin\Api\Tests\Web\Admin;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Trikoder\Bundle\OAuth2Bundle\Manager\Doctrine\ClientManager;
 use Trikoder\Bundle\OAuth2Bundle\Model\Client;
 
-class OAuth2ClientControllerTest extends AbstractAdminWebTestCase
+class OAuthControllerTest extends AbstractAdminWebTestCase
 {
     /**
      * @var ClientManager
@@ -36,13 +36,13 @@ class OAuth2ClientControllerTest extends AbstractAdminWebTestCase
 
     public function testRoutingAdminSettingSystemOAuth2Client()
     {
-        $this->client->request('GET', $this->generateUrl('api_admin_setting_system_oauth'));
+        $this->client->request('GET', $this->generateUrl('admin_api_oauth'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
     public function testRoutingAdminSettingSystemOAuth2ClientCreate()
     {
-        $this->client->request('GET', $this->generateUrl('api_admin_setting_oauth_create_client'));
+        $this->client->request('GET', $this->generateUrl('admin_api_oauth_new'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
@@ -55,9 +55,9 @@ class OAuth2ClientControllerTest extends AbstractAdminWebTestCase
         $this->clientManager->save($client);
 
         // main
-        $redirectUrl = $this->generateUrl('api_admin_setting_system_oauth');
+        $redirectUrl = $this->generateUrl('admin_api_oauth');
         $this->client->request('DELETE',
-            $this->generateUrl('api_admin_setting_oauth_delete_client', ['identifier' => $identifier])
+            $this->generateUrl('admin_api_oauth_delete', ['identifier' => $identifier])
         );
         $this->assertTrue($this->client->getResponse()->isRedirect($redirectUrl));
         $this->assertNull($this->clientManager->find($identifier));
@@ -73,7 +73,7 @@ class OAuth2ClientControllerTest extends AbstractAdminWebTestCase
 
         // main
         $this->client->request('POST',
-            $this->generateUrl('api_admin_setting_oauth_create_client'),
+            $this->generateUrl('admin_api_oauth_new'),
             [
                 'api_admin_client' => $formData,
             ]
@@ -81,7 +81,7 @@ class OAuth2ClientControllerTest extends AbstractAdminWebTestCase
 
         $client = $this->clientManager->find($formData['identifier']);
 
-        $redirectUrl = $this->generateUrl('api_admin_setting_system_oauth');
+        $redirectUrl = $this->generateUrl('admin_api_oauth');
         $this->assertTrue($this->client->getResponse()->isRedirect($redirectUrl));
 
         $this->actual = $client->getIdentifier();
@@ -100,7 +100,7 @@ class OAuth2ClientControllerTest extends AbstractAdminWebTestCase
 
         // main
         $crawler = $this->client->request('POST',
-            $this->generateUrl('api_admin_setting_oauth_create_client'),
+            $this->generateUrl('admin_api_oauth_new'),
             [
                 'api_admin_client' => $formData,
             ]
@@ -117,9 +117,9 @@ class OAuth2ClientControllerTest extends AbstractAdminWebTestCase
         $identifier = hash('md5', random_bytes(16));
 
         // main
-        $redirectUrl = $this->generateUrl('api_admin_setting_system_oauth');
+        $redirectUrl = $this->generateUrl('admin_api_oauth');
         $this->client->request('DELETE',
-            $this->generateUrl('api_admin_setting_oauth_delete_client', ['identifier' => $identifier])
+            $this->generateUrl('admin_api_oauth_delete', ['identifier' => $identifier])
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect($redirectUrl));

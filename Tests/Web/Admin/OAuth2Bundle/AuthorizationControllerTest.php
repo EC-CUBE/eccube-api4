@@ -11,13 +11,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\Web\Admin\OAuth2;
+namespace Plugin\Api\Tests\Web\Admin\OAuth2Bundle;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Trikoder\Bundle\OAuth2Bundle\Model\Client;
 
-class OAuth2ControllerTest extends AbstractAdminWebTestCase
+class AuthorizationControllerTest extends AbstractAdminWebTestCase
 {
     public function setUp()
     {
@@ -37,7 +37,7 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
                                        'redirect_uri' => (string) current($Client->getRedirectUris()),
                                        'response_type' => 'code',
                                        'scope' => 'read',
-                                       'state' => 'xxx'
+                                       'state' => 'xxx',
                                    ]
                                )
         );
@@ -60,7 +60,7 @@ class OAuth2ControllerTest extends AbstractAdminWebTestCase
                 'redirect_uri' => (string) current($Client->getRedirectUris()),
                 'response_type' => 'code',
                 'scope' => 'read',
-                'state' => 'xxx'
+                'state' => 'xxx',
             ]
         );
 

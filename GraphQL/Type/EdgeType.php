@@ -14,7 +14,6 @@
 namespace Plugin\Api\GraphQL\Type;
 
 use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
 use Plugin\Api\GraphQL\Types;
 
 class EdgeType extends ObjectType

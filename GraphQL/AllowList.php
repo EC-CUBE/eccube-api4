@@ -30,6 +30,7 @@ class AllowList
     public function isAllowed($entityName, $propertyName)
     {
         $allowProperties = $this->allows[$entityName] ?? [];
+
         return in_array($propertyName, $allowProperties, true);
     }
 }

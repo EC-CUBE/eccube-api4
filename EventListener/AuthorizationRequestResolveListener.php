@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\Api\EventListener;
 
@@ -35,8 +45,7 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
         PsrHttpFactory $psr7Factory,
         FormFactoryInterface $formFactory,
         RequestStack $requestStack
-    )
-    {
+    ) {
         $this->twig = $twig;
         $this->psr7Factory = $psr7Factory;
         $this->formFactory = $formFactory;
@@ -58,6 +67,7 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
         // システム管理者以外は承認しない
         if (!$user instanceof Member || $user->getAuthority()->getId() !== Authority::ADMIN) {
             $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_DENIED);
+
             return;
         }
 
@@ -77,10 +87,10 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
             $form['state']->setData($event->getState());
             $form['scope']->setData(join(' ', $event->getScopes()));
             $content = $this->twig->render(
-                '@Api/admin/OAuth2/authorization.twig',
+                '@Api/admin/OAuth/authorization.twig',
                 [
                     'scope' => join(' ', $event->getScopes()),
-                    'form' => $form->createView()
+                    'form' => $form->createView(),
                 ]
             );
 
