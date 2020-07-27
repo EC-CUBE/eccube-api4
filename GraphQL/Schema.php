@@ -20,13 +20,24 @@ class Schema extends \GraphQL\Type\Schema
 {
     public function __construct(
         Types $types,
-        ArrayObject $queries
+        ArrayObject $queries,
+        ArrayObject $mutations
     ) {
         parent::__construct([
             'query' => new ObjectType([
                 'name' => 'Query',
                 'fields' => array_reduce($queries->getArrayCopy(), function ($acc, Query $query) {
                     $acc[$query->getName()] = $query->getQuery();
+                    return $acc;
+                }, []),
+                'typeLoader' => function ($name) use ($types) {
+                    return $types->get($name);
+                },
+            ]),
+            'mutation' => new ObjectType([
+                'name' => 'Mutation',
+                'fields' => array_reduce($mutations->getArrayCopy(), function ($acc, Mutation $mutation) {
+                    $acc[$mutation->getName()] = $mutation->getMutation();
                     return $acc;
                 }, []),
                 'typeLoader' => function ($name) use ($types) {

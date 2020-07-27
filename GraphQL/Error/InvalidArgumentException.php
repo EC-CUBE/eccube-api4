@@ -15,7 +15,7 @@ namespace Plugin\Api\GraphQL\Error;
 
 use GraphQL\Error\ClientAware;
 
-class FormInvalidException extends \Exception implements ClientAware
+class InvalidArgumentException extends \Exception implements ClientAware
 {
     public function isClientSafe()
     {
