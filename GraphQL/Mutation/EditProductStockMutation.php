@@ -72,9 +72,18 @@ class EditProductStockMutation implements Mutation
         return  [
             'type' => $this->types->get(ProductClass::class),
             'args' => [
-                'code' => Type::nonNull(Type::string()),
-                'stock' => Type::int(),
-                'stock_unlimited' => Type::nonNull(Type::boolean()),
+                'code' => [
+                    'type' => Type::nonNull(Type::string()),
+                    'description' => trans('api.args.description.product_code'),
+                ],
+                'stock' => [
+                    'type' => Type::int(),
+                    'description' => trans('api.args.description.stock'),
+                ],
+                'stock_unlimited' => [
+                    'type' => Type::nonNull(Type::boolean()),
+                    'description' => trans('api.args.description.stock_unlimited'),
+                ],
             ],
             'resolve' => [$this, 'editProductStock'],
         ];

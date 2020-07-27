@@ -86,7 +86,7 @@ abstract class SearchFormQuery implements Query
 
         // paging のためのフォームを追加
         $builder->add('page', IntegerType::class, [
-            'label' => 'api.args.page.description',
+            'label' => 'api.args.description.page',
             'required' => false,
             'data' => 1,
             'constraints' => [
@@ -96,7 +96,7 @@ abstract class SearchFormQuery implements Query
                 ]),
             ],
         ])->add('limit', IntegerType::class, [
-            'label' => 'api.args.limit.description',
+            'label' => 'api.args.description.limit',
             'required' => false,
             'data' => $this->eccubeConfig->get('eccube_default_page_count'),
             'constraints' => [
