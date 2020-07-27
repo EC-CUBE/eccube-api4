@@ -16,12 +16,14 @@ namespace Plugin\Api\Command;
 use GraphQL\Utils\SchemaPrinter;
 use Plugin\Api\GraphQL\Schema;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DumpSchemaCommand extends Command
 {
     protected static $defaultName = 'eccube:api:dump-schema';
+
     /**
      * @var Schema
      */
@@ -38,12 +40,17 @@ class DumpSchemaCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Dump GraphQL schema.');
+        $this->addArgument('type', InputArgument::OPTIONAL, 'Type name to dump schema')
+            ->setDescription('Dump GraphQL schema.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $x = SchemaPrinter::doPrint($this->schema);
-        $output->writeln($x);
+        $type = $input->getArgument('type');
+        if ($type) {
+            $output->writeln(SchemaPrinter::printType($this->schema->getType($type)));
+        } else {
+            $output->writeln(SchemaPrinter::doPrint($this->schema));
+        }
     }
 }
