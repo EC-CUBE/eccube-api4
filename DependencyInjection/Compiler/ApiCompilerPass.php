@@ -15,6 +15,7 @@ namespace Plugin\Api\DependencyInjection\Compiler;
 
 use League\OAuth2\Server\CryptKey;
 use Plugin\Api\GraphQL\AllowList;
+use Plugin\Api\GraphQL\Query;
 use Plugin\Api\GraphQL\Types;
 use Plugin\Api\Service\WebHookEvents;
 use Plugin\Api\Service\WebHookTrigger;
@@ -29,12 +30,23 @@ class ApiCompilerPass implements CompilerPassInterface
         $this->configureTrigger($container);
         $this->configureAllowList($container);
         $this->configureKeyPair($container);
+        $this->configureQuery($container);
 
         $plugins = $container->getParameter('eccube.plugins.enabled');
         if (!in_array('Api', $plugins)) {
             if ($container->hasDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener')) {
                 $def = $container->getDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener');
                 $def->clearTags();
+            }
+        }
+    }
+
+    private function configureQuery(ContainerBuilder $container)
+    {
+        $serviceDef = $container->getDefinition('api.queries');
+        foreach ($container->getDefinitions() as $definition) {
+            if (is_subclass_of($definition->getClass(), Query::class)) {
+                $serviceDef->addMethodCall('append', [$definition]);
             }
         }
     }

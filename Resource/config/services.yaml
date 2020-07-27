@@ -46,6 +46,7 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         lazy: true
 
+
     # Register nyholm/psr7 services for autowiring with PSR-17 (HTTP factories)
     Psr\Http\Message\RequestFactoryInterface: '@nyholm.psr7.psr17_factory'
     Psr\Http\Message\ResponseFactoryInterface: '@nyholm.psr7.psr17_factory'
@@ -133,3 +134,11 @@ services:
                 Eccube\Entity\Master\TaxDisplayType: ['id', 'name', 'sort_no']
                 Eccube\Entity\Master\TaxType: ['id', 'name', 'sort_no']
                 Eccube\Entity\Master\Work: ['id', 'name', 'sort_no']
+
+    api.queries:
+        class: ArrayObject
+
+    Plugin\Api\GraphQL\Schema:
+        arguments:
+            - '@Plugin\Api\GraphQL\Types'
+            - '@api.queries'
