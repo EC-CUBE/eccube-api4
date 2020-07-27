@@ -21,7 +21,7 @@ use Plugin\Api\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api\GraphQL\Mutation;
 use Plugin\Api\GraphQL\Types;
 
-class EditProductStockMutation implements Mutation
+class UpdateProductStockMutation implements Mutation
 {
     /**
      * @var Types
@@ -64,7 +64,7 @@ class EditProductStockMutation implements Mutation
 
     public function getName()
     {
-        return 'editProductStock';
+        return 'updateProductStock';
     }
 
     public function getMutation()
@@ -85,11 +85,11 @@ class EditProductStockMutation implements Mutation
                     'description' => trans('api.args.description.stock_unlimited'),
                 ],
             ],
-            'resolve' => [$this, 'editProductStock'],
+            'resolve' => [$this, 'updateProductStock'],
         ];
     }
 
-    public function editProductStock($root, $args)
+    public function updateProductStock($root, $args)
     {
         $ProductClasses = $this->productClassRepository->findBy(['code' => $args['code']]);
         if (count($ProductClasses) < 1) {
