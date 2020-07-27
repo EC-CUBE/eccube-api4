@@ -16,7 +16,6 @@ namespace Plugin\Api\GraphQL\Query;
 use Eccube\Entity\Order;
 use Eccube\Form\Type\Admin\SearchOrderType;
 use Eccube\Repository\OrderRepository;
-use Plugin\Api\GraphQL\SearchFormQuery;
 
 class OrdersQuery extends SearchFormQuery
 {

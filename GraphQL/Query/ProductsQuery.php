@@ -16,7 +16,6 @@ namespace Plugin\Api\GraphQL\Query;
 use Eccube\Entity\Product;
 use Eccube\Form\Type\Admin\SearchProductType;
 use Eccube\Repository\ProductRepository;
-use Plugin\Api\GraphQL\SearchFormQuery;
 
 class ProductsQuery extends SearchFormQuery
 {

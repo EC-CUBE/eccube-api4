@@ -11,14 +11,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\GraphQL;
+namespace Plugin\Api\GraphQL\Query;
 
 use Eccube\Common\EccubeConfig;
 use Eccube\Util\StringUtil;
 use GraphQL\Type\Definition\Type;
 use Knp\Component\Pager\Paginator;
 use Plugin\Api\GraphQL\Error\FormInvalidException;
+use Plugin\Api\GraphQL\Query;
 use Plugin\Api\GraphQL\Type\ConnectionType;
+use Plugin\Api\GraphQL\Types;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
