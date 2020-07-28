@@ -46,7 +46,7 @@ class UpdateProductStockMutationTest extends EccubeTestCase
         $ProductClasses[0]->setStockUnlimited(false);
         $ProductClasses[0]->getProductStock()->setStock(100);
 
-        // 在庫100個
+        // 在庫無制限
         $ProductClasses[1]->setCode('code-unlimited');
         $ProductClasses[1]->setStock(null);
         $ProductClasses[1]->setStockUnlimited(true);
