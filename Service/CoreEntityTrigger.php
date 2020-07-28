@@ -44,7 +44,7 @@ class CoreEntityTrigger implements WebHookTrigger
         } elseif ($entity instanceof ProductTag) {
             return $entity->getProduct();
         } elseif ($entity instanceof ProductStock) {
-            return $entity->getProductClass()->getProduct();
+            return is_null($entity->getProductClass()) ? null : $entity->getProductClass()->getProduct();
         } elseif ($entity instanceof TaxRule) {
             return $entity->getProduct();
         } elseif ($entity instanceof ProductImage) {
