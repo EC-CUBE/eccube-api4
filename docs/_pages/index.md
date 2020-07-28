@@ -15,14 +15,14 @@ https://github.com/EC-CUBE/ec-cube/issues/4447
 composer create-project --no-scripts ec-cube/ec-cube ec-cube "4.0.x-dev" --keep-vcs
 cd ec-cube
 
-git fetch origin pull/4614/head:experimental/plugin_bundle
+git fetch origin pull/4625/head:experimental/plugin_bundle
 git checkout experimental/plugin_bundle
 
 # DATABASE_URL と DATABASE_SERVER_VERSION を適宜変更
 # sed -i -e 's/DATABASE_URL=sqlite:\/\/\/var\/eccube.db/DATABASE_URL=postgres:\/\/postgres@127.0.0.1\/eccube/g' ./.env
 # sed -i -e 's/DATABASE_SERVER_VERSION=3/DATABASE_SERVER_VERSION=9/g' ./.env
 
-bin/console e:i --no-interaction
+bin/console eccube:install --no-interaction
 
 # プラグインの保管ディレクトリを作成
 mkdir ${PWD}/repos
@@ -44,16 +44,19 @@ psql eccube -h 127.0.0.1 -U postgres -c "update dtb_base_info set authentication
 # mv eccube-api4-beta1.tar.gz eccube-api4-beta1.tgz
 # cd ..
 
-bin/console s:run --env=dev
-
-# FIXME 編集者が試したところ DB の更新がされませんでした。
-# 必要なテーブルが作成されていなかった場合は DB の定義を更新してください。
-# bin/console doctrine:schema:update --force --dump-sql
+bin/console server:run --env=dev
 ```
 
-管理画面のプラグインを探すでプラグインがインストールできる。
+管理画面→オーナーズストア→プラグイン→ **プラグインを探す** からプラグインをインストールできる。
 
-API プラグインの開発のため Git リポジトリで置き換える。
+コマンドラインでインストールする場合は以下を実行する
+```
+bin/console eccube:composer:require ec-cube/Api
+bin/console eccube:plugin:enable --code=Api
+```
+
+API プラグインの開発のため Git リポジトリで置き換える場合は以下のとおり。
+*プラグインをアンインストールすると、 Git リポジトリごと削除されてしまうため注意すること*
 
 ```
 cd app/Plugin/
@@ -70,7 +73,7 @@ mv eccube-api4 Api
 
 変更内容は以下のプルリクの内容となる。
 
-https://github.com/EC-CUBE/ec-cube/pull/4614
+https://github.com/EC-CUBE/ec-cube/pull/4625
 
 初回インストールはパッケージAPI経由でインストールする必要がある。
 
