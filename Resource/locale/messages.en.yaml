@@ -1,8 +1,9 @@
-#------------------------------------------------------------------------------------
-# Settings : API
-#------------------------------------------------------------------------------------
-
 api:
+
+  #------------------------------------------------------------------------------------
+  # Settings : API
+  #------------------------------------------------------------------------------------
+
   admin:
     management: API
     oauth:
@@ -27,9 +28,14 @@ api:
       delete__confirm_title: Delete a WebHook
       delete__confirm_message: Are you sure to delete this WebHook?
 
-#------------------------------------------------------------------------------------
-# API
-#------------------------------------------------------------------------------------
+  #------------------------------------------------------------------------------------
+  # API
+  #------------------------------------------------------------------------------------
 
-api.args.page.description: Page number
-api.args.limit.description: Limit number per page
+  args:
+    description:
+      page: Page number
+      limit: Limit number per page
+      product_code: SKU
+      stock: If the stock_unlimited is set to false, please set the value more than 0.
+      stock_unlimited: 'Specify false: Limited or true: Unlimited'

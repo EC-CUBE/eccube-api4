@@ -15,6 +15,7 @@ namespace Plugin\Api\DependencyInjection\Compiler;
 
 use League\OAuth2\Server\CryptKey;
 use Plugin\Api\GraphQL\AllowList;
+use Plugin\Api\GraphQL\Mutation;
 use Plugin\Api\GraphQL\Query;
 use Plugin\Api\GraphQL\Types;
 use Plugin\Api\Service\WebHookEvents;
@@ -30,7 +31,7 @@ class ApiCompilerPass implements CompilerPassInterface
         $this->configureTrigger($container);
         $this->configureAllowList($container);
         $this->configureKeyPair($container);
-        $this->configureQuery($container);
+        $this->configureSchema($container);
 
         $plugins = $container->getParameter('eccube.plugins.enabled');
         if (!in_array('Api', $plugins)) {
@@ -41,12 +42,16 @@ class ApiCompilerPass implements CompilerPassInterface
         }
     }
 
-    private function configureQuery(ContainerBuilder $container)
+    private function configureSchema(ContainerBuilder $container)
     {
-        $serviceDef = $container->getDefinition('api.queries');
+        $queriesServiceDef = $container->getDefinition('api.queries');
+        $mutationsServiceDef = $container->getDefinition('api.mutations');
         foreach ($container->getDefinitions() as $definition) {
             if (is_subclass_of($definition->getClass(), Query::class)) {
-                $serviceDef->addMethodCall('append', [$definition]);
+                $queriesServiceDef->addMethodCall('append', [$definition]);
+            }
+            if (is_subclass_of($definition->getClass(), Mutation::class)) {
+                $mutationsServiceDef->addMethodCall('append', [$definition]);
             }
         }
     }

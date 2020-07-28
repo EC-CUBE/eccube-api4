@@ -17,7 +17,7 @@ use Eccube\Common\EccubeConfig;
 use Eccube\Util\StringUtil;
 use GraphQL\Type\Definition\Type;
 use Knp\Component\Pager\Paginator;
-use Plugin\Api\GraphQL\Error\FormInvalidException;
+use Plugin\Api\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api\GraphQL\Query;
 use Plugin\Api\GraphQL\Type\ConnectionType;
 use Plugin\Api\GraphQL\Types;
@@ -86,7 +86,7 @@ abstract class SearchFormQuery implements Query
 
         // paging のためのフォームを追加
         $builder->add('page', IntegerType::class, [
-            'label' => 'api.args.page.description',
+            'label' => 'api.args.description.page',
             'required' => false,
             'data' => 1,
             'constraints' => [
@@ -96,7 +96,7 @@ abstract class SearchFormQuery implements Query
                 ]),
             ],
         ])->add('limit', IntegerType::class, [
-            'label' => 'api.args.limit.description',
+            'label' => 'api.args.description.limit',
             'required' => false,
             'data' => $this->eccubeConfig->get('eccube_default_page_count'),
             'constraints' => [
@@ -140,7 +140,7 @@ abstract class SearchFormQuery implements Query
                         $message .= sprintf('%s: %s;', $error->getOrigin()->getName(), $error->getMessage());
                     }
 
-                    throw new FormInvalidException($message);
+                    throw new InvalidArgumentException($message);
                 }
 
                 $data = $form->getData();

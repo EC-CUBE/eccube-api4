@@ -138,7 +138,11 @@ services:
     api.queries:
         class: ArrayObject
 
+    api.mutations:
+        class: ArrayObject
+
     Plugin\Api\GraphQL\Schema:
         arguments:
             - '@Plugin\Api\GraphQL\Types'
             - '@api.queries'
+            - '@api.mutations'
