@@ -40,7 +40,7 @@ class WebHookController extends AbstractController
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/webhook", name="admin_api_webhook")
+     * @Route("/%eccube_admin_route%/api/webhook", name="admin_api_webhook", methods={"GET"})
      * @Template("@Api/admin/WebHook/index.twig")
      */
     public function index()
@@ -53,8 +53,8 @@ class WebHookController extends AbstractController
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/webhook/new", name="admin_api_webhook_new")
-     * @Route("/%eccube_admin_route%/api/webhook/edit/{id}", requirements={"id" = "\d+"}, name="admin_api_webhook_edit")
+     * @Route("/%eccube_admin_route%/api/webhook/new", name="admin_api_webhook_new", methods={"GET", "POST"})
+     * @Route("/%eccube_admin_route%/api/webhook/edit/{id}", requirements={"id" = "\d+"}, name="admin_api_webhook_edit", methods={"GET", "POST"})
      * @Template("@Api/admin/WebHook/edit.twig")
      *
      * @param Request $request

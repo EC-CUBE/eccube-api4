@@ -64,8 +64,8 @@ class OAuthController extends AbstractController
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/config", name="admin_api_config")
-     * @Route("/%eccube_admin_route%/api/oauth", name="admin_api_oauth")
+     * @Route("/%eccube_admin_route%/api/config", name="admin_api_config", methods={"GET"})
+     * @Route("/%eccube_admin_route%/api/oauth", name="admin_api_oauth", methods={"GET"})
      * @Template("@Api/admin/OAuth/index.twig")
      *
      * @param Request $request
@@ -83,7 +83,7 @@ class OAuthController extends AbstractController
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/oauth/new", name="admin_api_oauth_new")
+     * @Route("/%eccube_admin_route%/api/oauth/new", name="admin_api_oauth_new", methods={"GET", "POST"})
      * @Template("@Api/admin/OAuth/edit.twig")
      *
      * @param Request $request

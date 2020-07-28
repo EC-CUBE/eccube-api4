@@ -50,7 +50,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api", name="api")
+     * @Route("/api", name="api", methods={"POST"})
      * @Security("has_role('ROLE_OAUTH2_READ')")
      */
     public function index(Request $request)
