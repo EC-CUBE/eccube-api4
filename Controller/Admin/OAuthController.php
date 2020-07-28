@@ -114,7 +114,6 @@ class OAuthController extends AbstractController
 
                 return $this->redirectToRoute('admin_api_oauth');
             } catch (Exception $e) {
-                dump($e);
                 $this->addError(trans('admin.common.save_error'), 'admin');
                 log_error('OAuth2 Client 登録エラー', [$e->getMessage()]);
             }
