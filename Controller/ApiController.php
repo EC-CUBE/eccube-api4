@@ -16,7 +16,9 @@ namespace Plugin\Api\Controller;
 use Eccube\Controller\AbstractController;
 use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
+use GraphQL\Validator\DocumentValidator;
 use Plugin\Api\GraphQL\Schema;
+use Plugin\Api\GraphQL\ScopeValidationRule;
 use Plugin\Api\GraphQL\Types;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,24 +36,32 @@ class ApiController extends AbstractController
      * @var KernelInterface
      */
     private $kernel;
+
     /**
      * @var Schema
      */
     private $schema;
 
+    /**
+     * @var ScopeValidationRule
+     */
+    private $scopeValidationRule;
+
     public function __construct(
         Types $types,
         KernelInterface $kernel,
-        Schema $schema
+        Schema $schema,
+        ScopeValidationRule $scopeValidationRule
     ) {
         $this->types = $types;
         $this->kernel = $kernel;
         $this->schema = $schema;
+        $this->scopeValidationRule = $scopeValidationRule;
     }
 
     /**
      * @Route("/api", name="api", methods={"POST"})
-     * @Security("has_role('ROLE_OAUTH2_READ')")
+     * @Security("has_role('ROLE_OAUTH2_READ') or has_role('ROLE_OAUTH2_WRITE')")
      */
     public function index(Request $request)
     {
@@ -59,6 +69,8 @@ class ApiController extends AbstractController
         $schema = $this->schema;
         $query = $body['query'];
         $variableValues = isset($body['variables']) ? $body['variables'] : null;
+
+        DocumentValidator::addRule($this->scopeValidationRule);
         $result = GraphQL::executeQuery($schema, $query, null, null, $variableValues);
 
         if ($this->kernel->isDebug()) {
