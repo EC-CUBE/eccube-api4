@@ -98,27 +98,6 @@ git clone git@github.com:okazy/eccube-api4.git
 mv eccube-api4 Api
 ```
 
-
-## インストール方法
-
-
-本プラグインを利用するには EC-CUBE 4.0.4 から若干ファイルを変更する必要がある。
-
-変更内容は以下のプルリクの内容となる。
-
-https://github.com/EC-CUBE/ec-cube/pull/4625
-
-初回インストールはパッケージAPI経由でインストールする必要がある。
-
-パッケージ API 経由でのインストール方法は以下のドキュメントを参照のこと。
-
-https://doc4.ec-cube.net/plugin_mock_package_api
-
-また本体の機能として開発していた際のインストール手順や動作確認方法も参考になるかもしれません。
-
-https://doc4.ec-cube.net/api_quickstart_guide
-
-
 ## OAuth2.0 による認可
 
 
