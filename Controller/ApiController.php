@@ -59,7 +59,7 @@ class ApiController extends AbstractController
         switch ($request->getMethod()) {
             case 'GET':
                 $query = $request->get('query');
-                $variableValues = $request->get('variables');
+                $variableValues = json_decode($request->get('variables'), true);
                 break;
             case 'POST':
                 $body = json_decode($request->getContent(), true);
