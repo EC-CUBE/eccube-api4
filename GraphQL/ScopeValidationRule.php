@@ -41,8 +41,8 @@ class ScopeValidationRule extends ValidationRule
             NodeKind::OPERATION_DEFINITION => function (OperationDefinitionNode $def) use ($context) {
                 if ($def->operation === 'query' && !$this->authorizationChecker->isGranted('ROLE_OAUTH2_READ')) {
                     $context->reportError(new Error('Insufficient permission. (read)'));
-                } elseif ($def->operation === 'mutation' && !$this->authorizationChecker->isGranted('ROLE_OAUTH2_WRITE')) {
-                    $context->reportError(new Error('Insufficient permission. (write)'));
+                } elseif ($def->operation === 'mutation' && !$this->authorizationChecker->isGranted(['ROLE_OAUTH2_READ', 'ROLE_OAUTH2_WRITE'])) {
+                    $context->reportError(new Error('Insufficient permission. (read,write)'));
                 }
             },
         ];

@@ -76,8 +76,8 @@ class ApiControllerTest extends AbstractWebTestCase
             [['read'],  $query],
             [['write'], $query, 'Insufficient permission. (read)'],
             [['read', 'write'], $query],
-            [['read'], $mutation, 'Insufficient permission. (write)'],
-            [['write'], $mutation],
+            [['read'], $mutation, 'Insufficient permission. (read,write)'],
+            [['write'], $mutation, 'Insufficient permission. (read,write)'],
             [['read', 'write'], $mutation],
         ];
     }
