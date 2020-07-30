@@ -36,11 +36,11 @@ EC-CUBE4 対応の Web API プラグイン
     sed -i.bak -e 's/DATABASE_SERVER_VERSION=3/DATABASE_SERVER_VERSION=5.7/g' ./.env
     ```
 
-1. [本プラグイン対応用のブランチ](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95)をチェックアウトします。
+1. 本プラグイン対応用のブランチをチェックアウトします。
     ```sh
     cd ec-cube
-    git fetch origin pull/4625/head:experimental/plugin_bundle
-    git checkout experimental/plugin_bundle
+    git fetch origin experimental/plugin_bundle
+    git checkout experimental/plugin_bundle origin/experimental/plugin_bundle
     ```
 1. EC-CUBEオーナーズストアのモックサーバーをセットアップします。
 
