@@ -20,6 +20,7 @@ use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
+use Plugin\Api\GraphQL\Error\InvalidArgumentException;
 
 class DateTimeType extends ScalarType
 {
@@ -53,10 +54,16 @@ class DateTimeType extends ScalarType
      * @param mixed $value
      *
      * @return DateTime|false|null
+     * @throws InvalidArgumentException
      */
     public function parseValue($value)
     {
-        return DateTime::createFromFormat(DateTime::ATOM, $value) ?: null;
+        $dateTime = DateTime::createFromFormat(DateTime::ATOM, $value);
+        if ($dateTime) {
+            return $dateTime;
+        } else {
+            throw new InvalidArgumentException('DateTime parse error, please specify in "Y-m-d\TH:i:sP".'.Utils::printSafe($value));
+        }
     }
 
     /**

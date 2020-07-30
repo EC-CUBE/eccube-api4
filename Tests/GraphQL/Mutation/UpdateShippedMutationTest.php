@@ -13,6 +13,7 @@
 
 namespace Plugin\Api\Tests\GraphQL\Mutation;
 
+use DateTime;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Entity\Shipping;
@@ -70,21 +71,21 @@ class UpdateShippedMutationTest extends EccubeTestCase
      */
     public function testResponseAndDB()
     {
+        $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2020-05-18T12:57:08+09:00');
         $args = [
             'id' => $this->Order->getShippings()->current()->getId(),
-            'shipping_date' => '2020-05-18 12:00:00',
+            'shipping_date' => $dateTime,
             'shipping_delivery_name' => 'テスト配送業者',
             'tracking_number' => 'tracking_number_0123',
             'note' => 'notes_0123456789',
-//            'is_send_mail' => true, // TODO: メール送信でエラーとなるためスキップ
+            'is_send_mail' => false,
         ];
 
         try {
             $Shipping = $this->updateShippedMutation->updateShipped(null, $args);
 
             // レスポンスの確認
-            $Shipping->getShippingDate()->setTimezone(new \DateTimeZone($this->eccubeConfig['timezone']));
-            self::assertEquals('2020-05-18 12:00:00', $Shipping->getShippingDate()->format('Y-m-d H:i:s'));
+            self::assertEquals($dateTime, $Shipping->getShippingDate());
             self::assertEquals('テスト配送業者', $Shipping->getShippingDeliveryName());
             self::assertEquals('tracking_number_0123', $Shipping->getTrackingNumber());
             self::assertEquals('notes_0123456789', $Shipping->getNote());
@@ -95,8 +96,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
 
         // DB の確認
         $this->entityManager->refresh($this->Order);
-        $this->Order->getShippings()->current()->getShippingDate()->setTimezone(new \DateTimeZone($this->eccubeConfig['timezone']));
-        self::assertEquals('2020-05-18 12:00:00', $this->Order->getShippings()->current()->getShippingDate()->format('Y-m-d H:i:s'));
+        self::assertEquals($dateTime, $this->Order->getShippings()->current()->getShippingDate());
         self::assertEquals('テスト配送業者', $this->Order->getShippings()->current()->getShippingDeliveryName());
         self::assertEquals('tracking_number_0123', $this->Order->getShippings()->current()->getTrackingNumber());
         self::assertEquals('notes_0123456789', $this->Order->getShippings()->current()->getNote());
@@ -107,7 +107,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
      *
      * @dataProvider validateArgsProvider
      */
-    public function testValidateArgs(array $args, string $message = null)
+    public function testValidateArgs($args = [], string $message = null)
     {
         $args = array_merge($args, ['id' => $this->Order->getShippings()->current()->getId()]);
 
@@ -132,17 +132,17 @@ class UpdateShippedMutationTest extends EccubeTestCase
         $str_eccube_ltext_len = str_repeat('a', $this->eccubeConfig['eccube_ltext_len']);
         $str_eccube_ltext_len_plus = str_repeat('a', $this->eccubeConfig['eccube_ltext_len'] + 1);
 
+        $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2020-05-18T12:57:08+09:00');
+
         return [
             [['id' => -1], '/id/'],
-            [['shipping_date' => '2020-05-18 09:00:00']],
-            [['shipping_date' => '2020-05-18 09:00:00aaaa'], '/shipping_date/'],
+            [['shipping_date' => $dateTime]],
             [['shipping_delivery_name' => $str_eccube_mtext_len]],
             [['shipping_delivery_name' => $str_eccube_mtext_len_plus], '/shipping_date/'],
             [['tracking_number' => $str_eccube_mtext_len]],
             [['tracking_number' => $str_eccube_mtext_len_plus], '/tracking_number/'],
             [['note' => $str_eccube_ltext_len]],
             [['note' => $str_eccube_ltext_len_plus], '/note/'],
-//            [['is_send_mail' => true]], // TODO: メール送信でエラーとなるためスキップ
             [['is_send_mail' => false]],
         ];
     }

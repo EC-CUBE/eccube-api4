@@ -47,7 +47,7 @@ api:
     args:
       description:
         id: 出荷ID（必須）
-        shipping_date: 出荷日（ Y-m-d H:i:s 形式で指定可能、未指定の場合は実行日時）
+        shipping_date: 出荷日（ Y-m-d\TH:i:sP 形式で指定可能、未指定の場合は実行日時）
         shipping_delivery_name: 出荷業者（変更する場合は必須）
         tracking_number: お問い合わせ番号（変更する場合は必須）
         note: 出荷用メモ欄（変更する場合は必須）

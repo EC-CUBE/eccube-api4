@@ -25,6 +25,7 @@ use Eccube\Service\OrderStateMachine;
 use GraphQL\Type\Definition\Type;
 use Plugin\Api\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api\GraphQL\Mutation;
+use Plugin\Api\GraphQL\Type\Definition\DateTimeType;
 use Plugin\Api\GraphQL\Types;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -101,7 +102,7 @@ class UpdateShippedMutation implements Mutation
                     'description' => trans('api.update_shipped.args.description.id'),
                 ],
                 'shipping_date' => [
-                    'type' => Type::string(),
+                    'type' => DateTimeType::dateTime(),
                     'description' => trans('api.update_shipped.args.description.shipping_date'),
                 ],
                 'shipping_delivery_name' => [
@@ -224,15 +225,13 @@ class UpdateShippedMutation implements Mutation
     /**
      * args で Shipping の出荷済み処理
      *
-     * @param Shipping $Shipping
-     * @param array $args
      * @throws InvalidArgumentException
      */
     private function updateShippingShippedWithArgs(Shipping $Shipping, array $args): void
     {
         // Shipping を出荷済みに変更
         try {
-            $Shipping->setShippingDate(new \DateTime($args['shipping_date'] ?? 'now'));
+            $Shipping->setShippingDate($args['shipping_date'] ?? new \DateTime());
         } catch (\Exception $e) {
             throw new InvalidArgumentException('shipping_date: '.$e->getMessage());
         }
@@ -255,8 +254,6 @@ class UpdateShippedMutation implements Mutation
 
     /**
      * Order の出荷済み処理
-     *
-     * @param Order $Order
      */
     private function updateOrderShipped(Order $Order): void
     {
@@ -277,7 +274,6 @@ class UpdateShippedMutation implements Mutation
     /**
      * 発送通知メールを送信する
      *
-     * @param Shipping $Shipping
      * @throws InvalidArgumentException
      */
     private function sendShippingNotifyMail(Shipping $Shipping): void
@@ -286,7 +282,7 @@ class UpdateShippedMutation implements Mutation
             $this->mailService->sendShippingNotifyMail($Shipping);
             $Shipping->setMailSendDate(new \DateTime());
         } catch (\Exception $e) {
-            // TODO: メールを送れなかったかといってすべてロールバックするのはおかしい気がするが、強制的に送信結果を返す手段がない
+            // メール送信エラー
             throw new InvalidArgumentException('is_send_mail: Error sending email;');
         }
     }

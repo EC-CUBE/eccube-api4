@@ -47,7 +47,7 @@ api:
     args:
       description:
         id: Shipping ID (required)
-        shipping_date: Shipping Date (Specify like Y-m-d H:i:s. Execution date if not specified.)
+        shipping_date: Shipping Date (Specify like Y-m-d\TH:i:sP. Execution date if not specified.)
         shipping_delivery_name: Delivery Company Name
         tracking_number: Tracking No.
         note: Notes
