@@ -29,7 +29,7 @@ use Plugin\Api\GraphQL\Types;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validation;
 
 class UpdateShippedMutation implements Mutation
 {
@@ -68,11 +68,6 @@ class UpdateShippedMutation implements Mutation
      */
     private $shippingRepository;
 
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-
     public function __construct(
         EccubeConfig $eccubeConfig,
         EntityManager $entityManager,
@@ -80,17 +75,15 @@ class UpdateShippedMutation implements Mutation
         OrderStateMachine $orderStateMachine,
         OrderStatusRepository $orderStatusRepository,
         Types $types,
-        ShippingRepository $shippingRepository,
-        ValidatorInterface $validator
+        ShippingRepository $shippingRepository
     ) {
-        $this->types = $types;
-        $this->shippingRepository = $shippingRepository;
+        $this->eccubeConfig = $eccubeConfig;
+        $this->entityManager = $entityManager;
+        $this->mailService = $mailService;
         $this->orderStateMachine = $orderStateMachine;
         $this->orderStatusRepository = $orderStatusRepository;
-        $this->mailService = $mailService;
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->eccubeConfig = $eccubeConfig;
+        $this->types = $types;
+        $this->shippingRepository = $shippingRepository;
     }
 
     public function getName()
@@ -167,8 +160,9 @@ class UpdateShippedMutation implements Mutation
      */
     private function validateArgs(array $args): void
     {
+        $validator = Validation::createValidator();
         $constraint = $this->getConstraint();
-        $violations = $this->validator->validate($args, $constraint);
+        $violations = $validator->validate($args, $constraint);
 
         if (count($violations)) {
             $message = '';
@@ -206,7 +200,7 @@ class UpdateShippedMutation implements Mutation
      *
      * @throws InvalidArgumentException
      */
-    private function validateShippable(Shipping $Shipping): void
+    private function validateShippable(?Shipping $Shipping): void
     {
         // Shipping が存在しない場合
         if (is_null($Shipping)) {
