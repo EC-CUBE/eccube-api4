@@ -18,6 +18,7 @@ use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
 use Plugin\Api\GraphQL\Schema;
 use Plugin\Api\GraphQL\Types;
+use RuntimeException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -50,16 +51,26 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api", name="api", methods={"POST"})
+     * @Route("/api", name="api", methods={"GET", "POST"})
      * @Security("has_role('ROLE_OAUTH2_READ')")
      */
     public function index(Request $request)
     {
-        $body = json_decode($request->getContent(), true);
-        $schema = $this->schema;
-        $query = $body['query'];
-        $variableValues = isset($body['variables']) ? $body['variables'] : null;
-        $result = GraphQL::executeQuery($schema, $query, null, null, $variableValues);
+        switch ($request->getMethod()) {
+            case 'GET':
+                $query = $request->get('query');
+                $variableValues = json_decode($request->get('variables'), true);
+                break;
+            case 'POST':
+                $body = json_decode($request->getContent(), true);
+                $query = $body['query'];
+                $variableValues = isset($body['variables']) ? $body['variables'] : null;
+                break;
+            default:
+                throw new RuntimeException();
+        }
+
+        $result = GraphQL::executeQuery($this->schema, $query, null, null, $variableValues);
 
         if ($this->kernel->isDebug()) {
             $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE;
