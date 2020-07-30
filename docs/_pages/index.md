@@ -11,6 +11,7 @@ EC-CUBE4 対応の Web API プラグイン
 
 - PHP 7.2 or higher
 - PostgreSQL or MySQL
+- SSLサーバー証明書(TLS) は必須
 
 - *Windows 環境での動作は未確認です*
 - *SQLite3 には未対応です*
@@ -85,7 +86,8 @@ EC-CUBE4 対応の Web API プラグイン
     bin/console eccube:plugin:enable --code=Api
     ```
     - 管理画面→オーナーズストア→プラグイン→ **プラグインを探す** からでもプラグインをインストールできます。
-
+1. [OAuth2.0 による認可](#oauth20-%E3%81%AB%E3%82%88%E3%82%8B%E8%AA%8D%E5%8F%AF) より API クライアントの認可をしてください。
+1. [機能仕様](#%E6%A9%9F%E8%83%BD%E4%BB%95%E6%A7%98) より API をコールしてみましょう！
 
 API プラグインの開発のため Git リポジトリで置き換える場合は以下のとおり。
 *プラグインをアンインストールすると、 Git リポジトリごと削除されてしまうため注意すること*
@@ -100,6 +102,15 @@ mv eccube-api4 Api
 
 ## OAuth2.0 による認可
 
+EC-CUBE で Web API を実行する際、顧客情報を参照したり、受注情報を更新する場合などは API クライアントの認可が必要です。
+
+このプラグインでは、 [OAuth2.0](http://openid-foundation-japan.github.io/rfc6749.ja.html) プロトコルをサポートしています。
+
+### 対応するフロー
+
+Authorization Code Flow のみに対応しています。
+
+- [Authorization Code Flow](authZ_code_grant) の設定方法
 
 
 ## 機能仕様
