@@ -168,7 +168,7 @@ abstract class SearchFormQuery implements Query
     private function addPagingForms(FormBuilderInterface $builder)
     {
         $builder->add('page', IntegerType::class, [
-            'label' => 'api.args.description.page',
+            'label' => 'api.search_form_query.args.description.page',
             'required' => false,
             'data' => 1,
             'constraints' => [
@@ -178,7 +178,7 @@ abstract class SearchFormQuery implements Query
                 ]),
             ],
         ])->add('limit', IntegerType::class, [
-            'label' => 'api.args.description.limit',
+            'label' => 'api.search_form_query.args.description.limit',
             'required' => false,
             'data' => $this->eccubeConfig->get('eccube_default_page_count'),
             'constraints' => [
