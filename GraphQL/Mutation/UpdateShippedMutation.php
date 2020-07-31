@@ -224,8 +224,6 @@ class UpdateShippedMutation implements Mutation
 
     /**
      * args で Shipping の出荷済み処理
-     *
-     * @throws InvalidArgumentException
      */
     private function updateShippingShippedWithArgs(Shipping $Shipping, array $args): void
     {
