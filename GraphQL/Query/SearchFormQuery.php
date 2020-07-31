@@ -21,7 +21,9 @@ use Plugin\Api\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api\GraphQL\Query;
 use Plugin\Api\GraphQL\Type\ConnectionType;
 use Plugin\Api\GraphQL\Types;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -83,34 +85,24 @@ abstract class SearchFormQuery implements Query
     protected function createQuery($entityClass, $searchFormType, $resolver)
     {
         $builder = $this->formFactory->createBuilder($searchFormType, null, ['csrf_protection' => false]);
-
-        // paging のためのフォームを追加
-        $builder->add('page', IntegerType::class, [
-            'label' => 'api.search_form_query.args.description.page',
-            'required' => false,
-            'data' => 1,
-            'constraints' => [
-                new Assert\Regex([
-                    'pattern' => "/^\d+$/u",
-                    'message' => 'form_error.numeric_only',
-                ]),
-            ],
-        ])->add('limit', IntegerType::class, [
-            'label' => 'api.search_form_query.args.description.limit',
-            'required' => false,
-            'data' => $this->eccubeConfig->get('eccube_default_page_count'),
-            'constraints' => [
-                new Assert\Regex([
-                    'pattern' => "/^\d+$/u",
-                    'message' => 'form_error.numeric_only',
-                ]),
-            ],
-        ]);
+        $this->overrideDateTimeFormat($builder);
+        $this->addPagingForms($builder);
 
         $args = array_reduce($builder->getForm()->all(), function ($acc, $form) {
             /* @var FormInterface $form */
             $formConfig = $form->getConfig();
-            $type = $formConfig->getType()->getInnerType() instanceof IntegerType ? Type::int() : Type::string();
+            $typeClass = get_class($formConfig->getType()->getInnerType());
+            switch ($typeClass) {
+                case IntegerType::class:
+                    $type = Type::int();
+                    break;
+                case DateTimeType::class:
+                    $type = \Plugin\Api\GraphQL\Type\Definition\DateTimeType::dateTime();
+                    break;
+                default:
+                    $type = Type::string();
+                    break;
+            }
             if ($formConfig->getOption('multiple')) {
                 $type = Type::listOf($type);
             }
@@ -148,5 +140,53 @@ abstract class SearchFormQuery implements Query
                 return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
             },
         ];
+    }
+
+    /**
+     * DateTimeTypeのフォーマットを「yyyy-MM-dd'T'HH:mm:ssZ」に上書きする
+     *
+     * @param FormBuilderInterface $builder
+     */
+    private function overrideDateTimeFormat(FormBuilderInterface $builder)
+    {
+        /** @var FormBuilderInterface $field */
+        foreach ($builder->all() as $field) {
+            $type = $field->getType()->getInnerType();
+            if ($type instanceof DateTimeType) {
+                $options = $field->getOptions();
+                $options['format'] = "yyyy-MM-dd'T'HH:mm:ssZ";
+                $builder->add($field->getName(), get_class($type), $options);
+            }
+        }
+    }
+
+    /**
+     * Pagingのためのフォームを追加
+     *
+     * @param FormBuilderInterface $builder
+     */
+    private function addPagingForms(FormBuilderInterface $builder)
+    {
+        $builder->add('page', IntegerType::class, [
+            'label' => 'api.search_form_query.args.description.page',
+            'required' => false,
+            'data' => 1,
+            'constraints' => [
+                new Assert\Regex([
+                    'pattern' => "/^\d+$/u",
+                    'message' => 'form_error.numeric_only',
+                ]),
+            ],
+        ])->add('limit', IntegerType::class, [
+            'label' => 'api.search_form_query.args.description.limit',
+            'required' => false,
+            'data' => $this->eccubeConfig->get('eccube_default_page_count'),
+            'constraints' => [
+                new Assert\Regex([
+                    'pattern' => "/^\d+$/u",
+                    'message' => 'form_error.numeric_only',
+                ]),
+            ],
+        ]);
     }
 }

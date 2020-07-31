@@ -139,6 +139,8 @@ class OAuthController extends AbstractController
      */
     public function delete(Request $request, string $identifier)
     {
+        $this->isTokenValid();
+
         $client = $this->clientManager->find($identifier);
         if (null === $client) {
             $this->addError('admin.common.delete_error_already_deleted', 'admin');

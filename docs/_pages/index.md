@@ -3,57 +3,94 @@ layout: home
 author_profile: true
 permalink: /
 ---
-EC-CUBE4 対応の API プラグイン
+EC-CUBE4 対応の Web API プラグイン
 
-仕様の詳細は以下の Issue を参照。
+外部サービスと連携するため、[GraphQL](https://graphql.org) による Web API 機能を実現します。
 
-https://github.com/EC-CUBE/ec-cube/issues/4447
+## システム要件
+
+- PHP 7.2 or higher
+- PostgreSQL or MySQL
+- SSLサーバー証明書(TLS) は必須
+
+- *Windows 環境での動作は未確認です*
+- *SQLite3 には未対応です*
+- *テスト環境の作成には Docker が必要です*
 
 ## Quick Start
 
-```sh
-composer create-project --no-scripts ec-cube/ec-cube ec-cube "4.0.x-dev" --keep-vcs
-cd ec-cube
+1. EC-CUBE4 をインストールします。
+    ```sh
+    composer create-project ec-cube/ec-cube ec-cube "4.0.x-dev" --keep-vcs
+    ```
+1. DATABASE_URL と DATABASE_SERVER_VERSION を適宜変更。*(実際の環境に合わせること)*
+    ```sh
+    ## for PostgreSQL
+    sed -i.bak -e 's/DATABASE_URL=sqlite:\/\/\/var\/eccube.db/DATABASE_URL=postgres:\/\/postgres:password@127.0.0.1\/eccubedb/g' ./.env
+    sed -i.bak -e 's/DATABASE_SERVER_VERSION=3/DATABASE_SERVER_VERSION=9/g' ./.env
+    ```
 
-git fetch origin pull/4614/head:experimental/plugin_bundle
-git checkout experimental/plugin_bundle
+    ```sh
+    ## for MySQL
+    sed -i.bak -e 's/DATABASE_URL=sqlite:\/\/\/var\/eccube.db/DATABASE_URL=mysql:\/\/root:password@127.0.0.1\/eccubedb/g' ./.env
+    sed -i.bak -e 's/DATABASE_SERVER_VERSION=3/DATABASE_SERVER_VERSION=5.7/g' ./.env
+    ```
 
-# DATABASE_URL と DATABASE_SERVER_VERSION を適宜変更
-# sed -i -e 's/DATABASE_URL=sqlite:\/\/\/var\/eccube.db/DATABASE_URL=postgres:\/\/postgres@127.0.0.1\/eccube/g' ./.env
-# sed -i -e 's/DATABASE_SERVER_VERSION=3/DATABASE_SERVER_VERSION=9/g' ./.env
+1. [本プラグイン対応用のブランチ](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95)をチェックアウトします。
+    ```sh
+    cd ec-cube
+    git fetch origin pull/4625/head:experimental/plugin_bundle
+    git checkout experimental/plugin_bundle
+    ```
+1. EC-CUBEオーナーズストアのモックサーバーをセットアップします。
 
-bin/console e:i --no-interaction
+    ``` sh
+   # プラグインの保管ディレクトリを作成
+   mkdir ${PWD}/repos
+   # mockサーバを起動。ここでは9999をポート番号に設定していますが、必要に応じて変更してください
+   docker run -d --rm -v ${PWD}/repos:/repos -e MOCK_REPO_DIR=/repos -p 9999:8080 eccube/mock-package-api
+   # mockサーバを参照するように環境変数を定義
+   echo ECCUBE_PACKAGE_API_URL=http://127.0.0.1:9999 >> .env
+     ```
+1. 認証キーを設定します。
 
-# プラグインの保管ディレクトリを作成
-mkdir ${PWD}/repos
+    ```sh
+    ## for PostgreSQL
+    psql eccubedb -h 127.0.0.1 -U postgres -c "update dtb_base_info set authentication_key='test';"
+    ```
 
-# mockサーバを起動。ここでは9999をポート番号に設定していますが、必要に応じて変更してください
-docker run -d --rm -v ${PWD}/repos:/repos -e MOCK_REPO_DIR=/repos -p 9999:8080 eccube/mock-package-api
+    ```sh
+    ## for MySQL
+    mysql -h 127.0.0.1 --user=root --password=password -e "update dtb_base_info set authentication_key='test';" eccubedb
+    ```
 
-# mockサーバを参照するように環境変数を定義
-echo ECCUBE_PACKAGE_API_URL=http://127.0.0.1:9999 >> .env
+1. プラグインのパッケージを配置します。
 
-# 認証キーを設定
-psql eccube -h 127.0.0.1 -U postgres -c "update dtb_base_info set authentication_key='test';"
+    ``` sh
+    cd repos
+    # パッケージングしたプラグインを配置。例でリンクを記載していますが、パッケージは古い可能性があるので各自でパッケージしたものに置き換えてください。
+    git clone https://github.com/EC-CUBE/eccube-api4.git
+    cd eccube-api4
+    tar cvzf ../Api-1.0.0.tgz *
+    cd ../../
+    ```
 
-# パッケージングしたプラグインを配置。例でリンクを記載していますが、パッケージは古い可能性があるので各自でパッケージしたものに置き換えてください。
-# cd repos
-# wget https://github.com/okazy/eccube-api4/releases/download/beta1/eccube-api4-beta1.tar.gz
+    
+1. ビルトインウェブサーバーを起動
+    ```sh
+    bin/console server:run
+    ```
+1. プラグインをインストールします。
+    ```sh
+    bin/console eccube:composer:require ec-cube/Api
+    bin/console eccube:plugin:enable --code=Api
+    ```
+    - 管理画面→オーナーズストア→プラグイン→ **プラグインを探す** からでもプラグインをインストールできます。
+1. [OAuth2.0 による認可](#oauth20-%E3%81%AB%E3%82%88%E3%82%8B%E8%AA%8D%E5%8F%AF) より API クライアントの認可をしてください。
+1. [機能仕様](#%E6%A9%9F%E8%83%BD%E4%BB%95%E6%A7%98) より API をコールしてみましょう！
 
-# reposディレクトリにプラグインを設置。拡張子はtgzに変更してください
-# mv eccube-api4-beta1.tar.gz eccube-api4-beta1.tgz
-# cd ..
-
-bin/console s:run --env=dev
-
-# FIXME 編集者が試したところ DB の更新がされませんでした。
-# 必要なテーブルが作成されていなかった場合は DB の定義を更新してください。
-# bin/console doctrine:schema:update --force --dump-sql
-```
-
-管理画面のプラグインを探すでプラグインがインストールできる。
-
-API プラグインの開発のため Git リポジトリで置き換える。
+API プラグインの開発のため Git リポジトリで置き換える場合は以下のとおり。
+*プラグインをアンインストールすると、 Git リポジトリごと削除されてしまうため注意すること*
 
 ```
 cd app/Plugin/
@@ -63,28 +100,17 @@ git clone git@github.com:okazy/eccube-api4.git
 mv eccube-api4 Api
 ```
 
-
-## インストール方法
-
-本プラグインを利用するには EC-CUBE 4.0.4 から若干ファイルを変更する必要がある。
-
-変更内容は以下のプルリクの内容となる。
-
-https://github.com/EC-CUBE/ec-cube/pull/4614
-
-初回インストールはパッケージAPI経由でインストールする必要がある。
-
-パッケージ API 経由でのインストール方法は以下のドキュメントを参照のこと。
-
-https://doc4.ec-cube.net/plugin_mock_package_api
-
-また本体の機能として開発していた際のインストール手順や動作確認方法も参考になるかもしれません。
-
-https://doc4.ec-cube.net/api_quickstart_guide
-
-
 ## OAuth2.0 による認可
 
+EC-CUBE で Web API を実行する際、顧客情報を参照したり、受注情報を更新する場合などは API クライアントの認可が必要です。
+
+このプラグインでは、 [OAuth2.0](http://openid-foundation-japan.github.io/rfc6749.ja.html) プロトコルをサポートしています。
+
+### 対応するフロー
+
+Authorization Code Flow のみに対応しています。
+
+- [Authorization Code Flow](authZ_code_grant) の設定方法
 
 
 ## 機能仕様
