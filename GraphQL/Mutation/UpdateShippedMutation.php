@@ -230,11 +230,7 @@ class UpdateShippedMutation implements Mutation
     private function updateShippingShippedWithArgs(Shipping $Shipping, array $args): void
     {
         // Shipping を出荷済みに変更
-        try {
-            $Shipping->setShippingDate($args['shipping_date'] ?? new \DateTime());
-        } catch (\Exception $e) {
-            throw new InvalidArgumentException('shipping_date: '.$e->getMessage());
-        }
+        $Shipping->setShippingDate($args['shipping_date'] ?? new \DateTime());
 
         // shipping_delivery_name が指定されている場合は配送社名を更新
         if (array_key_exists('shipping_delivery_name', $args)) {

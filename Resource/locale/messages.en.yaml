@@ -40,13 +40,13 @@ api:
   update_product_stock:
     args:
       description:
-        product_code: SKU (required)
+        product_code: SKU
         stock: Stock (If the stock_unlimited is set to false, please set the value more than 0.)
         stock_unlimited: 'Stock unlimited (Specify false: Limited or true: Unlimited)'
   update_shipped:
     args:
       description:
-        id: Shipping ID (required)
+        id: Shipping ID
         shipping_date: Shipping Date (Specify like Y-m-d\TH:i:sP. Execution date if not specified.)
         shipping_delivery_name: Delivery Company Name
         tracking_number: Tracking No.
