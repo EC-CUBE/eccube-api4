@@ -127,10 +127,13 @@ class UpdateShippedMutationTest extends EccubeTestCase
 
     public function validateArgsProvider()
     {
-        $str_eccube_mtext_len = str_repeat('a', $this->eccubeConfig['eccube_mtext_len']);
-        $str_eccube_mtext_len_plus = str_repeat('a', $this->eccubeConfig['eccube_mtext_len'] + 1);
-        $str_eccube_ltext_len = str_repeat('a', $this->eccubeConfig['eccube_ltext_len']);
-        $str_eccube_ltext_len_plus = str_repeat('a', $this->eccubeConfig['eccube_ltext_len'] + 1);
+        // dataProvider 実行時点で eccubeConfig がまだ使えないのでベタがきする。
+        $eccube_mtext_len = 200;
+        $eccube_ltext_len = 3000;
+        $str_eccube_mtext_len = str_repeat('a', $eccube_mtext_len);
+        $str_eccube_mtext_len_plus = str_repeat('a', $eccube_mtext_len + 1);
+        $str_eccube_ltext_len = str_repeat('a', $eccube_ltext_len);
+        $str_eccube_ltext_len_plus = str_repeat('a', $eccube_ltext_len + 1);
 
         $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2020-05-18T12:57:08+09:00');
 
@@ -138,7 +141,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             [['id' => -1], '/id/'],
             [['shipping_date' => $dateTime]],
             [['shipping_delivery_name' => $str_eccube_mtext_len]],
-            [['shipping_delivery_name' => $str_eccube_mtext_len_plus], '/shipping_date/'],
+            [['shipping_delivery_name' => $str_eccube_mtext_len_plus], '/shipping_delivery_name/'],
             [['tracking_number' => $str_eccube_mtext_len]],
             [['tracking_number' => $str_eccube_mtext_len_plus], '/tracking_number/'],
             [['note' => $str_eccube_ltext_len]],
