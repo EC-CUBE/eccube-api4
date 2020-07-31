@@ -1,6 +1,6 @@
 parameters:
-    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/var/oauth/private.key'
-    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/var/oauth/public.key'
+    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/app/PluginData/Api/oauth/private.key'
+    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api/oauth/public.key'
     env(ECCUBE_OAUTH2_ENCRYPTION_KEY): '<change.me>'
 
 trikoder_oauth2:
