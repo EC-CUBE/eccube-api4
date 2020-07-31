@@ -119,6 +119,11 @@ Authorization Code Flow のみに対応しています。
 
 GraphQL の Query で以下のデータの取得が可能です。
 
-- 商品一覧
-- 受注一覧
-- 顧客一覧
+- [商品情報の取得](query/products)
+- [受注情報の取得](query/orders)
+- [顧客情報の取得](query/customers)
+
+GraphQL の Mutation で以下のデータを更新可能です。
+
+- [商品在庫の更新](mutation/product_stock)
+- [出荷ステータスの更新](mutation/update_shipped)
