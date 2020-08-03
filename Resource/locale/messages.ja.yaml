@@ -11,12 +11,18 @@ api:
       identifier: クライアントID
       secret: クライアントシークレット
       scope: スコープ
+      scope.read.description: %shop_name%のデータに対する読み取り
+      scope.write.description: %shop_name%のデータに対する書き込み
       redirect_uri: リダイレクトURI
       grant_type: グラントタイプ
       client_registration: OAuthクライアント登録
       delete__confirm_title: OAuthクライアントを削除します。
       delete__confirm_message: OAuthクライアントを削除してよろしいですか？
       clear_expired_tokens: 期限切れのアクセストークンとリフレッシュトークンを削除する
+      allow__confirm_message: アプリから%shop_name%へのアクセスを許可しますか？
+      allow__confirm_description: 'このアプリに以下を許可します:'
+      allow: 許可する
+      deny: 許可しない
     webhook:
       management:  WebHook管理
       registration: WebHook登録

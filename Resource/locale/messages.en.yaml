@@ -11,12 +11,18 @@ api:
       identifier: Client ID
       secret: Client Secret
       scope: Scope
+      scope.read.description: Read %shop_name% data
+      scope.write.description: Write %shop_name% data
       redirect_uri: Redirect URI
       grant_type: Grant Type
       client_registration: Client Registration
       delete__confirm_title: Delete a Client
       delete__confirm_message: Are you sure to delete this Client?
       clear_expired_tokens: Clears all expired access and/or refresh tokens
+      allow__confirm_message: Do you want to allow access this app to %shop_name%?
+      allow__confirm_description: 'Allow this app to:'
+      allow: Allow
+      deny: Deny
     webhook:
       management:  WebHook
       registration: WebHook Registration

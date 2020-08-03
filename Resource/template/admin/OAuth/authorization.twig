@@ -1,22 +1,42 @@
 {% extends '@admin/login_frame.twig' %}
 
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
 {% block main %}
-    <p>このアプリ連携を許可しますか？</p>
-    <p>このアプリは以下のアクセス権を要求しています:</p>
-    <p>{{ scope }}</p>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <div class="container" style="margin-top: 150px;">
+        <div class="row">
+            <div class="col-12 col-lg-6 offset-lg-3">
+                <div class="text-center p-5 bg-white">
+                    <form name="form1" id="form1" method="post" action="">
+                        {{ form_widget(form._token) }}
+                        <p class="text-left">{{ 'api.admin.oauth.allow__confirm_message'|trans({'%shop_name%': "<a href=\"#{path('homepage')}\">#{BaseInfo.shop_name}</a>"})|raw }}</p>
+                        <p class="text-left">{{ 'api.admin.oauth.allow__confirm_description'|trans }}</p>
+                        <ul>
+                        {% for scope in scopes %}
+                        <li class="text-left">{{ "api.admin.oauth.scope.#{scope}.description"|trans({'%shop_name%': "<a href=\"#{path('homepage')}\">#{BaseInfo.shop_name}</a>"})|raw }}</li>
+                        {% endfor %}
+                        </ul>
 
-    {{ form_row(form.client_id) }}
-    {{ form_row(form.client_secret) }}
-    {{ form_row(form.redirect_uri) }}
-    {{ form_row(form.response_type) }}
-    {{ form_row(form.state) }}
-    {{ form_row(form.scope) }}
-    <div class="col-auto">
-        <button class="btn btn-ec-conversion px-5" type="submit">許可</button>
+                        {{ form_row(form.client_id) }}
+                        {{ form_row(form.client_secret) }}
+                        {{ form_row(form.redirect_uri) }}
+                        {{ form_row(form.response_type) }}
+                        {{ form_row(form.state) }}
+                        {{ form_row(form.scope) }}
+
+                        <div class="col-auto">
+                            {{ form_widget(form.approve, {'label':'api.admin.oauth.allow'}) }}
+                            {{ form_widget(form.deny, {'label':'api.admin.oauth.deny', 'attr':{'class':'btn btn-light'}}) }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-12">
+                <p class="text-center mt-3">
+                    <small>Copyright &copy; 2000-{{ "now"|date("Y") }} EC-CUBE CO.,LTD. All Rights Reserved.</small>
+                </p>
+            </div>
+        </div>
     </div>
-    {{ form_end(form) }}
-
 {% endblock %}
