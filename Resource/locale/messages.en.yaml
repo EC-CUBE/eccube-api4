@@ -22,6 +22,8 @@ api:
       delete__confirm_title: Delete a Client
       delete__confirm_message: Are you sure to delete this Client?
       clear_expired_tokens: Clears all expired access and/or refresh tokens
+      copy: Copy
+      copied: Copied
     webhook:
       management:  WebHook
       registration: WebHook Registration

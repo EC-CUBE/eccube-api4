@@ -22,6 +22,8 @@ api:
       delete__confirm_title: OAuthクライアントを削除します。
       delete__confirm_message: OAuthクライアントを削除してよろしいですか？
       clear_expired_tokens: 期限切れのアクセストークンとリフレッシュトークンを削除する
+      copy: コピーする
+      copied: コピーしました
     webhook:
       management:  WebHook管理
       registration: WebHook登録
