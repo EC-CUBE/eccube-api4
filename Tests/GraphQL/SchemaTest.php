@@ -13,6 +13,7 @@
 
 namespace Plugin\Api\Tests\GraphQL;
 
+use Eccube\Entity\Master\OrderStatus;
 use Eccube\Tests\EccubeTestCase;
 use GraphQL\Error\DebugFlag;
 use GraphQL\Executor\ExecutionResult;
@@ -220,6 +221,84 @@ class SchemaTest extends EccubeTestCase
             ['2020-07-30T12:57:08', '/有効な値ではありません。/'],
             ['2020-07-30', '/有効な値ではありません。/'],
         ];
+    }
+
+    public function testMutationUpdateStock()
+    {
+        $query = 'mutation UpdateProductStock(
+            $code: String!,
+            $stock: Int,
+            $stock_unlimited: Boolean!
+        ){
+            updateProductStock (
+                code: $code,
+                stock: $stock,
+                stock_unlimited: $stock_unlimited
+            ) {
+                code
+                stock
+                stock_unlimited
+            }
+        }';
+
+        $variables = [
+            'code' => 'sand-01',
+            'stock' => 10,
+            'stock_unlimited' => false,
+        ];
+
+        self::assertEquals([
+            'data' => [
+                'updateProductStock' => $variables,
+            ],
+        ], $this->executeQuery($query, $variables));
+    }
+
+    public function testMutationUpdateShipped()
+    {
+        // 出荷可能な受注を作成
+        $Customer = $this->createCustomer();
+        $Order = $this->createOrder($Customer);
+        $OrderStatus = $this->entityManager->getRepository(OrderStatus::class)->find(OrderStatus::NEW);
+        $Order->setOrderStatus($OrderStatus);
+        $this->entityManager->flush();
+        $shippingId = $Order->getShippings()[0]->getId();
+
+        $query = 'mutation UpdateShipped (
+            $id: ID!,
+            $shipping_date: DateTime,
+            $shipping_delivery_name: String,
+            $tracking_number: String,
+            $note: String,
+        ){
+            updateShipped (
+                id: $id,
+                shipping_date: $shipping_date
+                shipping_delivery_name: $shipping_delivery_name
+                tracking_number: $tracking_number
+                note: $note
+            ) {
+                id
+                shipping_delivery_name
+                shipping_date
+                tracking_number
+                note
+            }
+        }';
+
+        $variables = [
+            'id' => $shippingId,
+            'shipping_date' => '2020-05-18T12:57:08+00:00',
+            'shipping_delivery_name' => 'テスト配送業者',
+            'tracking_number' => 'tracking_number0123',
+            'note' => 'Hello Notes!',
+        ];
+
+        self::assertEquals([
+            'data' => [
+                'updateShipped' => $variables,
+            ],
+        ], $this->executeQuery($query, $variables));
     }
 
     private function executeQuery($query, $variables = null, $readonly = false)

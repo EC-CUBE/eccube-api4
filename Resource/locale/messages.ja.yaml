@@ -32,10 +32,23 @@ api:
   # API
   #------------------------------------------------------------------------------------
 
-  args:
-    description:
-      page: ページ番号
-      limit: ページあたりの取得数の上限
-      product_code: 商品コード
-      stock: stock_unlimited が false の場合、0以上の数値を設定してください。
-      stock_unlimited: 'false:制限, true: 無制限を指定します。'
+  search_form_query:
+    args:
+      description:
+        page: ページ番号
+        limit: ページあたりの取得数の上限
+  update_product_stock:
+    args:
+      description:
+        product_code: 商品コード
+        stock: 在庫数（在庫無制限の場合、0以上の数値を指定）
+        stock_unlimited: 在庫無制限（無制限は true 、制限は false を指定）
+  update_shipped:
+    args:
+      description:
+        id: 出荷ID
+        shipping_date: 出荷日（ Y-m-d\TH:i:sP 形式で指定可能、未指定の場合は実行日時）
+        shipping_delivery_name: 出荷業者
+        tracking_number: お問い合わせ番号
+        note: 出荷用メモ欄
+        is_send_mail: 出荷完了メール送信フラグ（送信する場合は true を指定）

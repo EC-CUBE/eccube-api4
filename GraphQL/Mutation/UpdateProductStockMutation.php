@@ -60,15 +60,15 @@ class UpdateProductStockMutation implements Mutation
             'args' => [
                 'code' => [
                     'type' => Type::nonNull(Type::string()),
-                    'description' => trans('api.args.description.product_code'),
+                    'description' => trans('api.update_product_stock.args.description.product_code'),
                 ],
                 'stock' => [
                     'type' => Type::int(),
-                    'description' => trans('api.args.description.stock'),
+                    'description' => trans('api.update_product_stock.args.description.stock'),
                 ],
                 'stock_unlimited' => [
                     'type' => Type::nonNull(Type::boolean()),
-                    'description' => trans('api.args.description.stock_unlimited'),
+                    'description' => trans('api.update_product_stock.args.description.stock_unlimited'),
                 ],
             ],
             'resolve' => [$this, 'updateProductStock'],
