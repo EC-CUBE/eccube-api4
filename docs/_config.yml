@@ -16,11 +16,11 @@ minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt"
 
 # Site Settings
 locale                   : "ja-JP"
-title                    : "EC-CUBE4 APIプラグイン"
+title                    : "EC-CUBE4 Web API プラグイン"
 title_separator          : "-"
 subtitle                 : "開発ドキュメント"
 name                     : "EC-CUBE"
-description              : "EC-CUBE4 APIプラグイン 開発ドキュメント"
+description              : "EC-CUBE4 Web API プラグイン 開発ドキュメント"
 url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : "EC-CUBE/eccube-api4"
