@@ -37,8 +37,13 @@ file that was distributed with this source code.
                                 {# identifier #}
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <span>{{ 'api.admin.oauth.identifier'|trans }}</span>
-                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.identifier_tooltip'|trans }}">
+                                            <span>{{ 'api.admin.oauth.identifier'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                            <span class="badge badge-primary ml-1">
+                                                {{ 'admin.common.required'|trans }}
+                                            </span>
+                                        </label>
                                     </div>
                                     <div class="col">
                                         <div class="row">
@@ -53,8 +58,13 @@ file that was distributed with this source code.
                                 {# secret #}
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <span>{{ 'api.admin.oauth.secret'|trans }}</span>
-                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.secret_tooltip'|trans }}">
+                                            <span>{{ 'api.admin.oauth.secret'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                            <span class="badge badge-primary ml-1">
+                                                {{ 'admin.common.required'|trans }}
+                                            </span>
+                                        </label>
                                     </div>
                                     <div class="col">
                                         <div class="row">
@@ -69,15 +79,20 @@ file that was distributed with this source code.
                                 {# scope #}
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <span>{{ 'api.admin.oauth.scope'|trans }}</span>
-                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.scope_tooltip'|trans }}">
+                                            <span>{{ 'api.admin.oauth.scope'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                            <span class="badge badge-primary ml-1">
+                                                {{ 'admin.common.required'|trans }}
+                                            </span>
+                                        </label>
                                     </div>
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                {{ form_widget(form.scopes, {'attr': { 'readonly': 'readonly' } }) }}
+                                                {{ form_widget(form.scopes, {'label_attr': {'class': 'checkbox-inline'}}) }}
                                             </div>
-                                            {{ form_errors(form.scopes) }}
+                                            {{ form_errors(form.scopes, {'label_attr': {'class': 'checkbox-inline'}}) }}
                                         </div>
                                     </div>
                                 </div>
@@ -85,8 +100,13 @@ file that was distributed with this source code.
                                 {# redirect_uri #}
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <span>{{ 'api.admin.oauth.redirect_uri'|trans }}</span>
-                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.redirect_uri_tooltip'|trans }}">
+                                            <span>{{ 'api.admin.oauth.redirect_uri'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                            <span class="badge badge-primary ml-1">
+                                                {{ 'admin.common.required'|trans }}
+                                            </span>
+                                        </label>
                                     </div>
                                     <div class="col">
                                         <div class="row">
@@ -101,15 +121,20 @@ file that was distributed with this source code.
                                 {# grant_type #}
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <span>{{ 'api.admin.oauth.grant_type'|trans }}</span>
-                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.grant_type_tooltip'|trans }}">
+                                            <span>{{ 'api.admin.oauth.grant_type'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                            <span class="badge badge-primary ml-1">
+                                                {{ 'admin.common.required'|trans }}
+                                            </span>
+                                        </label>
                                     </div>
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                {{ form_widget(form.grants, {'attr': { 'readonly': 'readonly' } }) }}
+                                                {{ form_widget(form.grants, {'label_attr': {'class': 'checkbox-inline'}}) }}
                                             </div>
-                                            {{ form_errors(form.grants) }}
+                                            {{ form_errors(form.grants, {'label_attr': {'class': 'checkbox-inline'}}) }}
                                         </div>
                                     </div>
                                 </div>

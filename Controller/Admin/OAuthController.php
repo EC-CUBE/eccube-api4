@@ -210,7 +210,7 @@ class OAuthController extends AbstractController
             function (string $grant): Grant {
                 return new Grant($grant);
             },
-            explode(',', $form->get('grants')->getData())
+            $form->get('grants')->getData()
         );
         $client->setGrants(...$grants);
 
@@ -218,7 +218,7 @@ class OAuthController extends AbstractController
             function (string $scope): Scope {
                 return new Scope($scope);
             },
-            explode(',', $form->get('scopes')->getData())
+            $form->get('scopes')->getData()
         );
         $client->setScopes(...$scopes);
 

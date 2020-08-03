@@ -16,6 +16,7 @@ namespace Plugin\Api\Form\Type\Admin;
 use Eccube\Common\EccubeConfig;
 use Exception;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -64,12 +65,16 @@ class ClientType extends AbstractType
                     new Assert\Regex(['pattern' => '/^[0-9a-zA-Z]+$/']),
                 ],
             ])
-            ->add('scopes', TextType::class, [
+            ->add('scopes', ChoiceType::class, [
+                'choices'  => [
+                    'read' => 'read',
+                    'write' => 'write',
+                ],
+                'expanded' => true,
+                'multiple' => true,
                 'mapped' => false,
-                'data' => 'read',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),
                 ],
             ])
             ->add('redirect_uris', TextType::class, [
@@ -80,12 +85,16 @@ class ClientType extends AbstractType
                     new Assert\Url(),
                 ],
             ])
-            ->add('grants', TextType::class, [
+            ->add('grants', ChoiceType::class, [
+                'choices'  => [
+                    'authorization_code' => 'authorization_code',
+                    'refresh_token' => 'refresh_token',
+                ],
+                'expanded' => true,
+                'multiple' => true,
                 'mapped' => false,
-                'data' => 'authorization_code,refresh_token',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),
                 ],
             ]);
     }

@@ -9,10 +9,15 @@ api:
     oauth:
       management: OAuth管理
       identifier: クライアントID
+      identifier_tooltip: 32文字以下の半角英数
       secret: クライアントシークレット
+      secret_tooltip: 128文字以下の半角英数
       scope: スコープ
+      scope_tooltip: GraphQLのQueryにはread, Mutationにはwrite/writeのScopeが必要
       redirect_uri: リダイレクトURI
+      redirect_uri_tooltip: カンマ区切りで複数のURIを入力可能
       grant_type: グラントタイプ
+      grant_type_tooltip: Authorization code grantのみサポート
       client_registration: OAuthクライアント登録
       delete__confirm_title: OAuthクライアントを削除します。
       delete__confirm_message: OAuthクライアントを削除してよろしいですか？
