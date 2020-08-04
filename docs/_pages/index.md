@@ -128,3 +128,4 @@ GraphQL の Mutation で以下のデータを更新可能です。
 CustomizeディレクトリやプラグインでAPIを拡張できます。
 
 - [取得可能なデータの追加](customize/allow_list)
+- [Query/Mutationの追加](customize/query)
