@@ -124,6 +124,17 @@ abstract class SearchFormQuery implements Query
             'args' => $args,
             'resolve' => function ($root, $args) use ($builder, $resolver) {
                 $form = $builder->getForm();
+
+                foreach ($form->all() as $field) {
+                    $formConfig = $field->getConfig();
+                    if ($formConfig->getType()->getInnerType() instanceof DateTimeType) {
+                        $value = $args[$field->getName()];
+                        if ($value instanceof \DateTime) {
+                            $args[$field->getName()] = $value->format(\DateTime::ATOM);
+                        }
+                    }
+                }
+
                 $form->submit($args);
 
                 if (!$form->isValid()) {

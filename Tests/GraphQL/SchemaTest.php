@@ -37,6 +37,63 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
+    public function testQueryProducts()
+    {
+        $query = '{
+          products (page: 1, limit: 2, create_datetime_start: "2018-09-28T10:14:52+00:00") {
+            nodes {
+              id
+            }
+          }
+        }';
+
+        self::assertEquals([
+            'data' => [
+                'products' => [
+                    'nodes' => [
+                        ['id' => '1'],
+                        ['id' => '2']
+                    ]
+                ],
+            ],
+        ], $this->executeQuery($query));
+    }
+
+    public function testQueryProducts_withVariables()
+    {
+        $query = '
+        query productsQuery(
+          $page: Int,
+          $limit: Int,
+          $create_datetime_start: DateTime
+        ) {
+          products (page: $page, limit: $limit, create_datetime_start: $create_datetime_start) {
+            nodes {
+              id
+            }
+          }
+        }';
+
+        $variables = [
+            'page' => 1,
+            'limit' => 2,
+            'create_datetime_start' => '2018-09-28T10:14:52+00:00'
+        ];
+
+        $result = $this->executeQuery($query, json_encode($variables));
+
+        self::assertEquals([
+            'data' => [
+                'products' => [
+                    'nodes' => [
+                        ['id' => '1'],
+                        ['id' => '2']
+                    ]
+                ],
+            ],
+        ], $result);
+    }
+
     public function testQueryConnection_withEdges()
     {
         $query = '{
@@ -217,9 +274,9 @@ class SchemaTest extends EccubeTestCase
     {
         return [
             ['2020-07-30T12:57:08+09:00'],
-            ['2020-07-30 12:57:08', '/有効な値ではありません。/'],
-            ['2020-07-30T12:57:08', '/有効な値ではありません。/'],
-            ['2020-07-30', '/有効な値ではありません。/'],
+            ['2020-07-30 12:57:08', '/DateTime parse error/'],
+            ['2020-07-30T12:57:08', '/DateTime parse error/'],
+            ['2020-07-30', '/DateTime parse error/'],
         ];
     }
 
@@ -255,6 +312,47 @@ class SchemaTest extends EccubeTestCase
     }
 
     public function testMutationUpdateShipped()
+    {
+        // 出荷可能な受注を作成
+        $Customer = $this->createCustomer();
+        $Order = $this->createOrder($Customer);
+        $OrderStatus = $this->entityManager->getRepository(OrderStatus::class)->find(OrderStatus::NEW);
+        $Order->setOrderStatus($OrderStatus);
+        $this->entityManager->flush();
+        $shippingId = $Order->getShippings()[0]->getId();
+
+        $query = "mutation {
+            updateShipped (
+                id: ${shippingId},
+                shipping_date: \"2020-05-18T12:57:08+00:00\"
+                shipping_delivery_name: \"テスト配送業者\"
+                tracking_number: \"tracking_number0123\"
+                note: \"Hello Notes!\"
+            ) {
+                id
+                shipping_delivery_name
+                shipping_date
+                tracking_number
+                note
+            }
+        }";
+
+        $result = $this->executeQuery($query);
+
+        self::assertEquals([
+            'data' => [
+                'updateShipped' => [
+                    "id" => $shippingId,
+                    "shipping_delivery_name" => "テスト配送業者",
+                    "shipping_date" => "2020-05-18T12:57:08+00:00",
+                    "tracking_number" => "tracking_number0123",
+                    "note" => "Hello Notes!"
+                ],
+            ],
+        ], $result);
+    }
+
+    public function testMutationUpdateShipped_withVariables()
     {
         // 出荷可能な受注を作成
         $Customer = $this->createCustomer();
