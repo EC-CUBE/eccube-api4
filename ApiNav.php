@@ -22,7 +22,7 @@ class ApiNav implements EccubeNav
      */
     public static function getNav()
     {
-        return [
+        $menu = [
             'setting' => [
                 'children' => [
                     'api' => [
@@ -41,5 +41,13 @@ class ApiNav implements EccubeNav
                 ],
             ],
         ];
+        if ('dev' === env('APP_ENV')) {
+            $menu['setting']['children']['api']['children']['graphiql'] = [
+                'name' => 'api.admin.graphiql.name',
+                'url' => 'admin_api_graphiql',
+            ];
+        }
+
+        return $menu;
     }
 }

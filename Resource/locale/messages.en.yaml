@@ -40,6 +40,8 @@ api:
       search_no_result_message: No WebHooks.
       delete__confirm_title: Delete a WebHook
       delete__confirm_message: Are you sure to delete this WebHook?
+    graphiql:
+      name: GraphiQL
 
   #------------------------------------------------------------------------------------
   # API
