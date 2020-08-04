@@ -9,16 +9,23 @@ api:
     oauth:
       management: OAuth管理
       identifier: クライアントID
+      identifier_tooltip: 32文字以下の半角英数
       secret: クライアントシークレット
+      secret_tooltip: 128文字以下の半角英数
       scope: スコープ
+      scope_tooltip: GraphQLのQueryにはread, Mutationにはwrite/writeのScopeが必要
       scope.read.description: %shop_name%のデータに対する読み取り
       scope.write.description: %shop_name%のデータに対する書き込み
       redirect_uri: リダイレクトURI
+      redirect_uri_tooltip: カンマ区切りで複数のURIを入力可能
       grant_type: グラントタイプ
+      grant_type_tooltip: Authorization code grantのみサポート
       client_registration: OAuthクライアント登録
       delete__confirm_title: OAuthクライアントを削除します。
       delete__confirm_message: OAuthクライアントを削除してよろしいですか？
       clear_expired_tokens: 期限切れのアクセストークンとリフレッシュトークンを削除する
+      copy: コピーする
+      copied: コピーしました
       allow__confirm_message: アプリから%shop_name%へのアクセスを許可しますか？
       allow__confirm_description: 'このアプリに以下を許可します:'
       allow: 許可する

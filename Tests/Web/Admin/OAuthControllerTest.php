@@ -16,6 +16,7 @@ namespace Plugin\Api\Tests\Web\Admin;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Trikoder\Bundle\OAuth2Bundle\Manager\Doctrine\ClientManager;
 use Trikoder\Bundle\OAuth2Bundle\Model\Client;
+use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
 
 class OAuthControllerTest extends AbstractAdminWebTestCase
 {
@@ -88,6 +89,15 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->expected = $formData['identifier'];
         $this->verify();
 
+        $scopes = $client->getScopes();
+        $this->assertTrue(in_array('read', $scopes));
+        $this->assertTrue(in_array('write', $scopes));
+
+        // authorization code grant が選択されていた場合には refresh token grant も付与される
+        $grants = $client->getGrants();
+        $this->assertTrue(in_array(OAuth2Grants::AUTHORIZATION_CODE, $grants));
+        $this->assertTrue(in_array(OAuth2Grants::REFRESH_TOKEN, $grants));
+
         $crawler = $this->client->followRedirect();
         $this->assertRegExp('/保存しました/u', $crawler->filter('div.alert-success')->text());
     }
@@ -134,9 +144,9 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
             '_token' => 'dummy',
             'identifier' => hash('md5', random_bytes(16)),
             'secret' => hash('sha512', random_bytes(32)),
-            'scopes' => 'read',
+            'scopes' => ['read', 'write'],
             'redirect_uris' => 'http://127.0.0.1:8000/',
-            'grants' => 'authorization_code',
+            'grants' => ['authorization_code'],
         ];
     }
 }

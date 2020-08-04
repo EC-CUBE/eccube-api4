@@ -30,6 +30,7 @@ use Trikoder\Bundle\OAuth2Bundle\Model\Client;
 use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
 use Trikoder\Bundle\OAuth2Bundle\Model\RedirectUri;
 use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
+use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
 
 class OAuthController extends AbstractController
 {
@@ -210,15 +211,19 @@ class OAuthController extends AbstractController
             function (string $grant): Grant {
                 return new Grant($grant);
             },
-            explode(',', $form->get('grants')->getData())
+            $form->get('grants')->getData()
         );
+        // authorization code grant が選択されていた場合には refresh token grant も付与
+        if (in_array(OAuth2Grants::AUTHORIZATION_CODE, $grants)) {
+            array_push($grants, new Grant(OAuth2Grants::REFRESH_TOKEN));
+        }
         $client->setGrants(...$grants);
 
         $scopes = array_map(
             function (string $scope): Scope {
                 return new Scope($scope);
             },
-            explode(',', $form->get('scopes')->getData())
+            $form->get('scopes')->getData()
         );
         $client->setScopes(...$scopes);
 
