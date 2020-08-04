@@ -89,7 +89,7 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
             $content = $this->twig->render(
                 '@Api/admin/OAuth/authorization.twig',
                 [
-                    'scope' => join(' ', $event->getScopes()),
+                    'scopes' => $event->getScopes(),
                     'form' => $form->createView(),
                 ]
             );
@@ -97,7 +97,9 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
             if ('POST' === $request->getMethod()) {
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
+                    if ($form->get('approve')->isClicked()) {
+                        $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
+                    }
                 } else {
                     $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_DENIED);
                 }

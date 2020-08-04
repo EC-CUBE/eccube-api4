@@ -16,6 +16,7 @@ namespace Plugin\Api\Form\Type\Admin;
 use Eccube\Common\EccubeConfig;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -67,7 +68,9 @@ class OAuth2AuthorizationType extends AbstractType
                 'constraints' => [
                     new Assert\NotBlank(),
                 ],
-            ]);
+            ])
+            ->add('approve', SubmitType::class)
+            ->add('deny', SubmitType::class);
     }
 
     public function getBlockPrefix()
