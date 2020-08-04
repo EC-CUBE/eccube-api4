@@ -23,6 +23,7 @@ api:
       allow__confirm_description: 'Allow this app to:'
       allow: Allow
       deny: Deny
+      graphiql: GraphiQL
     webhook:
       management:  WebHook
       registration: WebHook Registration

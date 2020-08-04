@@ -23,6 +23,7 @@ api:
       allow__confirm_description: 'このアプリに以下を許可します:'
       allow: 許可する
       deny: 許可しない
+      graphiql: GraphiQL
     webhook:
       management:  WebHook管理
       registration: WebHook登録

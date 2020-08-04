@@ -43,9 +43,6 @@ file that was distributed with this source code.
                                     {{ 'api.admin.oauth.grant_type'|trans }}
                                 </th>
                                 <th class="border-top-0 pt-2 pb-2 text-center"></th>
-                                <th class="border-top-0 pt-2 pb-2 text-center">
-                                    GraphiQL
-                                </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -111,9 +108,6 @@ file that was distributed with this source code.
                                                 </div>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <a href="{{ url('oauth2_authorize') }}?response_type=code&client_id={{ client.identifier }}&redirect_uri={{ client.redirectUris[0] }}&scope={% for Scope in client.scopes %}{{ Scope }}+{% endfor %}&state=aaa">GraphiQL</a>
                                     </td>
                                 </tr>
                             {% endfor %}

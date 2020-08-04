@@ -36,6 +36,10 @@ class ApiNav implements EccubeNav
                                 'name' => 'api.admin.webhook.management',
                                 'url' => 'admin_api_webhook',
                             ],
+                            'graphiql' => [
+                                'name' => 'api.admin.oauth.graphiql',
+                                'url' => 'admin_api_graphiql',
+                            ],
                         ],
                     ],
                 ],
