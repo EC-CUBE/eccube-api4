@@ -66,6 +66,8 @@ class GraphiQLController extends AbstractController
         if ('dev' !== env('APP_ENV')) {
             throw new AccessDeniedHttpException();
         }
+        $this->isTokenValid();
+
         switch ($request->getMethod()) {
             case 'GET':
                 $query = $request->get('query');
