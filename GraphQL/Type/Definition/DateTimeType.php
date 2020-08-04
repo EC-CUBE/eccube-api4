@@ -75,7 +75,7 @@ class DateTimeType extends ScalarType
     public function parseLiteral($valueNode, ?array $variables = null)
     {
         if ($valueNode instanceof StringValueNode) {
-            return $valueNode->value;
+            return $this->parseValue($valueNode->value);
         }
 
         return null;
