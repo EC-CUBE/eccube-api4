@@ -124,3 +124,10 @@ GraphQL の Mutation で以下のデータを更新可能です。
 
 - [商品在庫の更新](mutation/product_stock)
 - [出荷ステータスの更新](mutation/update_shipped)
+
+## 拡張機構
+
+CustomizeディレクトリやプラグインでAPIを拡張できます。
+
+- [取得可能なデータの追加](customize/allow_list)
+- [Query/Mutationの追加](customize/query)
