@@ -6,12 +6,7 @@ permalink: /customize/query
 
 ## Query/Mutationの追加
 
-特定のインタフェースを実装したクラスを作成することでQuery/Mutationの追加が可能です
-
-| Method         | Interface                           |
-|----------------|-------------------------------------|
-| Query          | Plugin\Api\GraphQL\Query            |
-| Mutation       | Plugin\Api\GraphQL\Mutation         |
+Query は `Plugin\Api\GraphQL\Query` インタフェースを、 Mutation は `Plugin\Api\GraphQL\Mutation` インタフェースを実装したクラスを作成することで Query/Mutation の追加が可能です。
 
 `Hello Query!` の文字列を返す最小のQueryの実装例は以下です。
 
@@ -55,7 +50,7 @@ query {
 ```json
 {
   "data": {
-    "hello": null
+    "hello": "Hello Query!"
   }
 }
 ```
