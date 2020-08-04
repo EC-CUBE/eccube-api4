@@ -78,18 +78,18 @@ file that was distributed with this source code.
                                         <input type="text" class="form-control copy-secret" value="{{ client.Secret }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
                                     </td>
                                     <td class="align-middle text-center pl-3">
-                                        {% for Scope in client.scopes %}
-                                            {{ Scope }}<br>
+                                        {% for scope in client.scopes %}
+                                            {{ scope }}<br>
                                         {% endfor %}
                                     </td>
                                     <td class="align-middle text-center">
-                                        {% for RedirectUri in client.redirectUris %}
-                                            {{ RedirectUri }}<br>
+                                        {% for redirectUri in client.redirectUris %}
+                                            {{ redirectUri }}<br>
                                         {% endfor %}
                                     </td>
                                     <td class="align-middle text-center pl-3">
-                                        {% for Grant in client.grants %}
-                                            {{ Grant }}<br>
+                                        {% for grant in client.grants if grant != 'refresh_token' %}
+                                            {{ grant }}<br>
                                         {% endfor %}
                                     </td>
                                     <td class="align-middle pr-3">

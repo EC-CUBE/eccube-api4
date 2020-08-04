@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
 
 class ClientType extends AbstractType
 {
@@ -87,11 +88,11 @@ class ClientType extends AbstractType
             ])
             ->add('grants', ChoiceType::class, [
                 'choices'  => [
-                    'authorization_code' => 'authorization_code',
-                    'refresh_token' => 'refresh_token',
+                    'Authorization code' => OAuth2Grants::AUTHORIZATION_CODE,
                 ],
                 'expanded' => true,
                 'multiple' => true,
+                'data' => [OAuth2Grants::AUTHORIZATION_CODE],
                 'mapped' => false,
                 'constraints' => [
                     new Assert\NotBlank(),
