@@ -23,7 +23,6 @@ api:
       allow__confirm_description: 'このアプリに以下を許可します:'
       allow: 許可する
       deny: 許可しない
-      graphiql: GraphiQL
     webhook:
       management:  WebHook管理
       registration: WebHook登録
@@ -34,7 +33,8 @@ api:
       search_no_result_message: WebHookが登録されていません
       delete__confirm_title: WebHookを削除します
       delete__confirm_message: WebHookを削除してもよろしいですか？
-
+    graphiql:
+      name: GraphiQL
   #------------------------------------------------------------------------------------
   # API
   #------------------------------------------------------------------------------------

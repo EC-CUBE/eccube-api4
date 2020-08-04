@@ -22,7 +22,7 @@ class ApiNav implements EccubeNav
      */
     public static function getNav()
     {
-        return [
+        $menu = [
             'setting' => [
                 'children' => [
                     'api' => [
@@ -36,14 +36,18 @@ class ApiNav implements EccubeNav
                                 'name' => 'api.admin.webhook.management',
                                 'url' => 'admin_api_webhook',
                             ],
-                            'graphiql' => [
-                                'name' => 'api.admin.oauth.graphiql',
-                                'url' => 'admin_api_graphiql',
-                            ],
                         ],
                     ],
                 ],
             ],
         ];
+        if ('dev' === env('APP_ENV')) {
+            $menu['setting']['children']['api']['children']['graphiql'] = [
+                'name' => 'api.admin.graphiql.name',
+                'url' => 'admin_api_graphiql',
+            ];
+        }
+
+        return $menu;
     }
 }
