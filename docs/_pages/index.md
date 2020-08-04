@@ -112,6 +112,8 @@ Authorization Code Flow のみに対応しています。
 
 **この記事は GraphQL についての説明はしていませんので、GraphQL 自体の仕様について[GraphQL公式サイト](https://graphql.org/)等でご確認ください。**
 
+GraphQLの[スキーマ](schema)は `bin/console eccube:api:dump-schema` コマンドで出力できます。
+
 GraphQL の Query で以下のデータの取得が可能です。
 
 - [商品情報の取得](query/products)
