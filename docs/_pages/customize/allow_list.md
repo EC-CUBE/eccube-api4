@@ -24,10 +24,7 @@ services:
         arguments:
             - #
                 Eccube\Entity\AuthorityRole: ['id', 'deny_url', 'create_date', 'update_date', 'Authority', 'Creator']
-                Eccube\Entity\BaseInfo: ['id', 'company_name', 'company_kana', 'postal_code', 'addr01', 'addr02', 'phone_number', 'business_hour', 'email01', 'email02', 'email03', 'email04', 'shop_name', 'shop_kana', 'shop_name_eng', 'update_date', 'good_traded', 'message', 'delivery_free_amount', 'delivery_free_quantity', 'option_mypage_order_status_display', 'option_nostock_hidden', 'option_favorite_product', 'option_product_delivery_fee', 'option_product_tax_rule', 'option_customer_activate', 'option_remember_me', 'php_path', 'option_point', 'basic_point_rate', 'point_conversion_rate', 'Country', 'Pref']
-                Eccube\Entity\Block: ['id', 'name', 'file_name', 'use_controller', 'deletable', 'create_date', 'update_date', 'BlockPositions', 'DeviceType']
-                Eccube\Entity\BlockPosition: ['section', 'block_id', 'layout_id', 'block_row', 'Block', 'Layout']
-                Eccube\Entity\Cart: ['id', 'cart_key', 'pre_order_id', 'total_price', 'delivery_fee_total', 'sort_no', 'create_date', 'update_date', 'add_point', 'use_point', 'Customer', 'CartItems']
+                Eccube\Entity\BaseInfo: ['id', 'company_name', 'company_kana', 'postal_code', 'addr01', 'addr02', ... ]
                 # 以降省略
 ```
 
