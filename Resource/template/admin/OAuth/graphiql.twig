@@ -1,11 +1,20 @@
-<html>
-  <head>
-    <title>GraphiQL - EC-CUBE API</title>
-    <link href="https://unpkg.com/graphiql/graphiql.min.css" rel="stylesheet" />
-  </head>
-  <body style="margin: 0;">
-    <div id="graphiql" style="height: 100vh;"></div>
+{% extends '@admin/default_frame.twig' %}
 
+{% set menus = ['setting', 'api', 'graphiql'] %}
+
+{% block title %}{% endblock %}
+{% block sub_title %}{% endblock %}
+
+{% block stylesheet %}
+    <link href="https://unpkg.com/graphiql/graphiql.min.css" rel="stylesheet" />
+    <style type="text/css" media="screen">
+      .c-pageTitle {
+          display: none;
+      }
+    </style>
+{% endblock %}
+
+{% block javascript %}
     <script
       crossorigin
       src="https://unpkg.com/react/umd/react.production.min.js"
@@ -20,21 +29,142 @@
     ></script>
 
     <script>
+      const defaultQuery =`query {
+  products(limit: 5, page: 1) {
+    edges {
+      node {
+        id
+        name
+        ProductClasses {
+          id
+          code
+          price02
+          stock
+        }
+        Status {
+          id
+          name
+        }
+        Creator {
+          id
+        }
+        ProductTag {
+          id
+        }
+      }
+    }
+    nodes {
+      id
+      name
+      ProductClasses {
+        id
+        code
+        price02
+        stock
+      }
+      Status {
+        id
+        name
+      }
+      Creator {
+        id
+      }
+      ProductTag {
+        id
+      }
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+  orders(limit: 5, page: 1) {
+    edges {
+      node {
+        id
+        pre_order_id
+        name01
+        name02
+        message
+        Country {
+          id
+        }
+        OrderItems {
+          id
+          product_name
+          price
+        }
+        Shippings {
+          id
+        }
+      }
+    }
+    nodes {
+      id
+      pre_order_id
+      name01
+      name02
+      message
+      Country {
+        id
+      }
+      OrderItems {
+        id
+        product_name
+        price
+      }
+      Shippings {
+        id
+      }
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+  customers(limit: 5, page: 1) {
+    edges {
+      node {
+        name01
+        name02
+        email
+        point
+      }
+    }
+    nodes {
+      name01
+      name02
+      email
+      point
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+        `;
       const graphQLFetcher = graphQLParams =>
         fetch('{{ url('admin_api_graphiql_api') }}', {
           method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'ECCUBE-CSRF-TOKEN': '{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}'
-            },
+          headers: {
+            'Content-Type': 'application/json',
+            'ECCUBE-CSRF-TOKEN': '{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}'
+          },
           body: JSON.stringify(graphQLParams),
         })
           .then(response => response.json())
           .catch(() => response.text());
       ReactDOM.render(
-        React.createElement(GraphiQL, { fetcher: graphQLFetcher }),
+        React.createElement(GraphiQL, { fetcher: graphQLFetcher, defaultQuery: defaultQuery }),
         document.getElementById('graphiql'),
       );
     </script>
-  </body>
-</html>
+{% endblock javascript %}
+
+{% block main %}
+    <div id="graphiql" style="height: 100vh;"></div>
+{% endblock %}
