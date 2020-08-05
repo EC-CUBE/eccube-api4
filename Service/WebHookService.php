@@ -18,7 +18,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
-use Nyholm\Psr7\Response;
+use GuzzleHttp\Psr7\Response;
 use Plugin\Api\Entity\WebHook;
 use Plugin\Api\Repository\WebHookRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
