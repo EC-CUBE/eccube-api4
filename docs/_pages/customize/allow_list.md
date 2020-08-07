@@ -1,6 +1,4 @@
 ---
-layout: home
-author_profile: true
 permalink: /customize/allow_list
 ---
 

@@ -11,7 +11,7 @@
 # https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/#installing-the-theme
 
 # theme                  : "minimal-mistakes-jekyll"
-# remote_theme           : "mmistakes/minimal-mistakes"
+remote_theme             : "mmistakes/minimal-mistakes@4.20.1"
 minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
@@ -273,9 +273,11 @@ defaults:
       type: pages
     values:
       layout: single
-      author_profile: true
+      author_profile: false
       read_time: true
-      comments: # true
-      share: true
-      related: true
+      comments: false
+      share: false
+      related: false
+      toc: true
+      toc_sticky: true
 

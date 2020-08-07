@@ -1,6 +1,4 @@
 ---
-layout: home
-author_profile: true
 permalink: /query/customers
 ---
 ## 顧客一覧の取得
