@@ -11,9 +11,17 @@ EC-CUBE4 対応の Web API プラグイン
 - PostgreSQL or MySQL
 - SSLサーバー証明書(TLS) は必須
 
+- *テスト環境の作成には Docker が必要です*
+
+### 現在のバージョンでの制限事項
+
 - *Windows 環境での動作は未確認です*
 - *SQLite3 には未対応です*
-- *テスト環境の作成には Docker が必要です*
+- *システム間連携を想定したAPIを前提としています。 ネイティブアプリケーションや、 SPA(Single Page Application)、シングルサインオン(SSO)などの用途は想定されていません*
+- *Authorization code Grant 以外の Grant には未対応です*
+- *OAuth2.0(RFC6749) や OpenID Connect には完全に準拠していません。今後のバージョンアップで準拠を目指していく予定です*
+
+
 
 ## Quick Start
 
