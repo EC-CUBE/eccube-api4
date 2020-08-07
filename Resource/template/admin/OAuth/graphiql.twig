@@ -30,6 +30,7 @@
 
     <script>
       const defaultQuery =`query {
+  # 商品一覧を取得
   products(limit: 5, page: 1) {
     edges {
       node {
@@ -79,6 +80,14 @@
       hasPreviousPage
     }
   }
+
+  # ID指定で商品情報を取得
+  product(id: 1) {
+    id
+    name
+  }
+
+  # 受注一覧を取得
   orders(limit: 5, page: 1) {
     edges {
       node {
@@ -87,9 +96,6 @@
         name01
         name02
         message
-        Country {
-          id
-        }
         OrderItems {
           id
           product_name
@@ -106,9 +112,6 @@
       name01
       name02
       message
-      Country {
-        id
-      }
       OrderItems {
         id
         product_name
@@ -124,6 +127,14 @@
       hasPreviousPage
     }
   }
+
+  # ID指定で受注情報を取得
+  order(id: 1) {
+    id
+    order_no
+  }
+
+  # 会員一覧を取得
   customers(limit: 5, page: 1) {
     edges {
       node {
@@ -144,6 +155,13 @@
       hasNextPage
       hasPreviousPage
     }
+  }
+
+  # ID指定で会員情報を取得
+  customer(id:1) {
+    id
+    name01
+    name02
   }
 }
         `;
