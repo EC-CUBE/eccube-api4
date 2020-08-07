@@ -1,6 +1,4 @@
 ---
-layout: home
-author_profile: true
 permalink: /mutation/product_stock
 ---
 

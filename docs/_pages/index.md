@@ -1,6 +1,4 @@
 ---
-layout: home
-author_profile: true
 permalink: /
 ---
 EC-CUBE4 対応の Web API プラグイン

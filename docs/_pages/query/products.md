@@ -1,6 +1,4 @@
 ---
-layout: home
-author_profile: true
 permalink: /query/products
 ---
 ## 商品一覧の取得

@@ -1,6 +1,4 @@
 ---
-layout: home
-author_profile: true
 permalink: /authZ_code_grant
 ---
 ## Authorization Code Flow での認可

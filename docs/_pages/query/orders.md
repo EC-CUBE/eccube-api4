@@ -1,6 +1,4 @@
 ---
-layout: home
-author_profile: true
 permalink: /query/orders
 ---
 ## 受注一覧の取得
