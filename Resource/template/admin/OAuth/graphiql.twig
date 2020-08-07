@@ -164,7 +164,7 @@
     name02
   }
 }
-        `;
+`;
       const graphQLFetcher = graphQLParams =>
         fetch('{{ url('admin_api_graphiql_api') }}', {
           method: 'post',
@@ -184,5 +184,5 @@
 {% endblock javascript %}
 
 {% block main %}
-    <div id="graphiql" style="height: 100vh;"></div>
+    <div id="graphiql" style="height: calc(100vh - 65px);"></div>
 {% endblock %}
