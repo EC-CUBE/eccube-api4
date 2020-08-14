@@ -123,6 +123,10 @@ GraphQL の Mutation で以下のデータを更新可能です。
 - [商品在庫の更新](mutation/product_stock)
 - [出荷ステータスの更新](mutation/update_shipped)
 
+商品/受注/会員情報の変更時(登録/更新/削除)に登録されたWebHookに対して変更を通知します。
+
+- [WebHook による通知](webhook)
+
 ## 拡張機構
 
 CustomizeディレクトリやプラグインでAPIを拡張できます。
