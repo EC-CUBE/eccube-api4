@@ -1,5 +1,5 @@
 {
-  "name": "ec-cube/api",
+  "name": "ec-cube/Api",
   "version": "1.0.0",
   "description": "Web API",
   "type": "eccube-plugin",
