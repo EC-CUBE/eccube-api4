@@ -25,11 +25,10 @@ EC-CUBE4 対応の Web API プラグイン
 
 ## Quick Start
 
-1. [本プラグイン対応用のブランチ](https://github.com/EC-CUBE/ec-cube/tree/experimental/plugin_bundle)をチェックアウトします。
+1. EC-CUBE（4.0.5以降）をcloneします。
     ```sh
     git clone https://github.com/EC-CUBE/ec-cube.git
     cd ec-cube
-    git checkout experimental/plugin_bundle
     composer install
     ```
 
