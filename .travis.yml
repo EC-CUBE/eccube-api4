@@ -38,7 +38,7 @@ install_eccube: &install_eccube |
   git clone https://github.com/EC-CUBE/ec-cube.git
   cd ec-cube
   git checkout experimental/plugin_bundle
-  composer selfupdate
+  composer selfupdate --1
   composer install --dev --no-interaction -o --apcu-autoloader
 
 package_api_setup: &package_api_setup |
