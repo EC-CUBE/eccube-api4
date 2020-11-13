@@ -47,10 +47,22 @@ Authorization Code Flow のみに対応しています。
 
 - [Authorization Code Flow](authZ_code_grant) の設定方法
 
+### エンドポイント
+
+```
+Authorization endpoint: https://<ec-cubeのホスト名>/<管理画面URL>/authorize
+Token endpoint: https://<ec-cubeのホスト名>/token
+```
 
 ## 機能仕様
 
 **この記事は GraphQL についての説明はしていませんので、GraphQL 自体の仕様について[GraphQL公式サイト](https://graphql.org/)等でご確認ください。**
+
+エンドポイントはQuery/Mutationで共通です。
+
+```
+API endpoint: https://<ec-cubeのホスト名>/api
+```
 
 GraphQLの[スキーマ](schema)は `bin/console eccube:api:dump-schema` コマンドで出力できます。
 
