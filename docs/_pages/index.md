@@ -7,6 +7,7 @@ EC-CUBE4 対応の Web API プラグイン
 
 ## システム要件
 
+- EC-CUBE 4.0.5 or higher
 - PHP 7.2 or higher
 - PostgreSQL or MySQL
 - SSLサーバー証明書(TLS) は必須
@@ -23,82 +24,16 @@ EC-CUBE4 対応の Web API プラグイン
 
 
 
-## Quick Start
+## プラグインのインストール
 
-1. EC-CUBE（4.0.5以降）をcloneします。
-    ```sh
-    git clone https://github.com/EC-CUBE/ec-cube.git
-    cd ec-cube
-    composer install
-    ```
+他のプラグインと同様にEC-CUBE4の管理画面からインストールできます。
 
-1. DATABASE_URL と DATABASE_SERVER_VERSION を適宜変更。*(実際の環境に合わせること)*
-    ```sh
-    ## for PostgreSQL
-    sed -i.bak -e 's/DATABASE_URL=sqlite:\/\/\/var\/eccube.db/DATABASE_URL=postgres:\/\/postgres:password@127.0.0.1\/eccubedb/g' ./.env
-    sed -i.bak -e 's/DATABASE_SERVER_VERSION=3/DATABASE_SERVER_VERSION=9/g' ./.env
-    ```
+[オーナーズストアのEC-CUBE 4.0 Web API プラグインページへ](https://www.ec-cube.net/products/detail.php?product_id=2121)
 
-    ```sh
-    ## for MySQL
-    sed -i.bak -e 's/DATABASE_URL=sqlite:\/\/\/var\/eccube.db/DATABASE_URL=mysql:\/\/root:password@127.0.0.1\/eccubedb/g' ./.env
-    sed -i.bak -e 's/DATABASE_SERVER_VERSION=3/DATABASE_SERVER_VERSION=5.7/g' ./.env
-    ```
-
-1. EC-CUBE4 をインストールします。
-    ```sh
-    bin/console eccube:install --no-interaction
-    ```
-
-1. EC-CUBEオーナーズストアのモックサーバーをセットアップします。
-    ``` sh
-    # プラグインの保管ディレクトリを作成
-    mkdir ${PWD}/repos
-    # mockサーバを起動。ここでは9999をポート番号に設定していますが、必要に応じて変更してください
-    docker run -d --rm -v ${PWD}/repos:/repos -e MOCK_REPO_DIR=/repos -p 9999:8080 eccube/mock-package-api
-    # mockサーバを参照するように環境変数を定義
-    echo ECCUBE_PACKAGE_API_URL=http://127.0.0.1:9999 >> .env
-    ```
-
-1. 認証キーを設定します。
-    ```sh
-    bin/console doctrine:query:sql "update dtb_base_info set authentication_key='dummy'"
-    ```
-
-1. プラグインのパッケージを配置します。
-    ``` sh
-    cd repos
-    git clone https://github.com/EC-CUBE/eccube-api4.git
-    cd eccube-api4
-    tar cvzf ../Api-1.0.0.tgz *
-    cd ../../
-    ```
-
-1. プラグインをインストールします。
-    ```sh
-    bin/console eccube:composer:require ec-cube/Api
-    bin/console eccube:plugin:enable --code=Api
-    ```
-    - 管理画面→オーナーズストア→プラグイン→ **プラグインを探す** からでもプラグインをインストールできます。
-
-1. ビルトインウェブサーバーを起動
-    ```sh
-    bin/console server:run
-    ```
+Web API プラグイン自体の開発をされる場合は[GitHubからインストール（開発者向け）](quickstart)をご覧ください。
 
 1. [OAuth2.0 による認可](#oauth20-%E3%81%AB%E3%82%88%E3%82%8B%E8%AA%8D%E5%8F%AF) より API クライアントの認可をしてください。
 1. [機能仕様](#%E6%A9%9F%E8%83%BD%E4%BB%95%E6%A7%98) より API をコールしてみましょう！
-
-API プラグインの開発のため Git リポジトリで置き換える場合は以下のとおり。
-*プラグインをアンインストールすると、 Git リポジトリごと削除されてしまうため注意すること*
-
-```sh
-cd app/Plugin/
-
-rm -rf Api
-git clone https://github.com/EC-CUBE/eccube-api4.git
-mv eccube-api4 Api
-```
 
 ## OAuth2.0 による認可
 
