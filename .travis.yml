@@ -37,7 +37,7 @@ install_eccube: &install_eccube |
   tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
   git clone https://github.com/EC-CUBE/ec-cube.git
   cd ec-cube
-  composer selfupdate
+  composer selfupdate --1
   composer install --dev --no-interaction -o --apcu-autoloader
 
 package_api_setup: &package_api_setup |
