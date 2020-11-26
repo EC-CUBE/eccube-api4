@@ -16,7 +16,7 @@ namespace Plugin\Api\GraphQL\Query;
 use Eccube\Common\EccubeConfig;
 use Eccube\Util\StringUtil;
 use GraphQL\Type\Definition\Type;
-use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Plugin\Api\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api\GraphQL\Query;
 use Plugin\Api\GraphQL\Type\ConnectionType;
@@ -24,14 +24,14 @@ use Plugin\Api\GraphQL\Types;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class SearchFormQuery implements Query
 {
     /**
-     * @var Paginator
+     * @var PaginatorInterface
      */
     private $paginator;
 
@@ -41,7 +41,7 @@ abstract class SearchFormQuery implements Query
     private $eccubeConfig;
 
     /**
-     * @var FormFactory
+     * @var FormFactoryInterface
      */
     private $formFactory;
 
@@ -53,7 +53,7 @@ abstract class SearchFormQuery implements Query
     /**
      * @required
      */
-    public function setPaginator(Paginator $paginator): void
+    public function setPaginator(PaginatorInterface $paginator): void
     {
         $this->paginator = $paginator;
     }
@@ -69,7 +69,7 @@ abstract class SearchFormQuery implements Query
     /**
      * @required
      */
-    public function setFormFactory(FormFactory $formFactory): void
+    public function setFormFactory(FormFactoryInterface $formFactory): void
     {
         $this->formFactory = $formFactory;
     }
