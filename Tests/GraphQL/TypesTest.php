@@ -28,7 +28,7 @@ class TypesTest extends EccubeTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->types = $this->container->get(Types::class);
+        $this->types = self::$container->get(Types::class);
     }
 
     /**

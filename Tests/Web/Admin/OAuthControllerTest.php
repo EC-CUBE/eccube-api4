@@ -32,7 +32,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
     {
         parent::setUp();
 
-        $this->clientManager = $this->container->get(ClientManager::class);
+        $this->clientManager = self::$container->get(ClientManager::class);
     }
 
     public function testRoutingAdminSettingSystemOAuth2Client()
