@@ -65,9 +65,29 @@ install:
   - *install_eccube
   - *package_api_setup
   - *eccube_setup
+  - composer require --dev kiy0taka/eccube4-test-fixer
 
-script:
-  -  ./vendor/bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests;
+script: |
+  if [[ $ECCUBE_VERSION = '4.0.5' ]]
+  then
+    while read TESTCASE
+    do
+      ./vendor/bin/phpunit --include-path vendor/kiy0taka/eccube4-test-fixer/src --loader 'Eccube\PHPUnit\Loader\Eccube4CompatTestSuiteLoader' app/Plugin/${PLUGIN_CODE}/Tests/${TESTCASE}
+    done <<EOF
+  Web/Admin/OAuth2Bundle/AuthorizationControllerTest.php
+  Web/Admin/LoginControllerTest.php
+  Web/Admin/OAuthControllerTest.php
+  Web/ApiControllerTest.php
+  GraphQL/SchemaTest.php
+  GraphQL/Mutation/UpdateProductStockMutationTest.php
+  GraphQL/Mutation/UpdateShippedMutationTest.php
+  GraphQL/TypesTest.php
+  GraphQL/AllowListTest.php
+  Service/WebHookServiceTest.php
+  EOF
+  else
+    ./vendor/bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
+  fi
 
 #after_script:
 #  # disable plugin
