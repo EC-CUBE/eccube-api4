@@ -70,21 +70,10 @@ install:
 script: |
   if [[ $ECCUBE_VERSION = '4.0.5' ]]
   then
-    while read TESTCASE
+    find app/Plugin/${PLUGIN_CODE}/Tests -name "*Test.php" | while read TESTCASE
     do
-      ./vendor/bin/phpunit --include-path vendor/kiy0taka/eccube4-test-fixer/src --loader 'Eccube\PHPUnit\Loader\Eccube4CompatTestSuiteLoader' app/Plugin/${PLUGIN_CODE}/Tests/${TESTCASE}
-    done <<EOF
-  Web/Admin/OAuth2Bundle/AuthorizationControllerTest.php
-  Web/Admin/LoginControllerTest.php
-  Web/Admin/OAuthControllerTest.php
-  Web/ApiControllerTest.php
-  GraphQL/SchemaTest.php
-  GraphQL/Mutation/UpdateProductStockMutationTest.php
-  GraphQL/Mutation/UpdateShippedMutationTest.php
-  GraphQL/TypesTest.php
-  GraphQL/AllowListTest.php
-  Service/WebHookServiceTest.php
-  EOF
+      ./vendor/bin/phpunit --include-path vendor/kiy0taka/eccube4-test-fixer/src --loader 'Eccube\PHPUnit\Loader\Eccube4CompatTestSuiteLoader' ${TESTCASE}
+    done
   else
     ./vendor/bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
   fi
