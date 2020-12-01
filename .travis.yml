@@ -22,8 +22,10 @@ env:
     PLUGIN_CODE=Api
     ECCUBE_PACKAGE_API_URL=http://127.0.0.1:8080
   matrix:
-    - DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
-    - DATABASE_URL=postgres://postgres:password@localhost/cube4_dev DATABASE_SERVER_VERSION=9
+    - ECCUBE_VERSION=4.0.5 DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
+    - ECCUBE_VERSION=4.0.5 DATABASE_URL=postgres://postgres:password@localhost/cube4_dev DATABASE_SERVER_VERSION=9
+    - ECCUBE_VERSION=4.1 DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
+    - ECCUBE_VERSION=4.1 DATABASE_URL=postgres://postgres:password@localhost/cube4_dev DATABASE_SERVER_VERSION=9
 
 before_install: &php_setup |
   echo "opcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
@@ -37,8 +39,9 @@ install_eccube: &install_eccube |
   tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
   git clone https://github.com/EC-CUBE/ec-cube.git
   cd ec-cube
-  git checkout experimental/plugin_bundle
-  composer selfupdate --1
+  git checkout ${ECCUBE_VERSION}
+  if [[ $ECCUBE_VERSION = '4.0.5' ]]; then composer selfupdate --1 ; fi
+  if [[ $ECCUBE_VERSION = '4.1' ]]; then composer selfupdate ; fi
   composer install --dev --no-interaction -o --apcu-autoloader
 
 package_api_setup: &package_api_setup |
@@ -62,9 +65,18 @@ install:
   - *install_eccube
   - *package_api_setup
   - *eccube_setup
+  - composer require --dev kiy0taka/eccube4-test-fixer
 
-script:
-  -  ./vendor/bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests;
+script: |
+  if [[ $ECCUBE_VERSION = '4.0.5' ]]
+  then
+    find app/Plugin/${PLUGIN_CODE}/Tests -name "*Test.php" | while read TESTCASE
+    do
+      ./vendor/bin/phpunit --include-path vendor/kiy0taka/eccube4-test-fixer/src --loader 'Eccube\PHPUnit\Loader\Eccube4CompatTestSuiteLoader' ${TESTCASE}
+    done
+  else
+    ./vendor/bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
+  fi
 
 #after_script:
 #  # disable plugin

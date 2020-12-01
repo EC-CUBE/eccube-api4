@@ -31,8 +31,8 @@ class UpdateProductStockMutationTest extends EccubeTestCase
     public function setUp()
     {
         parent::setUp();
-        $types = $this->container->get(Types::class);
-        $this->productClassRepository = $this->container->get(ProductClassRepository::class);
+        $types = self::$container->get(Types::class);
+        $this->productClassRepository = self::$container->get(ProductClassRepository::class);
         $this->updateProductStockMutation = new UpdateProductStockMutation($types, $this->productClassRepository, $this->entityManager);
 
         // テスト用の商品を作成

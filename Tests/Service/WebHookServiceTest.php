@@ -29,7 +29,7 @@ class WebHookServiceTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->service = $this->container->get(WebHookService::class);
+        $this->service = self::$container->get(WebHookService::class);
     }
 
     public function testCreateRequest_withSecret()

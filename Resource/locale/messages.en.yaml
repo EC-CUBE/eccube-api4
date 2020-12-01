@@ -14,8 +14,8 @@ api:
       secret_tooltip: Up to 128 alphanumeric characters
       scope: Scope
       scope_tooltip: GraphQL Query requires read, Mutation requires write/write Scope
-      scope.read.description: Read %shop_name% data
-      scope.write.description: Write %shop_name% data
+      scope.read.description: 'Read %shop_name% data'
+      scope.write.description: 'Write %shop_name% data'
       redirect_uri: Redirect URI
       redirect_uri_tooltip: You can enter multiple URIs separated by commas
       grant_type: Grant Type
@@ -26,7 +26,7 @@ api:
       clear_expired_tokens: Clears all expired access and/or refresh tokens
       copy: Copy
       copied: Copied
-      allow__confirm_message: Do you want to allow access this app to %shop_name%?
+      allow__confirm_message: 'Do you want to allow access this app to %shop_name%?'
       allow__confirm_description: 'Allow this app to:'
       allow: Allow
       deny: Deny

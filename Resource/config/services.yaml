@@ -68,6 +68,9 @@ services:
     nyholm.psr7.httplug_factory:
         class: Nyholm\Psr7\Factory\HttplugFactory
 
+
+    Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory: '@sensio_framework_extra.psr7.http_message_factory'
+
     core.api.allow_list:
         class: ArrayObject
         tags: ['eccube.api.allow_list']
