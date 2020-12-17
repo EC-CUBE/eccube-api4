@@ -37,7 +37,6 @@ install_eccube: &install_eccube |
   tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
   git clone https://github.com/EC-CUBE/ec-cube.git
   cd ec-cube
-  git checkout experimental/plugin_bundle
   composer selfupdate --1
   composer install --dev --no-interaction -o --apcu-autoloader
 
@@ -66,33 +65,12 @@ install:
 script:
   -  ./vendor/bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests;
 
-#after_script:
-#  # disable plugin
-#  - bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
-#  # uninstall plugin
-#  - bin/console eccube:plugin:uninstall --code=${PLUGIN_CODE}
-#  # re install plugin
-#  - bin/console eccube:plugin:install --code=${PLUGIN_CODE}
-#  # re enable plugin
-#  - bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
-#
-#jobs:
-#  fast_finish: true
-#  include:
-#    - &coverage
-#      stage: Code Coverage
-#      php: 7.3
-#      env: DATABASE_URL=sqlite:///var/eccube.db DATABASE_SERVER_VERSION=3 COVERAGE=1
-#      before_install:
-#        - docker pull nanasess/phpdbg
-#        - docker pull schickling/mailcatcher
-#        - docker run -d -p 1080:1080 -p 1025:1025 --name mailcatcher schickling/mailcatcher
-#      install:
-#        - *install_eccube
-#        - *php_setup
-#        - *eccube_setup
-#      script:
-#        - docker run -e DATABASE_URL=sqlite:///var/eccube.db -v "$PWD":/usr/src/myapp:cached -w /usr/src/myapp --rm nanasess/phpdbg phpdbg -qrr -dmemory_limit=-1 ./bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=app/Plugin/${PLUGIN_CODE}/coverage.clover app/Plugin/${PLUGIN_CODE}/Tests
-#      after_success:
-#        - sed -i.bak -e 's|/usr/src/myapp/||g' app/Plugin/${PLUGIN_CODE}/coverage.clover
-#        - php vendor/bin/php-coveralls -v -x app/Plugin/${PLUGIN_CODE}/coverage.clover
+after_script:
+  # disable plugin
+  - bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
+  # uninstall plugin
+  - bin/console eccube:plugin:uninstall --code=${PLUGIN_CODE}
+  # re install plugin
+  - bin/console eccube:plugin:install --code=${PLUGIN_CODE}
+  # re enable plugin
+  - bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
