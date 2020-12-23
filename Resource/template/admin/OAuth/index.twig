@@ -42,6 +42,41 @@ file that was distributed with this source code.
     <div class="c-contentsArea__cols">
         <div class="c-contentsArea__primaryCol">
             <div class="c-primaryCol">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-header"><span>{{ 'api.admin.oauth.endpoint'|trans }}</span></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="d-inline-block">
+                                    <span>{{ 'api.admin.oauth.authorization_endpoint'|trans }}</span>
+                                </div>
+                            </div>
+                            <div class="col mb-2">
+                                <input type="text" class="form-control copy-secret" value="{{ url('oauth2_authorize') }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="d-inline-block">
+                                    <span>{{ 'api.admin.oauth.token_endpoint'|trans }}</span>
+                                </div>
+                            </div>
+                            <div class="col mb-2">
+                                <input type="text" class="form-control copy-secret" value="{{ url('oauth2_token') }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="d-inline-block">
+                                    <span>{{ 'api.admin.oauth.api_endpoint'|trans }}</span>
+                                </div>
+                            </div>
+                            <div class="col mb-2">
+                                <input type="text" class="form-control copy-secret" value="{{ url('api') }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div id="create-client" class="d-block mb-3">
                     <a class="btn btn-ec-regular" href="{{ url('admin_api_oauth_new') }}">{{ 'admin.common.registration__new'|trans }}</a>
                 </div>
