@@ -62,7 +62,7 @@ class PluginManager extends AbstractPluginManager
         $entityManager = $container->get('doctrine')->getManager();
 
         /** @var AuthorityRoleRepository $AuthorityRoleRepository */
-        $AuthorityRoleRepository = $container->get(AuthorityRoleRepository::class);
+        $AuthorityRoleRepository = $entityManager->getRepository(AuthorityRole::class);
 
         $AuthorityRole = $AuthorityRoleRepository->findOneBy(['deny_url' => $this->denyUrl]);
 
