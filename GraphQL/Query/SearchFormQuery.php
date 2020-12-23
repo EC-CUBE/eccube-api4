@@ -187,6 +187,7 @@ abstract class SearchFormQuery implements Query
                     'pattern' => "/^\d+$/u",
                     'message' => 'form_error.numeric_only',
                 ]),
+                new Assert\GreaterThan(0),
             ],
         ])->add('limit', IntegerType::class, [
             'label' => 'api.search_form_query.args.description.limit',
@@ -197,6 +198,7 @@ abstract class SearchFormQuery implements Query
                     'pattern' => "/^\d+$/u",
                     'message' => 'form_error.numeric_only',
                 ]),
+                new Assert\GreaterThan(0),
             ],
         ]);
     }

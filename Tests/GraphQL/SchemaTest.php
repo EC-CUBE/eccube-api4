@@ -255,6 +255,31 @@ class SchemaTest extends EccubeTestCase
     }
 
     /**
+     * @dataProvider queryWithPaginationProvider
+     */
+    public function testQueryWithPagination($page, $limit, $expectedErrorMessage = null)
+    {
+        $query = '{ products(page: '.$page.', limit: '.$limit.') { nodes { id } } }';
+
+        $result = $this->executeQuery($query);
+
+        if ($expectedErrorMessage) {
+            self::assertRegExp($expectedErrorMessage, $result['errors'][0]['message']);
+        } else {
+            self::assertFalse(isset($result['errors']));
+        }
+    }
+
+    public function queryWithPaginationProvider()
+    {
+        return [
+            ['1', '1'],
+            ['0', '1', '/page: 0より大きくなければなりません。;/'],
+            ['1', '0', '/limit: 0より大きくなければなりません。;/'],
+        ];
+    }
+
+    /**
      * @dataProvider queryWithDateTimeProvider
      */
     public function testQueryWithDateTime($dateTime, $expectedErrorMessage = null)

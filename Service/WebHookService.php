@@ -62,6 +62,10 @@ class WebHookService implements EventSubscriberInterface
 
     public function fire(FilterResponseEvent $event)
     {
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
         $events = $this->webHookEvents->toArray();
 
         if ($events) {

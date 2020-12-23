@@ -7,6 +7,10 @@ api:
   admin:
     management: API管理
     oauth:
+      endpoint: Endpoint
+      authorization_endpoint: Authorization endpoint
+      token_endpoint: Token endpoint
+      api_endpoint: API endpoint
       management: OAuth管理
       identifier: クライアントID
       identifier_tooltip: 32文字以下の半角英数

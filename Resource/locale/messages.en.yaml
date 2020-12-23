@@ -7,6 +7,10 @@ api:
   admin:
     management: API
     oauth:
+      endpoint: Endpoint
+      authorization_endpoint: Authorization endpoint
+      token_endpoint: Token endpoint
+      api_endpoint: API endpoint
       management: OAuth
       identifier: Client ID
       identifier_tooltip: Up to 32 alphanumeric characters
