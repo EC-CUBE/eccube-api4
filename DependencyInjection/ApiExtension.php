@@ -21,24 +21,31 @@ class ApiExtension extends Extension implements PrependExtensionInterface
 {
     public function prepend(ContainerBuilder $container)
     {
-        $securityConfig = $container->getExtensionConfig('security');
-        $origin = $securityConfig[0]['firewalls'];
-        $names = array_keys($origin);
-        $replaced = [];
-        foreach ($names as $name) {
-            // adminの前にapiを追加する
-            if ($name === 'admin') {
-                $replaced['api'] = [
-                    'pattern' => '^/api',
-                    'security' => true,
-                    'stateless' => true,
-                    'oauth2' => true,
-                ];
+        $extensionConfigsRefl = new \ReflectionProperty(ContainerBuilder::class, 'extensionConfigs');
+        $extensionConfigsRefl->setAccessible(true);
+        $extensionConfigs = $extensionConfigsRefl->getValue($container);
+
+        foreach($extensionConfigs["security"] as $key => $security) {
+            if(isset($security["firewalls"])) {
+                $names = array_keys($security["firewalls"]);
+                $replaced = [];
+                foreach ($names as $name) {
+                    // adminの前にapiを追加する
+                    if ($name === 'admin') {
+                        $replaced['api'] = [
+                            'pattern' => '^/api',
+                            'security' => true,
+                            'stateless' => true,
+                            'oauth2' => true,
+                        ];
+                    }
+                    $replaced[$name] = $security["firewalls"][$name];
+                }
+                $extensionConfigs["security"][$key]["firewalls"] = $replaced;
             }
-            $replaced[$name] = $origin[$name];
         }
 
-        $container->prependExtensionConfig('security', ['firewalls' => $replaced]);
+        $extensionConfigsRefl->setValue($container, $extensionConfigs);
     }
 
     public function load(array $configs, ContainerBuilder $container)
