@@ -13,7 +13,7 @@
 
 namespace Plugin\Api\GraphQL\Mutation;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\ProductClass;
 use Eccube\Repository\ProductClassRepository;
 use GraphQL\Type\Definition\Type;
@@ -34,14 +34,14 @@ class UpdateProductStockMutation implements Mutation
     private $productClassRepository;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
     public function __construct(
         Types $types,
         ProductClassRepository $productClassRepository,
-        EntityManager $entityManager
+        EntityManagerInterface $entityManager
     ) {
         $this->types = $types;
         $this->productClassRepository = $productClassRepository;

@@ -13,7 +13,7 @@
 
 namespace Plugin\Api\GraphQL\Mutation;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
@@ -40,7 +40,7 @@ class UpdateShippedMutation implements Mutation
     private $eccubeConfig;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -71,7 +71,7 @@ class UpdateShippedMutation implements Mutation
 
     public function __construct(
         EccubeConfig $eccubeConfig,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         MailService $mailService,
         OrderStateMachine $orderStateMachine,
         OrderStatusRepository $orderStatusRepository,
