@@ -428,7 +428,7 @@ class SchemaTest extends EccubeTestCase
     {
         $op = OperationParams::create(['query' => $query, 'variables' => $variables], $readonly);
         $helper = new Helper();
-        $config = ServerConfig::create()->setSchema($this->container->get(Schema::class));
+        $config = ServerConfig::create()->setSchema(self::$container->get(Schema::class));
         $result = $helper->executeOperation($config, $op);
         self::assertInstanceOf(ExecutionResult::class, $result);
 

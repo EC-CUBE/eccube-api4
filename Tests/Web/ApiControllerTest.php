@@ -40,10 +40,10 @@ class ApiControllerTest extends AbstractWebTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->clientManager = $this->container->get(ClientManager::class);
-        $this->clientRepository = $this->container->get(ClientRepositoryInterface::class);
-        $this->accessTokenRepository = $this->container->get(AccessTokenRepositoryInterface::class);
-        $this->authorizationServer = $this->container->get(AuthorizationServer::class);
+        $this->clientManager = self::$container->get(ClientManager::class);
+        $this->clientRepository = self::$container->get(ClientRepositoryInterface::class);
+        $this->accessTokenRepository = self::$container->get(AccessTokenRepositoryInterface::class);
+        $this->authorizationServer = self::$container->get(AuthorizationServer::class);
     }
 
     /**

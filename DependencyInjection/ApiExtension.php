@@ -33,6 +33,7 @@ class ApiExtension extends Extension implements PrependExtensionInterface
                     'security' => true,
                     'stateless' => true,
                     'oauth2' => true,
+                    'provider' => 'member_provider'
                 ];
             }
             $replaced[$name] = $origin[$name];
