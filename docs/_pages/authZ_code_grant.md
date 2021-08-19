@@ -16,7 +16,13 @@ permalink: /authZ_code_grant
 ここでは、参考までに curl コマンドを使用して、アクセストークンを発行します。
 
 1. 以下のURLにブラウザでアクセスします。`client_id` などの各項目は、前項で登録した API クライアントのものを使用してください。
-  - `https://<ec-cubeのホスト名>/<管理画面URL>/authorize?response_type=code&client_id=client_id>&redirect_uri=<リダイレクトURI>&scope=read&state=<ランダム文字列>`
+  - `https://<ec-cubeのホスト名>/<管理画面URL>/authorize?response_type=code&client_id=client_id>&redirect_uri=<リダイレクトURI>&scope=<スコープ>&state=<ランダム文字列>`
+  - ※スコープは、登録したスコープのうち、要求したいスコープを空白区切りで設定してください
+    ```
+      readのみを要求：scope=read
+      read/writeを要求：scope=read write
+      ※mutationを行う場合、read/writeの要求が必要です。
+    ```
 1. 管理画面のログイン画面が表示されますので、ログイン(認証)します。
 1. API クライアントの認可画面が表示されますので、内容を確認し、「許可」をクリックします。
 1. リダイレクトURIにリダイレクトされますので、 `code` の値をコピーしておきます。
