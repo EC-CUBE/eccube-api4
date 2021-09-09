@@ -1,5 +1,7 @@
 # EC-CUBE4 対応の Web API プラグイン
 
+[![Packaging for EC-CUBE Plugin](https://github.com/EC-CUBE/eccube-api4/actions/workflows/main.yml/badge.svg)](https://github.com/EC-CUBE/eccube-api4/actions/workflows/main.yml)
+
 外部サービスと連携するため、[GraphQL](https://graphql.org) による Web API 機能を実現します。
 
 本プラグインの利用には EC-CUBE 4.0.5 以上へのアップデートが必要になる予定です。

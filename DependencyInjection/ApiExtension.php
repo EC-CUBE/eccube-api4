@@ -26,7 +26,7 @@ class ApiExtension extends Extension implements PrependExtensionInterface
         $extensionConfigs = $extensionConfigsRefl->getValue($container);
 
         foreach($extensionConfigs["security"] as $key => $security) {
-            if(isset($security["firewalls"])) {
+            if (isset($security["firewalls"])) {
                 $names = array_keys($security["firewalls"]);
                 $replaced = [];
                 foreach ($names as $name) {
@@ -37,6 +37,7 @@ class ApiExtension extends Extension implements PrependExtensionInterface
                             'security' => true,
                             'stateless' => true,
                             'oauth2' => true,
+                            'provider' => 'member_provider'
                         ];
                     }
                     $replaced[$name] = $security["firewalls"][$name];
