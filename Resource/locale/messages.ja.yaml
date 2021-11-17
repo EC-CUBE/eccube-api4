@@ -61,6 +61,12 @@ api:
         product_code: 商品コード
         stock: 在庫数（在庫無制限の場合、0以上の数値を指定）
         stock_unlimited: 在庫無制限（無制限は true 、制限は false を指定）
+  update_product_price:
+    args:
+      description:
+        product_code: 商品コード
+        price01: 通常価格
+        price02: 販売価格
   update_shipped:
     args:
       description:
