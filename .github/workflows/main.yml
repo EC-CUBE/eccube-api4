@@ -113,9 +113,16 @@ jobs:
     - if: matrix.composer == 'v1'
       run: sudo composer selfupdate --1
 
+    - if: matrix.composer == 'v2' && matrix.php == '7.2'
+      run: |
+        sudo composer selfupdate
+        sudo composer selfupdate --2.2
+
     - name: Install to composer
       working-directory: 'ec-cube'
-      run: composer install --no-interaction -o --apcu-autoloader
+      run: |
+        composer -V
+        composer install --no-interaction -o --apcu-autoloader
 
     - if: matrix.composer == 'v1'
       working-directory: 'ec-cube'
