@@ -11,26 +11,26 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Controller\Admin;
+namespace Plugin\Api42\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Exception;
-use Plugin\Api\Form\Type\Admin\ClientType;
+use Plugin\Api42\Form\Type\Admin\ClientType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
-use Trikoder\Bundle\OAuth2Bundle\Manager\ClientFilter;
-use Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface;
-use Trikoder\Bundle\OAuth2Bundle\Manager\RefreshTokenManagerInterface;
-use Trikoder\Bundle\OAuth2Bundle\Model\AuthorizationCode;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
-use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
-use Trikoder\Bundle\OAuth2Bundle\Model\RedirectUri;
-use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
-use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
+use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
+use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 
 class OAuthController extends AbstractController
 {
@@ -67,7 +67,7 @@ class OAuthController extends AbstractController
     /**
      * @Route("/%eccube_admin_route%/api/config", name="admin_api_config", methods={"GET"})
      * @Route("/%eccube_admin_route%/api/oauth", name="admin_api_oauth", methods={"GET"})
-     * @Template("@Api/admin/OAuth/index.twig")
+     * @Template("@Api42/admin/OAuth/index.twig")
      *
      * @param Request $request
      *
@@ -85,7 +85,7 @@ class OAuthController extends AbstractController
 
     /**
      * @Route("/%eccube_admin_route%/api/oauth/new", name="admin_api_oauth_new", methods={"GET", "POST"})
-     * @Template("@Api/admin/OAuth/edit.twig")
+     * @Template("@Api42/admin/OAuth/edit.twig")
      *
      * @param Request $request
      *
@@ -95,6 +95,8 @@ class OAuthController extends AbstractController
      */
     public function create(Request $request)
     {
+        $name = '';
+
         $builder = $this->formFactory
             ->createBuilder(ClientType::class);
 
@@ -106,7 +108,7 @@ class OAuthController extends AbstractController
             $secret = $form->get('secret')->getData();
 
             try {
-                $client = new Client($identifier, $secret);
+                $client = new Client($name, $identifier, $secret);
                 $client = $this->updateClientFromForm($client, $form);
 
                 $this->clientManager->save($client);

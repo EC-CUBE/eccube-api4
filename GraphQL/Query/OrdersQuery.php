@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\GraphQL\Query;
+namespace Plugin\Api42\GraphQL\Query;
 
 use Eccube\Entity\Order;
 use Eccube\Form\Type\Admin\SearchOrderType;

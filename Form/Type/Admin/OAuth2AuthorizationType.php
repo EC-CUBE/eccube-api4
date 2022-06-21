@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Form\Type\Admin;
+namespace Plugin\Api42\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
 use Symfony\Component\Form\AbstractType;

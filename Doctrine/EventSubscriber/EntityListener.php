@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Doctrine\EventSubscriber;
+namespace Plugin\Api42\Doctrine\EventSubscriber;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Plugin\Api\Service\WebHookEvents;
+use Plugin\Api42\Service\WebHookEvents;
 
 class EntityListener implements EventSubscriber
 {

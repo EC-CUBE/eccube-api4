@@ -4,7 +4,7 @@ permalink: /customize/query
 
 ## Query/Mutationの追加
 
-Query は `Plugin\Api\GraphQL\Query` インタフェースを、 Mutation は `Plugin\Api\GraphQL\Mutation` インタフェースを実装したクラスを作成することで Query/Mutation の追加が可能です。
+Query は `Plugin\Api42\GraphQL\Query` インタフェースを、 Mutation は `Plugin\Api42\GraphQL\Mutation` インタフェースを実装したクラスを作成することで Query/Mutation の追加が可能です。
 
 `Hello Query!` の文字列を返す最小のQueryの実装例は以下です。
 
@@ -14,7 +14,7 @@ Query は `Plugin\Api\GraphQL\Query` インタフェースを、 Mutation は `P
 namespace Customize\GraphQL\Query;
 
 use GraphQL\Type\Definition\Type;
-use Plugin\Api\GraphQL\Query;
+use Plugin\Api42\GraphQL\Query;
 
 class HelloQuery implements Query
 {
@@ -57,4 +57,4 @@ query {
 
 ### 参考
 
-プラグインのデフォルトの Query および Mutation の実装は `Api/GraphQL/Query` および `Api/GraphQL/Mutation` にあります。
+プラグインのデフォルトの Query および Mutation の実装は `Api42/GraphQL/Query` および `Api42/GraphQL/Mutation` にあります。

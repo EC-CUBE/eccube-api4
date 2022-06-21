@@ -11,17 +11,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\Web;
+namespace Plugin\Api42\Tests\Web;
 
 use DateTime;
 use Eccube\Tests\Web\AbstractWebTestCase;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use Trikoder\Bundle\OAuth2Bundle\League\Entity\AccessToken;
-use Trikoder\Bundle\OAuth2Bundle\League\Entity\Scope;
-use Trikoder\Bundle\OAuth2Bundle\Manager\Doctrine\ClientManager;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Entity\Scope;
+use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 
 class ApiControllerTest extends AbstractWebTestCase
 {
@@ -37,7 +37,7 @@ class ApiControllerTest extends AbstractWebTestCase
     /** @var AuthorizationServer */
     private $authorizationServer;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->clientManager = self::$container->get(ClientManager::class);
@@ -89,7 +89,7 @@ class ApiControllerTest extends AbstractWebTestCase
 
         $client = new Client($identifier, $secret);
         $client->setScopes(...array_map(function ($s) {
-            return new \Trikoder\Bundle\OAuth2Bundle\Model\Scope($s);
+            return new League\Bundle\OAuth2ServerBundle\ValueObject\Scope($s);
         }, $scopes));
         $this->clientManager->save($client);
         $clientEntity = $this->clientRepository->getClientEntity($identifier, 'authorization_code', $secret);

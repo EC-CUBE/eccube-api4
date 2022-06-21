@@ -11,13 +11,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Controller\Admin;
+namespace Plugin\Api42\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Exception;
-use Plugin\Api\Entity\WebHook;
-use Plugin\Api\Form\Type\Admin\WebHookType;
-use Plugin\Api\Repository\WebHookRepository;
+use Plugin\Api42\Entity\WebHook;
+use Plugin\Api42\Form\Type\Admin\WebHookType;
+use Plugin\Api42\Repository\WebHookRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +41,7 @@ class WebHookController extends AbstractController
 
     /**
      * @Route("/%eccube_admin_route%/api/webhook", name="admin_api_webhook", methods={"GET"})
-     * @Template("@Api/admin/WebHook/index.twig")
+     * @Template("@Api42/admin/WebHook/index.twig")
      */
     public function index()
     {
@@ -55,7 +55,7 @@ class WebHookController extends AbstractController
     /**
      * @Route("/%eccube_admin_route%/api/webhook/new", name="admin_api_webhook_new", methods={"GET", "POST"})
      * @Route("/%eccube_admin_route%/api/webhook/edit/{id}", requirements={"id" = "\d+"}, name="admin_api_webhook_edit", methods={"GET", "POST"})
-     * @Template("@Api/admin/WebHook/edit.twig")
+     * @Template("@Api42/admin/WebHook/edit.twig")
      *
      * @param Request $request
      * @param WebHook|null $WebHook

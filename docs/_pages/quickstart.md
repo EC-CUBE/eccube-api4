@@ -55,8 +55,8 @@ permalink: /quickstart
 
 1. プラグインをインストールします。
     ```sh
-    bin/console eccube:composer:require ec-cube/Api
-    bin/console eccube:plugin:enable --code=Api
+    bin/console eccube:composer:require ec-cube/Api42
+    bin/console eccube:plugin:enable --code=Api42
     ```
     - 管理画面→オーナーズストア→プラグイン→ **プラグインを探す** からでもプラグインをインストールできます。
 

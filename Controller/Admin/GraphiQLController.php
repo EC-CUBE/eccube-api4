@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Controller\Admin;
+namespace Plugin\Api42\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
-use Plugin\Api\GraphQL\Schema;
+use Plugin\Api42\GraphQL\Schema;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -46,7 +46,7 @@ class GraphiQLController extends AbstractController
 
     /**
      * @Route("/%eccube_admin_route%/graphiql", name="admin_api_graphiql", methods={"GET"})
-     * @Template("@Api/admin/OAuth/graphiql.twig")
+     * @Template("@Api42/admin/OAuth/graphiql.twig")
      *
      * @return array
      */

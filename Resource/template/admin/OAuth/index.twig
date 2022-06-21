@@ -123,7 +123,7 @@ file that was distributed with this source code.
                                         {% endfor %}
                                     </td>
                                     <td class="align-middle text-center pl-3">
-                                        {% for grant in client.grants if grant != 'refresh_token' %}
+                                        {% for grant in client.grants|filter(grant => grant != 'refresh_token') %}
                                             {{ grant }}<br>
                                         {% endfor %}
                                     </td>

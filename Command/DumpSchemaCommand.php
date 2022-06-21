@@ -11,10 +11,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Command;
+namespace Plugin\Api42\Command;
 
 use GraphQL\Utils\SchemaPrinter;
-use Plugin\Api\GraphQL\Schema;
+use Plugin\Api42\GraphQL\Schema;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

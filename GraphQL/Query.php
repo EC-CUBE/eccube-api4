@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\GraphQL;
+namespace Plugin\Api42\GraphQL;
 
 interface Query
 {

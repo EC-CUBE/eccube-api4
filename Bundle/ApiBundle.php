@@ -11,10 +11,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Bundle;
+namespace Plugin\Api42\Bundle;
 
-use Plugin\Api\DependencyInjection\ApiExtension;
-use Plugin\Api\DependencyInjection\Compiler\ApiCompilerPass;
+use Plugin\Api42\DependencyInjection\ApiExtension;
+use Plugin\Api42\DependencyInjection\Compiler\ApiCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

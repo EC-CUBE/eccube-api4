@@ -53,7 +53,7 @@ curl \
 
 #### 上記以外のEntityで発火させるカスタマイズ
 
-プラグインやカスタマイズで上記以外の Entity で発火させたい場合は、 `Plugin\Api\Service\WebHookTrigger` インターフェイスを実装したクラスを定義します。
+プラグインやカスタマイズで上記以外の Entity で発火させたい場合は、 `Plugin\Api42\Service\WebHookTrigger` インターフェイスを実装したクラスを定義します。
 
 ### 対象のアクション
 
