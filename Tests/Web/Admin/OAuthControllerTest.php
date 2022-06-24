@@ -52,7 +52,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         // before
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
-        $client = new Client($identifier, $secret);
+        $client = new Client('', $identifier, $secret);
         $this->clientManager->save($client);
 
         // main

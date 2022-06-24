@@ -91,7 +91,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertEquals('notes_0123456789', $Shipping->getNote());
         } catch (InvalidArgumentException $e) {
             // 通らない
-            self::assertTrue(false);
+            self::assertTrue(false, $e->getMessage());
         }
 
         // DB の確認
@@ -119,7 +119,9 @@ class UpdateShippedMutationTest extends EccubeTestCase
         } catch (InvalidArgumentException $e) {
             // エラーの確認
             self::assertEquals('Invalid argument', $e->getCategory());
-            self::assertMatchesRegularExpression($message, $e->getMessage());
+            if ($message !== null) {
+                self::assertStringContainsString($message, $e->getMessage());
+            }
             // Shipping が出荷済みになっていない
             self::assertNull($this->Order->getShippings()->current()->getShippingDate());
         }
@@ -141,11 +143,11 @@ class UpdateShippedMutationTest extends EccubeTestCase
             [['id' => -1], '/id/'],
             [['shipping_date' => $dateTime]],
             [['shipping_delivery_name' => $str_eccube_mtext_len]],
-            [['shipping_delivery_name' => $str_eccube_mtext_len_plus], '/shipping_delivery_name/'],
+            [['shipping_delivery_name' => $str_eccube_mtext_len_plus], 'shipping_delivery_name'],
             [['tracking_number' => $str_eccube_mtext_len]],
-            [['tracking_number' => $str_eccube_mtext_len_plus], '/tracking_number/'],
+            [['tracking_number' => $str_eccube_mtext_len_plus], 'tracking_number'],
             [['note' => $str_eccube_ltext_len]],
-            [['note' => $str_eccube_ltext_len_plus], '/note/'],
+            [['note' => $str_eccube_ltext_len_plus], 'note'],
             [['is_send_mail' => false]],
         ];
     }

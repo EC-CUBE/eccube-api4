@@ -13,9 +13,9 @@
 
 namespace Plugin\Api42\Tests\Web;
 
-use DateTime;
 use Eccube\Tests\Web\AbstractWebTestCase;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
@@ -87,9 +87,9 @@ class ApiControllerTest extends AbstractWebTestCase
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
 
-        $client = new Client($identifier, $secret);
+        $client = new Client('', $identifier, $secret);
         $client->setScopes(...array_map(function ($s) {
-            return new League\Bundle\OAuth2ServerBundle\ValueObject\Scope($s);
+            return new \League\Bundle\OAuth2ServerBundle\Model\Scope($s);
         }, $scopes));
         $this->clientManager->save($client);
         $clientEntity = $this->clientRepository->getClientEntity($identifier, 'authorization_code', $secret);
@@ -97,8 +97,10 @@ class ApiControllerTest extends AbstractWebTestCase
         $accessTokenEntity = new AccessToken();
         $accessTokenEntity->setIdentifier($identifier);
         $accessTokenEntity->setClient($clientEntity);
-        $accessTokenEntity->setExpiryDateTime(new DateTime('+1 hour'));
+        $accessTokenEntity->setExpiryDateTime(new \DateTimeImmutable('+1 days', new \DateTimeZone('Asia/Tokyo')));
         $accessTokenEntity->setUserIdentifier('admin');
+        $accessTokenEntity->setPrivateKey(new CryptKey(self::$container->getParameter('kernel.project_dir').'/app/PluginData/Api42/oauth/private.key'));
+
         array_walk($scopes, function ($s) use ($accessTokenEntity) {
             $scope = new Scope();
             $scope->setIdentifier($s);
@@ -106,10 +108,6 @@ class ApiControllerTest extends AbstractWebTestCase
         });
         $this->accessTokenRepository->persistNewAccessToken($accessTokenEntity);
 
-        $rc = new \ReflectionClass($this->authorizationServer);
-        $property = $rc->getProperty('privateKey');
-        $property->setAccessible(true);
-
-        return $accessTokenEntity->convertToJWT($property->getValue($this->authorizationServer));
+        return $accessTokenEntity->__toString();
     }
 }
