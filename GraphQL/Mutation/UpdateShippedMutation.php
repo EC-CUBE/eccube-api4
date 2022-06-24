@@ -129,6 +129,11 @@ class UpdateShippedMutation implements Mutation
 
     public function updateShipped($root, $args)
     {
+        // XXX Validate with string
+        if (array_key_exists('shipping_date', $args) && $args['shipping_date'] instanceof \DateTime) {
+            $args['shipping_date'] = $args['shipping_date']->format(\DateTime::ATOM);
+        }
+
         // 引数の検証
         $this->validateArgs($args);
 
@@ -180,7 +185,7 @@ class UpdateShippedMutation implements Mutation
         return new Assert\Collection([
             'fields' => [
                 'id' => new Assert\GreaterThan(0),
-                'shipping_date' => new Assert\DateTime(),
+                'shipping_date' => new Assert\DateTime('Y-m-d\TH:i:sP'),
                 'shipping_delivery_name' => new Assert\Length([
                     'max' => $this->eccubeConfig['eccube_mtext_len'],
                 ]),
@@ -227,6 +232,10 @@ class UpdateShippedMutation implements Mutation
      */
     private function updateShippingShippedWithArgs(Shipping $Shipping, array $args): void
     {
+        // XXX shipping_date may be a string.
+        if (array_key_exists('shipping_date', $args) && !$args['shipping_date'] instanceof \DateTime) {
+            $args['shipping_date'] = new \DateTime($args['shipping_date']);
+        }
         // Shipping を出荷済みに変更
         $Shipping->setShippingDate($args['shipping_date'] ?? new \DateTime());
 
