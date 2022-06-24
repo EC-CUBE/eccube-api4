@@ -1,8 +1,8 @@
 security:
   enable_authenticator_manager: true
 parameters:
-    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/app/PluginData/Api/oauth/private.key'
-    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api/oauth/public.key'
+    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/app/PluginData/Api42/oauth/private.key'
+    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api42/oauth/public.key'
     env(ECCUBE_OAUTH2_ENCRYPTION_KEY): '<change.me>'
 
 league_oauth2_server:
@@ -31,7 +31,6 @@ league_oauth2_server:
     resource_server:
         public_key: '%env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY)%'
 
-#    scopes: ['read', 'write']
     scopes:
         available: ['read', 'write']
         default: ['read']
