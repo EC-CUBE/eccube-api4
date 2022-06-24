@@ -15,7 +15,7 @@ namespace Plugin\Api42\Service;
 
 use Eccube\Util\StringUtil;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -89,7 +89,7 @@ class WebHookService implements EventSubscriberInterface
                 'fulfilled' => function (Response $reason, $index) use ($availableWebHooks) {
                     log_info('WebHook request successful.', ['Payload URL' => $availableWebHooks[$index]->getPayloadUrl()]);
                 },
-                'rejected' => function (RequestException $e, $index) use ($availableWebHooks) {
+                'rejected' => function (TransferException $e, $index) use ($availableWebHooks) {
                     log_error($e->getMessage(), ['Payload URL' => $availableWebHooks[$index]->getPayloadUrl()]);
                 },
             ]);
