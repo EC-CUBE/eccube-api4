@@ -51,8 +51,8 @@ class SchemaTest extends EccubeTestCase
             'data' => [
                 'products' => [
                     'nodes' => [
-                        ['id' => '1'],
-                        ['id' => '2']
+                        ['id' => '2'],
+                        ['id' => '1']
                     ]
                 ],
             ],
@@ -86,8 +86,8 @@ class SchemaTest extends EccubeTestCase
             'data' => [
                 'products' => [
                     'nodes' => [
-                        ['id' => '1'],
-                        ['id' => '2']
+                        ['id' => '2'],
+                        ['id' => '1']
                     ]
                 ],
             ],
@@ -112,12 +112,12 @@ class SchemaTest extends EccubeTestCase
                     'edges' => [
                         [
                             'node' => [
-                                'id' => '1',
+                                'id' => '2',
                             ],
                         ],
                         [
                             'node' => [
-                                'id' => '2',
+                                'id' => '1',
                             ],
                         ],
                     ],
@@ -141,10 +141,10 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         [
-                            'id' => '1',
+                            'id' => '2',
                         ],
                         [
-                            'id' => '2',
+                            'id' => '1',
                         ],
                     ],
                 ],
@@ -172,10 +172,10 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         [
-                            'id' => '1',
+                            'id' => '2',
                         ],
                         [
-                            'id' => '2',
+                            'id' => '1',
                         ],
                     ],
                     'totalCount' => 2,
@@ -208,7 +208,7 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         [
-                            'id' => '1',
+                            'id' => '2',
                         ],
                     ],
                     'totalCount' => 2,
@@ -241,7 +241,7 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         [
-                            'id' => '2',
+                            'id' => '1',
                         ],
                     ],
                     'totalCount' => 2,
