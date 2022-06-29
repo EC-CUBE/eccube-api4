@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Security\Core\Encoder;
+namespace Plugin\Api42\Security\Core\Encoder;
 
 use Eccube\Security\Core\Encoder\PasswordEncoder;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -48,5 +48,13 @@ class UserPasswordEncoder implements UserPasswordEncoderInterface
     {
         return $this->passwordEncoder->isPasswordValid($user->getPassword(), $raw, $user->getSalt());
 
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function needsRehash(UserInterface $user): bool
+    {
+        // TODO: Implement needsRehash() method.
     }
 }

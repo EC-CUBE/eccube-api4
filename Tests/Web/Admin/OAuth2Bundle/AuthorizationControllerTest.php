@@ -11,16 +11,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\Web\Admin\OAuth2Bundle;
+namespace Plugin\Api42\Tests\Web\Admin\OAuth2Bundle;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 
 class AuthorizationControllerTest extends AbstractAdminWebTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }

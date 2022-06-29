@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api;
+namespace Plugin\Api42;
 
 use Eccube\Common\EccubeNav;
 

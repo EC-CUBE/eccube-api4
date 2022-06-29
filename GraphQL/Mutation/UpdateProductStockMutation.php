@@ -11,15 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\GraphQL\Mutation;
+namespace Plugin\Api42\GraphQL\Mutation;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\ProductClass;
 use Eccube\Repository\ProductClassRepository;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api\GraphQL\Mutation;
-use Plugin\Api\GraphQL\Types;
+use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Mutation;
+use Plugin\Api42\GraphQL\Types;
 
 class UpdateProductStockMutation implements Mutation
 {

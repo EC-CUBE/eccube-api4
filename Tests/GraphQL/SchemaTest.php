@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\GraphQL;
+namespace Plugin\Api42\Tests\GraphQL;
 
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Tests\EccubeTestCase;
@@ -20,7 +20,7 @@ use GraphQL\Executor\ExecutionResult;
 use GraphQL\Server\Helper;
 use GraphQL\Server\OperationParams;
 use GraphQL\Server\ServerConfig;
-use Plugin\Api\GraphQL\Schema;
+use Plugin\Api42\GraphQL\Schema;
 
 class SchemaTest extends EccubeTestCase
 {
@@ -51,8 +51,8 @@ class SchemaTest extends EccubeTestCase
             'data' => [
                 'products' => [
                     'nodes' => [
-                        ['id' => '1'],
-                        ['id' => '2']
+                        ['id' => '2'],
+                        ['id' => '1']
                     ]
                 ],
             ],
@@ -86,8 +86,8 @@ class SchemaTest extends EccubeTestCase
             'data' => [
                 'products' => [
                     'nodes' => [
-                        ['id' => '1'],
-                        ['id' => '2']
+                        ['id' => '2'],
+                        ['id' => '1']
                     ]
                 ],
             ],
@@ -112,12 +112,12 @@ class SchemaTest extends EccubeTestCase
                     'edges' => [
                         [
                             'node' => [
-                                'id' => '1',
+                                'id' => '2',
                             ],
                         ],
                         [
                             'node' => [
-                                'id' => '2',
+                                'id' => '1',
                             ],
                         ],
                     ],
@@ -141,10 +141,10 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         [
-                            'id' => '1',
+                            'id' => '2',
                         ],
                         [
-                            'id' => '2',
+                            'id' => '1',
                         ],
                     ],
                 ],
@@ -172,10 +172,10 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         [
-                            'id' => '1',
+                            'id' => '2',
                         ],
                         [
-                            'id' => '2',
+                            'id' => '1',
                         ],
                     ],
                     'totalCount' => 2,
@@ -208,7 +208,7 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         [
-                            'id' => '1',
+                            'id' => '2',
                         ],
                     ],
                     'totalCount' => 2,
@@ -241,7 +241,7 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         [
-                            'id' => '2',
+                            'id' => '1',
                         ],
                     ],
                     'totalCount' => 2,
@@ -264,7 +264,7 @@ class SchemaTest extends EccubeTestCase
         $result = $this->executeQuery($query);
 
         if ($expectedErrorMessage) {
-            self::assertRegExp($expectedErrorMessage, $result['errors'][0]['message']);
+            self::assertMatchesRegularExpression($expectedErrorMessage, $result['errors'][0]['message']);
         } else {
             self::assertFalse(isset($result['errors']));
         }
@@ -289,7 +289,7 @@ class SchemaTest extends EccubeTestCase
         $result = $this->executeQuery($query);
 
         if ($expectedErrorMessage) {
-            self::assertRegExp($expectedErrorMessage, $result['errors'][0]['message']);
+            self::assertMatchesRegularExpression($expectedErrorMessage, $result['errors'][0]['message']);
         } else {
             self::assertFalse(isset($result['errors']));
         }

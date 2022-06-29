@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\GraphQL;
+namespace Plugin\Api42\GraphQL;
 
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\NodeKind;
@@ -41,7 +41,8 @@ class ScopeValidationRule extends ValidationRule
             NodeKind::OPERATION_DEFINITION => function (OperationDefinitionNode $def) use ($context) {
                 if ($def->operation === 'query' && !$this->authorizationChecker->isGranted('ROLE_OAUTH2_READ')) {
                     $context->reportError(new Error('Insufficient permission. (read)'));
-                } elseif ($def->operation === 'mutation' && !$this->authorizationChecker->isGranted(['ROLE_OAUTH2_READ', 'ROLE_OAUTH2_WRITE'])) {
+                } elseif ($def->operation === 'mutation'
+                          && !($this->authorizationChecker->isGranted('ROLE_OAUTH2_READ') && $this->authorizationChecker->isGranted('ROLE_OAUTH2_WRITE'))) {
                     $context->reportError(new Error('Insufficient permission. (read,write)'));
                 }
             },

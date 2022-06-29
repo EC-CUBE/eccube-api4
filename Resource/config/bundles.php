@@ -12,6 +12,5 @@
  */
 
 return [
-    Plugin\Api\Bundle\ApiBundle::class => ['all' => true],
-    Trikoder\Bundle\OAuth2Bundle\TrikoderOAuth2Bundle::class => ['all' => true],
+    Plugin\Api42\Bundle\ApiBundle::class => ['all' => true],
 ];

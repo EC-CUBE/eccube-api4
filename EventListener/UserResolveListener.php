@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\EventListener;
+namespace Plugin\Api42\EventListener;
 
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Trikoder\Bundle\OAuth2Bundle\Event\UserResolveEvent;
+use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 
 final class UserResolveListener
 {

@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Form\Type\Admin;
+namespace Plugin\Api42\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
 use Exception;
@@ -20,7 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 
 class ClientType extends AbstractType
 {
