@@ -1,6 +1,6 @@
 {
   "name": "ec-cube/api42",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "Web API",
   "type": "eccube-plugin",
   "require": {
