@@ -62,7 +62,7 @@ class WebHookService implements EventSubscriberInterface
 
     public function fire(ResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

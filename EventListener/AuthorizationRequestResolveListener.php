@@ -56,7 +56,7 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
     public function onAuthorizationRequestResolve(AuthorizationRequestResolveEvent $event): void
     {
         $user = $event->getUser();
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
 
         // システム管理者以外は承認しない
         if (!$user instanceof Member || $user->getAuthority()->getId() !== Authority::ADMIN) {
