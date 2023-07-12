@@ -13,6 +13,7 @@
 
 namespace Plugin\Api42\EventListener;
 
+use Eccube\Security\Core\User\UserPasswordHasher;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
@@ -25,15 +26,15 @@ final class UserResolveListener
     private $userProvider;
 
     /**
-     * @var UserPasswordEncoderInterface
+     * @var UserPasswordHasher
      */
     private $userPasswordEncoder;
 
     /**
      * @param UserProviderInterface $userProvider
-     * @param UserPasswordEncoderInterface $userPasswordEncoder
+     * @param UserPasswordHasher $userPasswordEncoder
      */
-    public function __construct(UserProviderInterface $userProvider, UserPasswordEncoderInterface $userPasswordEncoder)
+    public function __construct(UserProviderInterface $userProvider, UserPasswordHasher $userPasswordEncoder)
     {
         $this->userProvider = $userProvider;
         $this->userPasswordEncoder = $userPasswordEncoder;

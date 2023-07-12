@@ -42,7 +42,7 @@ services:
     Plugin\Api42\EventListener\UserResolveListener:
         arguments:
             - '@Eccube\Security\Core\User\MemberProvider'
-            - '@Plugin\Api42\Security\Core\Encoder\UserPasswordEncoder'
+            - '@Eccube\Security\Core\User\UserPasswordHasher'
         tags:
             - { name: kernel.event_listener, event: league.oauth2_server.event.user_resolve, method: onUserResolve }
 
