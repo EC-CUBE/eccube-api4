@@ -73,6 +73,18 @@ services:
     nyholm.psr7.httplug_factory:
         class: Nyholm\Psr7\Factory\HttplugFactory
 
+    Plugin\Api42\GraphQL\AllowList:
+        autowire: false
+
+    Plugin\Api42\GraphQL\Type\ConnectionType:
+        autowire: false
+
+    Plugin\Api42\GraphQL\Type\EdgeType:
+        autowire: false
+
+    Plugin\Api42\GraphQL\Type\PageInfoType:
+        autowire: false
+
     core.api.allow_list:
         class: ArrayObject
         tags: ['eccube.api.allow_list']
