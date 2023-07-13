@@ -82,7 +82,9 @@ class ApiController extends AbstractController
                 throw new RuntimeException();
         }
 
-        DocumentValidator::addRule($this->scopeValidationRule);
+        // FIXME 認証認可をいったん解除
+        // DocumentValidator::addRule($this->scopeValidationRule);
+
         $result = GraphQL::executeQuery($this->schema, $query, null, null, $variableValues);
 
         if ($this->kernel->isDebug()) {
