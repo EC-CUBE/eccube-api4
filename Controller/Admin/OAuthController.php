@@ -14,13 +14,8 @@
 namespace Plugin\Api42\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
+use Eccube\Form\Form;
 use Exception;
-use Plugin\Api42\Form\Type\Admin\ClientType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -31,6 +26,11 @@ use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
 use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
+use Plugin\Api42\Form\Type\Admin\ClientType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class OAuthController extends AbstractController
 {
@@ -193,11 +193,11 @@ class OAuthController extends AbstractController
 
     /**
      * @param Client $client
-     * @param FormInterface $form
+     * @param Form $form
      *
      * @return Client
      */
-    private function updateClientFromForm(Client $client, FormInterface $form): Client
+    private function updateClientFromForm(Client $client, Form $form): Client
     {
         $client->setActive(true);
 

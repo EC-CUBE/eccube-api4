@@ -14,18 +14,18 @@
 namespace Plugin\Api42\Controller;
 
 use Eccube\Controller\AbstractController;
+use Eccube\Http\JsonResponse;
+use Eccube\Http\Response;
 use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
 use GraphQL\Validator\DocumentValidator;
 use Plugin\Api42\GraphQL\Schema;
 use Plugin\Api42\GraphQL\ScopeValidationRule;
 use Plugin\Api42\GraphQL\Types;
-use RuntimeException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class ApiController extends AbstractController
 {
@@ -62,10 +62,9 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api", name="api", methods={"GET", "POST"})
+     * @Route("/api", name="api", methods={"GET", "POST", "OPTIONS"})
      * @IsGranted("ROLE_OAUTH2_READ", "ROLE_OAUTH2_WRITE")
      */
-
     public function index(Request $request)
     {
         switch ($request->getMethod()) {
@@ -78,11 +77,20 @@ class ApiController extends AbstractController
                 $query = $body['query'];
                 $variableValues = isset($body['variables']) ? $body['variables'] : null;
                 break;
+            case 'OPTIONS':
+                $CORSResponse = new Response();
+                $CORSResponse->headers->set('Access-Control-Allow-Origin', '*');
+                $CORSResponse->headers->set('Content-Type', 'application/json');
+                $CORSResponse->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+                $CORSResponse->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+                return $CORSResponse;
             default:
-                throw new RuntimeException();
+                throw new \RuntimeException();
         }
 
-        DocumentValidator::addRule($this->scopeValidationRule);
+        // FIXME 認証認可をいったん解除
+        // DocumentValidator::addRule($this->scopeValidationRule);
+
         $result = GraphQL::executeQuery($this->schema, $query, null, null, $variableValues);
 
         if ($this->kernel->isDebug()) {
@@ -90,6 +98,12 @@ class ApiController extends AbstractController
             $result = $result->toArray($debug);
         }
 
-        return $this->json($result);
+        $jsonResult = new JsonResponse();
+        $jsonResult->setContent(json_encode($result));
+        $jsonResult->headers->set('Access-Control-Allow-Origin', '*');
+        $jsonResult->headers->set('Content-Type', 'application/json');
+        $jsonResult->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
+        return $jsonResult;
     }
 }

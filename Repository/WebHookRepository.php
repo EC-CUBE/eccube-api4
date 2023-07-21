@@ -13,14 +13,14 @@
 
 namespace Plugin\Api42\Repository;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Eccube\ORM\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
 use Plugin\Api42\Entity\WebHook;
 
 class WebHookRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, $entityClass = WebHook::class)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, $entityClass);
+        parent::__construct($registry, WebHook::class);
     }
 }

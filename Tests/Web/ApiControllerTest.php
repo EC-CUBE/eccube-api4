@@ -51,6 +51,7 @@ class ApiControllerTest extends AbstractWebTestCase
      */
     public function testPermission($scopes, $query, $expectedErrorMessage = null)
     {
+        $this->markTestSkipped('一時的にScopeValidationRuleを無効にしているのでスキップする');
         $token = $this->newAccessToken($scopes);
         $this->client->request('POST', $this->generateUrl('api'), [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,

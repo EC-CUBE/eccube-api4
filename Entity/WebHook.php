@@ -14,61 +14,54 @@
 namespace Plugin\Api42\Entity;
 
 use DateTime;
-use Doctrine\ORM\Mapping as ORM;
+use Eccube\ORM\Mapping as ORM;
 
 /**
  * Class WebHook
- *
- * @ORM\Table(name="plg_api_webhook")
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\HasLifecycleCallbacks()
- * @ORM\Entity(repositoryClass="Plugin\Api42\Repository\WebHookRepository")
  */
+#[ORM\Table(name: 'plg_api_webhook')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'discriminator_type', type: 'string', length: 255)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Entity(repositoryClass: 'Plugin\Api42\Repository\WebHookRepository')]
 class WebHook
 {
     /**
      * @var integer ID
-     *
-     * @ORM\Column(name="id", type="integer", options={"unsigned":true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    #[ORM\Column(name: 'id', type: 'integer', options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
     /**
      * @var string Payload URL
-     *
-     * @ORM\Column(name="payload_url", type="string", length=1024)
      */
+    #[ORM\Column(name: 'payload_url', type: 'string', length: 1024)]
     private $payloadUrl;
 
     /**
      * @var string Secret
-     *
-     * @ORM\Column(name="secret", type="string", length=1024, nullable=true)
      */
+    #[ORM\Column(name: 'secret', type: 'string', length: 1024, nullable: true)]
     private $secret;
 
     /**
      * @var boolean Whether this WebHook is enabled.
-     *
-     * @ORM\Column(name="enabled", type="boolean")
      */
+    #[ORM\Column(name: 'enabled', type: 'boolean')]
     private $enabled = false;
 
     /**
      * @var DateTime
-     *
-     * @ORM\Column(name="create_date", type="datetimetz")
      */
+    #[ORM\Column(name: 'create_date', type: 'datetimetz')]
     private $createDate;
 
     /**
      * @var DateTime
-     *
-     * @ORM\Column(name="update_date", type="datetimetz")
      */
+    #[ORM\Column(name: 'update_date', type: 'datetimetz')]
     private $updateDate;
 
     /**
