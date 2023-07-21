@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ ubuntu-18.04 ]
+        operating-system: [ ubuntu-20.04 ]
         php: [ '7.4', '8.0', '8.1' ]
         db: [ 'mysql', 'mysql8', 'pgsql' ]
         eccube_version: [ '4.2' ]
