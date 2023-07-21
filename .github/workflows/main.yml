@@ -22,9 +22,9 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ ubuntu-20.04 ]
-        php: [ '7.4', '8.0', '8.1' ]
+        php: [ '8.1' ]
         db: [ 'mysql', 'mysql8', 'pgsql' ]
-        eccube_version: [ '4.2' ]
+        eccube_version: [ 'main' ]
         plugin_code: [ 'Api42' ]
         include:
           - db: mysql
@@ -98,7 +98,7 @@ jobs:
     - name: Checkout EC-CUBE
       uses: actions/checkout@v2
       with:
-        repository: 'EC-CUBE/ec-cube'
+        repository: 'EC-CUBE/next-poc'
         ref: ${{ matrix.eccube_version }}
         path: 'ec-cube'
 
