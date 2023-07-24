@@ -17,7 +17,7 @@ league_oauth2_server:
         enable_client_credentials_grant: false
 
       # Whether to enable the password grant
-        enable_password_grant: false
+        enable_password_grant: true
 
       # Whether to enable the refresh token grant
         enable_refresh_token_grant: true
@@ -41,7 +41,8 @@ league_oauth2_server:
 services:
     Plugin\Api42\EventListener\UserResolveListener:
         arguments:
-            - '@Eccube\Security\Core\User\MemberProvider'
+            # - '@Eccube\Security\Core\User\MemberProvider'
+            - '@Eccube\Security\Core\User\CustomerProvider' # FIXME
             - '@Eccube\Security\Core\User\UserPasswordHasher'
         tags:
             - { name: kernel.event_listener, event: league.oauth2_server.event.user_resolve, method: onUserResolve }
