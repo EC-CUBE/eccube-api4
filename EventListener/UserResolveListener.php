@@ -15,15 +15,21 @@ namespace Plugin\Api42\EventListener;
 
 use Eccube\Security\Core\User\UserPasswordHasher;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 
 final class UserResolveListener
 {
     /**
-     * @var UserProviderInterface
+     * @var CustomerProvider
      */
-    private $userProvider;
+    private $customerProvider;
+
+    /**
+     * @var MemberProvider
+     */
+    private $memberProvider;
 
     /**
      * @var UserPasswordHasher
@@ -31,12 +37,14 @@ final class UserResolveListener
     private $userPasswordEncoder;
 
     /**
-     * @param UserProviderInterface $userProvider
+     * @param UserProviderInterface $customerProvider
+     * @param UserProviderInterface $memberProvider
      * @param UserPasswordHasher $userPasswordEncoder
      */
-    public function __construct(UserProviderInterface $userProvider, UserPasswordHasher $userPasswordEncoder)
+    public function __construct(UserProviderInterface $customerProvider, UserProviderInterface $memberProvider, UserPasswordHasher $userPasswordEncoder)
     {
-        $this->userProvider = $userProvider;
+        $this->customerProvider = $customerProvider;
+        $this->memberProvider = $memberProvider;
         $this->userPasswordEncoder = $userPasswordEncoder;
     }
 
@@ -45,10 +53,14 @@ final class UserResolveListener
      */
     public function onUserResolve(UserResolveEvent $event): void
     {
-        $user = $this->userProvider->loadUserByUsername($event->getUsername());
-
-        if (null === $user) {
-            return;
+        try {
+            $user = $this->customerProvider->loadUserByUsername($event->getUsername());
+        } catch (UserNotFoundException $e) {
+            try {
+                $user = $this->memberProvider->loadUserByUsername($event->getUsername());
+            } catch (UserNotFoundException $e) {
+                return;
+            }
         }
 
         if (!$this->userPasswordEncoder->isPasswordValid($user, $event->getPassword())) {

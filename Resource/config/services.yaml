@@ -39,10 +39,12 @@ league_oauth2_server:
         doctrine: null
 
 services:
-    Plugin\Api42\EventListener\UserResolveListener:
+    Symfony\Component\Security\Core\User\UserProviderInterface: '@security.user_providers'
+    api.event.user_resolve:
+        class: Plugin\Api42\EventListener\UserResolveListener
         arguments:
-            # - '@Eccube\Security\Core\User\MemberProvider'
-            - '@Eccube\Security\Core\User\CustomerProvider' # FIXME
+            - '@Eccube\Security\Core\User\CustomerProvider'
+            - '@Eccube\Security\Core\User\MemberProvider'
             - '@Eccube\Security\Core\User\UserPasswordHasher'
         tags:
             - { name: kernel.event_listener, event: league.oauth2_server.event.user_resolve, method: onUserResolve }
