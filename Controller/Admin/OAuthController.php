@@ -108,7 +108,7 @@ class OAuthController extends AbstractController
             $secret = $form->get('secret')->getData();
 
             try {
-                $client = new Client($name, $identifier, null); // FIXME Set client_secret to null
+                $client = new Client($name, $identifier, $secret);
                 $client = $this->updateClientFromForm($client, $form);
 
                 $this->clientManager->save($client);
@@ -209,10 +209,14 @@ class OAuthController extends AbstractController
         );
         $client->setRedirectUris(...$redirectUris);
 
-        $grants = [
-            new Grant(OAuth2Grants::PASSWORD),
-            new Grant(OAuth2Grants::REFRESH_TOKEN)
-        ];
+        $grants = array_map(
+            function (string $grant): Grant {
+                return new Grant($grant);
+            },
+            $form->get('grants')->getData()
+        );
+        array_push($grants, new Grant(OAuth2Grants::REFRESH_TOKEN)); // RefreshToken は常に利用可能
+
         $client->setGrants(...$grants);
 
         $scopes = array_map(
