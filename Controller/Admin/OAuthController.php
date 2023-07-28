@@ -14,6 +14,7 @@
 namespace Plugin\Api42\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
+use Eccube\Form\Form;
 use Exception;
 use Plugin\Api42\Form\Type\Admin\ClientType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -197,7 +198,7 @@ class OAuthController extends AbstractController
      *
      * @return Client
      */
-    private function updateClientFromForm(Client $client, FormInterface $form): Client
+    private function updateClientFromForm(Client $client, Form $form): Client
     {
         $client->setActive(true);
 
