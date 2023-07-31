@@ -150,7 +150,6 @@ jobs:
         bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
         bin/console doctrine:schema:update --force --dump-sql
         bin/console cache:clear --no-warmup
-        bin/console league:oauth2-server:create-client --redirect-uri=http://127.0.0.1:8000/ --grant-type=authorization_code --grant-type=client_credentials --grant-type=implicit --grant-type=password --grant-type=refresh_token --scope=read --scope=write test
         rm codeception/_support/*Tester.php
         chmod 600 app/PluginData/Api42/oauth/private.key
 
