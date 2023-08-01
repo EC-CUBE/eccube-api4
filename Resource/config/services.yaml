@@ -17,7 +17,7 @@ league_oauth2_server:
         enable_client_credentials_grant: false
 
       # Whether to enable the password grant
-        enable_password_grant: false
+        enable_password_grant: true
 
       # Whether to enable the refresh token grant
         enable_refresh_token_grant: true
@@ -39,8 +39,11 @@ league_oauth2_server:
         doctrine: null
 
 services:
-    Plugin\Api42\EventListener\UserResolveListener:
+    Symfony\Component\Security\Core\User\UserProviderInterface: '@security.user_providers'
+    api.event.user_resolve:
+        class: Plugin\Api42\EventListener\UserResolveListener
         arguments:
+            - '@Eccube\Security\Core\User\CustomerProvider'
             - '@Eccube\Security\Core\User\MemberProvider'
             - '@Eccube\Security\Core\User\UserPasswordHasher'
         tags:

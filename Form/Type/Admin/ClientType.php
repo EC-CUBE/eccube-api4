@@ -14,12 +14,14 @@
 namespace Plugin\Api42\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
+use Eccube\Form\FormError;
 use Exception;
-use Symfony\Component\Form\AbstractType;
+use Eccube\Form\FormBuilder;
+use Eccube\Form\FormEvent;
+use Eccube\Form\Type\AbstractType;
+use Eccube\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 
 class ClientType extends AbstractType
@@ -45,7 +47,7 @@ class ClientType extends AbstractType
      *
      * @throws Exception
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilder $builder, array $options)
     {
         $builder
             ->add('identifier', TextType::class, [
@@ -61,7 +63,6 @@ class ClientType extends AbstractType
                 'mapped' => false,
                 'data' => hash('sha512', random_bytes(32)),
                 'constraints' => [
-                    new Assert\NotBlank(),
                     new Assert\Length(['max' => 128]),
                     new Assert\Regex(['pattern' => '/^[0-9a-zA-Z]+$/']),
                 ],
@@ -89,6 +90,7 @@ class ClientType extends AbstractType
             ->add('grants', ChoiceType::class, [
                 'choices'  => [
                     'Authorization code' => OAuth2Grants::AUTHORIZATION_CODE,
+                    'Password' => OAuth2Grants::PASSWORD,
                 ],
                 'expanded' => true,
                 'multiple' => true,
@@ -98,6 +100,18 @@ class ClientType extends AbstractType
                     new Assert\NotBlank(),
                 ],
             ]);
+
+        $builder->onPostSubmit(function (FormEvent $event) {
+            $form = $event->getForm();
+            $grants = $form['grants']->getData();
+            $secret = $form['secret']->getData();
+
+            if (in_array(OAuth2Grants::AUTHORIZATION_CODE, $grants) && empty($secret)) {
+                // ja: Authorization code grant を指定した場合は client_secret を入力してください。
+                // en: Please enter client_secret if you specify Authorization code grant.
+                $form['secret']->addError(new FormError(trans('api.admin.oauth.client_secret.required')));
+            }
+        });
     }
 
     /**

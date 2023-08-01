@@ -215,10 +215,8 @@ class OAuthController extends AbstractController
             },
             $form->get('grants')->getData()
         );
-        // authorization code grant が選択されていた場合には refresh token grant も付与
-        if (in_array(OAuth2Grants::AUTHORIZATION_CODE, $grants)) {
-            array_push($grants, new Grant(OAuth2Grants::REFRESH_TOKEN));
-        }
+        array_push($grants, new Grant(OAuth2Grants::REFRESH_TOKEN)); // RefreshToken は常に利用可能
+
         $client->setGrants(...$grants);
 
         $scopes = array_map(
