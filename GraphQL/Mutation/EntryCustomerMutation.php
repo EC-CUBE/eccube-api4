@@ -13,20 +13,21 @@
 
 namespace Plugin\Api42\GraphQL\Mutation;
 
+use Eccube\Entity\AbstractEntity;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Master\CustomerStatus;
-use Eccube\Entity\Master\Pref;
+use Eccube\Form\Type\Front\EntryType;
 use Eccube\ORM\EntityManager;
 use Eccube\Repository\CustomerRepository;
 use Eccube\Routing\Generator\UrlGeneratorInterface;
 use Eccube\Routing\Router;
 use Eccube\Security\Core\User\UserPasswordHasher;
 use Eccube\Service\MailService;
-use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Types;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormFactoryInterface;
 
-class EntryCustomerMutation implements Mutation
+class EntryCustomerMutation extends AbstractMutation
 {
     private Types $types;
 
@@ -46,101 +47,59 @@ class EntryCustomerMutation implements Mutation
         CustomerRepository $customerRepository,
         EntityManager $entityManager,
         MailService $mailService,
-        Router $router
+        Router $router,
+        FormFactoryInterface $formFactory
     ) {
-        $this->types = $types;
         $this->entityManager = $entityManager;
         $this->passwordHasher = $passwordHasher;
         $this->customerRepository = $customerRepository;
         $this->mailService = $mailService;
         $this->router = $router;
+        $this->setTypes($types);
+        $this->setFormFactory($formFactory);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'entryCustomer';
     }
 
-    public function getMutation()
+    /**
+     * @return class-string<Customer>
+     */
+    public function getTypesClass(): string
     {
-        return [
-            'type' => $this->types->get(Customer::class),
-            'args' => [
-                'name01' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('Name01'),
-                ],
-                'name02' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('Name02'),
-                ],
-                'kana01' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('Kana01'),
-                ],
-                'kana02' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('Kana02'),
-                ],
-                'postal_code' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('PostalCode'),
-                ],
-                'addr01' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('Addr01'),
-                ],
-                'addr02' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('Addr02'),
-                ],
-                'pref' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('Pref'),
-                ],
-                'email' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('Email'),
-                ],
-                'plain_password' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('PlainPassword'),
-                ],
-                'phone_number' => [
-                    'type' => Type::nonNull(Type::string()),
-                    'description' => trans('PhoneNumber'),
-                ],
-            ],
-            'resolve' => [$this, 'entryCustomer'],
-        ];
+        return Customer::class;
     }
 
-    public function entryCustomer($root, $args)
+    /**
+      * @return class-string<EntryType>
+     */
+    public function getArgsType(): string
     {
-        $customer = new Customer();
-        $password = $this->passwordHasher->hashPassword($customer, $args['plain_password']);
+        return EntryType::class;
+    }
+
+    /**
+     * @template T of Customer
+     * @param mixed $root
+     * @param T $args
+     * @return T
+     */
+    protected function executeMutation($root, $args): mixed
+    {
+        /** @var Customer $customer */
+        $customer = $args;
+        $password = $this->passwordHasher->hashPassword($customer, $customer->getPlainPassword());
 
         $customerStatusProvisional = $this->entityManager
             ->find(CustomerStatus::class, CustomerStatus::PROVISIONAL);
 
-        $pref = $this->entityManager
-            ->find(Pref::class, $args['pref']);
-
         $customer
-            ->setName01($args['name01'])
-            ->setName02($args['name02'])
-            ->setKana01($args['kana01'])
-            ->setKana02($args['kana02'])
-            ->setPostalCode($args['postal_code'])
-            ->setPref($pref)
-            ->setAddr01($args['addr01'])
-            ->setAddr02($args['addr02'])
-            ->setPhoneNumber($args['phone_number'])
-            ->setEmail($args['email'])
             ->setPassword($password)
             ->setStatus($customerStatusProvisional)
             ->setSecretKey($this->customerRepository->getUniqueSecretKey())
-            ->setPoint(0);
+            ->setPoint('0');
 
         $this->entityManager->persist($customer);
         $this->entityManager->flush();
