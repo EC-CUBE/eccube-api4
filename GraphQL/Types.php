@@ -60,6 +60,16 @@ class Types
         return $this->types[$className];
     }
 
+    public function getAll()
+    {
+        return array_map(
+            function (ClassMetadata $m) {
+                return $this->get($m->getName());
+            },
+            $this->entityManager->getMetadataFactory()->getAllMetadata()
+        );
+    }
+
     private function createObjectType($className)
     {
         return new ObjectType([
@@ -67,14 +77,17 @@ class Types
             'fields' => function () use ($className) {
                 $classMetadata = $this->entityManager->getClassMetadata($className);
                 $fields = array_reduce($classMetadata->fieldMappings, function ($acc, $mapping) use ($classMetadata) {
-                    $type = $this->convertFieldMappingToType($mapping);
                     $fieldName = $mapping['fieldName'];
 
                     $allowed = array_filter($this->allowLists, function (AllowList $al) use ($classMetadata, $fieldName) {
                         return $al->isAllowed($classMetadata->name, $fieldName);
                     });
+                    if (!$allowed) {
+                        return $acc;
+                    }
 
-                    if ($allowed && $type) {
+                    $type = $this->convertFieldMappingToType($mapping);
+                    if ($type) {
                         $acc[$fieldName] = $type;
                     }
 

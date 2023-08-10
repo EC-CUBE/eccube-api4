@@ -14,15 +14,16 @@
 namespace Plugin\Api42\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
-use Eccube\Form\FormError;
-use Exception;
 use Eccube\Form\FormBuilder;
+use Eccube\Form\FormError;
 use Eccube\Form\FormEvent;
 use Eccube\Form\Type\AbstractType;
 use Eccube\Validator\Constraints as Assert;
+use GraphQL\Type\Definition\ObjectType;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
+use Plugin\Api42\GraphQL\Types;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 
 class ClientType extends AbstractType
 {
@@ -30,6 +31,7 @@ class ClientType extends AbstractType
      * @var EccubeConfig
      */
     protected $eccubeConfig;
+    private Types $types;
 
     /**
      * ClientType constructor.
@@ -37,18 +39,36 @@ class ClientType extends AbstractType
      * @param EccubeConfig $eccubeConfig
      */
     public function __construct(
-        EccubeConfig $eccubeConfig
+        EccubeConfig $eccubeConfig,
+        Types $types
     ) {
         $this->eccubeConfig = $eccubeConfig;
+        $this->types = $types;
     }
 
     /**
      * {@inheritdoc}
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function buildForm(FormBuilder $builder, array $options)
     {
+        $allTypes = array_filter($this->types->getAll(), function (ObjectType $type) {
+            return !empty($type->getFields());
+        });
+        asort($allTypes);
+        $scopes = array_reduce(
+            $allTypes,
+            function ($acc, $type) {
+                $read = 'read:'.$type->name;
+                $write = 'write:'.$type->name;
+                $acc[$read] = $read;
+                $acc[$write] = $write;
+
+                return $acc;
+            },
+            []);
+
         $builder
             ->add('identifier', TextType::class, [
                 'mapped' => false,
@@ -68,10 +88,7 @@ class ClientType extends AbstractType
                 ],
             ])
             ->add('scopes', ChoiceType::class, [
-                'choices'  => [
-                    'read' => 'read',
-                    'write' => 'write',
-                ],
+                'choices' => $scopes,
                 'expanded' => true,
                 'multiple' => true,
                 'mapped' => false,
@@ -88,7 +105,7 @@ class ClientType extends AbstractType
                 ],
             ])
             ->add('grants', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Authorization code' => OAuth2Grants::AUTHORIZATION_CODE,
                     'Password' => OAuth2Grants::PASSWORD,
                 ],
