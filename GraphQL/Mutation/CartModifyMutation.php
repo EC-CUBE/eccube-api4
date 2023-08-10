@@ -39,10 +39,6 @@ class CartModifyMutation implements Mutation
     private CartService $cartService;
     private ProductClassRepository $productClassRepository;
     private EccubeConfig $eccubeConfig;
-
-    public const CART_MODIFY_ADD_QUANTITY = 'add';
-    public const CART_MODIFY_SET_QUANTITY = 'set';
-    public const CART_MODIFY_REMOVE_QUANTITY = 'remove';
     private PurchaseFlow $purchaseFlow;
     private SecurityContext $securityContext;
 
@@ -77,12 +73,8 @@ class CartModifyMutation implements Mutation
                     'type' => Type::nonNull(Type::id()),
                     'description' => trans('api.cart_modify.args.description.product_class_id'),
                 ],
-                'cart_modify_type' => [
-                    'type' => Type::nonNull(Type::id()),
-                    'description' => trans('api.cart_modify.args.description.cart_modify_type'),
-                ],
                 'quantity' => [
-                    'type' => Type::nonNull(Type::id()),
+                    'type' => Type::nonNull(Type::int()),
                     'description' => trans('api.cart_modify.args.description.quantity'),
                 ],
             ],
@@ -116,8 +108,7 @@ class CartModifyMutation implements Mutation
         return new Assert\Collection([
             'fields' => [
                 'product_class_id' => new Assert\GreaterThan(0),
-                'cart_modify_type' => new Assert\Choice([self::CART_MODIFY_ADD_QUANTITY, self::CART_MODIFY_SET_QUANTITY, self::CART_MODIFY_REMOVE_QUANTITY]),
-                'quantity' => new Assert\GreaterThan(0),
+                'quantity' => new Assert\GreaterThanOrEqual(0),
             ],
             'allowMissingFields' => false,
         ]);

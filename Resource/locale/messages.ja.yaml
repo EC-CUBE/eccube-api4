@@ -75,5 +75,4 @@ api:
     args:
       description:
         product_class_id: 商品規格ID
-        cart_modify_type: カート操作タイプ
         quantity: 数量
