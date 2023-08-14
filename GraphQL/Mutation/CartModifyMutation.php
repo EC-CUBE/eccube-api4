@@ -209,6 +209,7 @@ class CartModifyMutation implements Mutation
             $messages = $errorMessages;
         }
 
-        return $Carts;
+        // @TODO: Cartの配列を返すようにする
+        return $Carts[0];
     }
 }
