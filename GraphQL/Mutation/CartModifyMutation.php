@@ -18,7 +18,6 @@ use Eccube\Entity\Cart;
 use Eccube\Entity\Master\ProductStatus;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
-use Eccube\Http\Exception\NotFoundHttpException;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Security\SecurityContext;
 use Eccube\Service\CartService;
@@ -43,14 +42,13 @@ class CartModifyMutation implements Mutation
     private SecurityContext $securityContext;
 
     public function __construct(
-        Types                  $types,
-        CartService            $cartService,
+        Types $types,
+        CartService $cartService,
         ProductClassRepository $productClassRepository,
-        EccubeConfig           $eccubeConfig,
-        SecurityContext        $securityContext,
-        PurchaseFlow           $cartPurchaseFlow,
-    )
-    {
+        EccubeConfig $eccubeConfig,
+        SecurityContext $securityContext,
+        PurchaseFlow $cartPurchaseFlow
+    ) {
         $this->types = $types;
         $this->cartService = $cartService;
         $this->productClassRepository = $productClassRepository;
@@ -148,13 +146,15 @@ class CartModifyMutation implements Mutation
         $productClass = $this->productClassRepository->find($args['product_class_id']);
 
         if (!$productClass) {
-            throw new NotFoundHttpException();
+            // @TODO: エラーメッセージを作成
+            throw new InvalidArgumentException();
         }
 
         // エラーメッセージの配列
         $errorMessages = [];
         if (!$this->checkVisibility($productClass->getProduct())) {
-            throw new NotFoundHttpException();
+            // @TODO: エラーメッセージを作成
+            throw new InvalidArgumentException();
         }
 
         log_info(

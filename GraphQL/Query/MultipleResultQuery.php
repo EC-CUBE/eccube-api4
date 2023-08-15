@@ -15,6 +15,7 @@ namespace Plugin\Api42\GraphQL\Query;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Eccube\Entity\Cart;
 use Eccube\Security\SecurityContext;
 use Eccube\Service\CartService;
 use GraphQL\Type\Definition\Type;
@@ -81,7 +82,7 @@ abstract class MultipleResultQuery implements Query
     public function getQuery(): array
     {
         return [
-            'type' => new ConnectionType($this->entityClass, $this->types),
+            'type' => Type::listOf($this->types->get($this->entityClass)),
             'args' => $this->getArgs(),
             'resolve' => function ($root, $args) {
                 return $this->runResolver($root, $args);
