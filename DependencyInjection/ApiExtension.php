@@ -37,7 +37,7 @@ class ApiExtension extends Extension implements PrependExtensionInterface
                             'security' => true,
                             'stateless' => true,
                             'oauth2' => true,
-                            'provider' => 'member_provider'
+                            'provider' => 'user_provider'
                         ];
                         unset($security["firewalls"]["admin"]["form_login"]["csrf_token_generator"]);
                         unset($security["firewalls"]["admin"]["anonymous"]);
