@@ -15,6 +15,7 @@ namespace Plugin\Api42\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use GraphQL\Error\DebugFlag;
+use GraphQL\Error\Error;
 use GraphQL\GraphQL;
 use Plugin\Api42\GraphQL\Schema;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -82,7 +83,12 @@ class GraphiQLController extends AbstractController
                 throw new RuntimeException();
         }
 
-        $result = GraphQL::executeQuery($this->schema, $query, null, null, $variableValues);
+        /** @var Warning[] $warnings */
+        $warnings = [];
+        $result = GraphQL::executeQuery($this->schema, $query, null, ['warnings' => &$warnings], $variableValues);
+        if (empty($result->errors)) {
+            $result->errors = $warnings;
+        }
 
         if ($this->kernel->isDebug()) {
             $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE;

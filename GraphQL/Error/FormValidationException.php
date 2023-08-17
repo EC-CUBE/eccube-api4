@@ -17,7 +17,7 @@ use GraphQL\Error\ClientAware;
 use GraphQL\Error\Error;
 use GraphQL\Language\Source;
 
-class InvalidArgumentException extends Error implements ClientAware
+class FormValidationException extends Error implements ClientAware
 {
     public function __construct(
         $message = '',
@@ -38,6 +38,6 @@ class InvalidArgumentException extends Error implements ClientAware
 
     public function getCategory()
     {
-        return 'Invalid argument';
+        return 'FormValidation';
     }
 }

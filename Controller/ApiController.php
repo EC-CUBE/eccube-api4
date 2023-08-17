@@ -17,6 +17,7 @@ use Eccube\Controller\AbstractController;
 use Eccube\Http\JsonResponse;
 use Eccube\Http\Response;
 use GraphQL\Error\DebugFlag;
+use GraphQL\Error\Error;
 use GraphQL\GraphQL;
 use GraphQL\Validator\DocumentValidator;
 use Plugin\Api42\GraphQL\Schema;

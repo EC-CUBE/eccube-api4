@@ -110,6 +110,9 @@ class EntryCustomerMutation extends AbstractMutation
 
         $this->mailService->sendCustomerConfirmMail($customer, $activateUrl);
 
+        $this->addWarning('一つ目の Warning です。');
+        $this->addWarning('2つ目の Warning です。');
+
         return $customer;
     }
 }
