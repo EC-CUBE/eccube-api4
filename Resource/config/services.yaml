@@ -1,5 +1,9 @@
 security:
   enable_authenticator_manager: true
+  providers:
+    user_provider:
+      id: Plugin\Api42\Security\Core\User\UserProvider
+
 parameters:
     env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/app/PluginData/Api42/oauth/private.key'
     env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api42/oauth/public.key'

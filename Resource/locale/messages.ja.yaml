@@ -71,3 +71,8 @@ api:
         tracking_number: お問い合わせ番号
         note: 出荷用メモ欄
         is_send_mail: 出荷完了メール送信フラグ（送信する場合は true を指定）
+  cart_modify:
+    args:
+      description:
+        product_class_id: 商品規格ID
+        quantity: 数量
