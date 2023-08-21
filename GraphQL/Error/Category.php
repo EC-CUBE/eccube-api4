@@ -13,6 +13,10 @@
 
 namespace Plugin\Api42\GraphQL\Error;
 
+/**
+ * ja: エラーカテゴリを表す列挙型
+ * en: Enumerated type representing error category
+ */
 enum Category: string
 {
     case Global = 'Global';

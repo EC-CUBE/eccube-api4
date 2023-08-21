@@ -23,7 +23,7 @@ use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Plugin\Api42\GraphQL\Error\FormValidationException;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Error\Info;
 use Plugin\Api42\GraphQL\Error\Warning;
 use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Type\Definition\DateTimeType;
@@ -41,7 +41,10 @@ abstract class AbstractMutation implements Mutation
     private Types $types;
 
     /** @var Error[] */
-    private array $errors = [];
+    private array $warnings = [];
+
+    /** @var Error[] */
+    private array $infos = [];
 
     abstract public function getName(): string;
 
@@ -215,7 +218,8 @@ abstract class AbstractMutation implements Mutation
         }
 
         $result = $this->executeMutation($value, $form->getData());
-        $context['warnings'] = $this->getWarning();
+        $context['warnings'] = $this->getWarnings();
+        $context['infos'] = $this->getInfos();
 
         return $result;
     }
@@ -244,9 +248,21 @@ abstract class AbstractMutation implements Mutation
         return $this->formFactory;
     }
 
+    public function addInfo(string $message): self
+    {
+        $this->infos[] = new Info($message);
+
+        return $this;
+    }
+
+    public function getInfos(): array
+    {
+        return $this->infos;
+    }
+
     public function addWarning(string $message): self
     {
-        $this->errors[] = new Warning($message);
+        $this->warnings[] = new Warning($message);
 
         return $this;
     }
@@ -254,8 +270,8 @@ abstract class AbstractMutation implements Mutation
     /**
      * @return Warning[]
      */
-    public function getWarning(): array
+    public function getWarnings(): array
     {
-        return $this->errors;
+        return $this->warnings;
     }
 }

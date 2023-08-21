@@ -83,12 +83,21 @@ class GraphiQLController extends AbstractController
                 throw new RuntimeException();
         }
 
-        /** @var Warning[] $warnings */
+        /** @var Error[] $warnings */
         $warnings = [];
-        $result = GraphQL::executeQuery($this->schema, $query, null, ['warnings' => &$warnings], $variableValues);
-        if (empty($result->errors)) {
-            $result->errors = $warnings;
-        }
+        /** @var Error[] $infos */
+        $infos = [];
+
+        $result = GraphQL::executeQuery(
+            $this->schema, $query, null,
+            [
+                'warnings' => &$warnings,
+                'infos' => &$infos,
+            ],
+            $variableValues
+        );
+        $result->errors = array_merge($result->errors, $warnings, $infos);
+
 
         if ($this->kernel->isDebug()) {
             $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE;

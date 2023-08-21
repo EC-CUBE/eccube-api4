@@ -91,7 +91,20 @@ class ApiController extends AbstractController
 
         DocumentValidator::addRule($this->scopeValidationRule);
 
-        $result = GraphQL::executeQuery($this->schema, $query, null, null, $variableValues);
+        /** @var Error[] $warnings */
+        $warnings = [];
+        /** @var Error[] $infos */
+        $infos = [];
+
+        $result = GraphQL::executeQuery(
+            $this->schema, $query, null,
+            [
+                'warnings' => &$warnings,
+                'infos' => &$infos,
+            ],
+            $variableValues
+        );
+        $result->errors = array_merge($result->errors, $warnings, $infos);
 
         if ($this->kernel->isDebug()) {
             $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE;

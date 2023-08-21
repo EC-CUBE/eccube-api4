@@ -17,7 +17,9 @@ use Eccube\Common\EccubeConfig;
 use Eccube\Util\StringUtil;
 use GraphQL\Type\Definition\Type;
 use Knp\Component\Pager\PaginatorInterface;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Error\FormValidationException;
+use Plugin\Api42\GraphQL\Error\Info;
+use Plugin\Api42\GraphQL\Error\Warning;
 use Plugin\Api42\GraphQL\Query;
 use Plugin\Api42\GraphQL\Type\ConnectionType;
 use Plugin\Api42\GraphQL\Types;
@@ -49,6 +51,12 @@ abstract class SearchFormQuery implements Query
      * @var Types
      */
     private $types;
+
+    /** @var Error[] */
+    private array $warnings = [];
+
+    /** @var Error[] */
+    private array $infos = [];
 
     /**
      * @required
@@ -122,7 +130,7 @@ abstract class SearchFormQuery implements Query
         return [
             'type' => new ConnectionType($entityClass, $this->types),
             'args' => $args,
-            'resolve' => function ($root, $args) use ($builder, $resolver) {
+            'resolve' => function ($root, $args, $context) use ($builder, $resolver) {
                 $form = $builder->getForm();
 
                 foreach ($form->all() as $field) {
@@ -140,15 +148,22 @@ abstract class SearchFormQuery implements Query
                 if (!$form->isValid()) {
                     $message = '';
                     foreach ($form->getErrors(true) as $error) {
-                        $message .= sprintf('%s: %s;', $error->getOrigin()->getName(), $error->getMessage());
+                        $extensions['errorDetails'][] = [
+                            'field' => $error->getOrigin()->getName(),
+                            'message' => $error->getMessage(),
+                        ];
                     }
 
-                    throw new InvalidArgumentException($message);
+                    throw new FormValidationException('Form validation failed', null, null, [], null, null, $extensions);
                 }
 
                 $data = $form->getData();
 
-                return $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
+                $result = $this->paginator->paginate($resolver($data), $args['page'], $args['limit']);
+                $context['warnings'] = $this->getWarnings();
+                $context['infos'] = $this->getInfos();
+
+                return $result;
             },
         ];
     }
@@ -202,5 +217,32 @@ abstract class SearchFormQuery implements Query
                 new Assert\GreaterThan(0),
             ],
         ]);
+    }
+
+    public function addInfo(string $message): self
+    {
+        $this->infos[] = new Info($message);
+
+        return $this;
+    }
+
+    public function getInfos(): array
+    {
+        return $this->infos;
+    }
+
+    public function addWarning(string $message): self
+    {
+        $this->warnings[] = new Warning($message);
+
+        return $this;
+    }
+
+    /**
+     * @return Warning[]
+     */
+    public function getWarnings(): array
+    {
+        return $this->warnings;
     }
 }
