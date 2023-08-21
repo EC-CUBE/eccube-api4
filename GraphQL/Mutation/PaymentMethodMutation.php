@@ -14,6 +14,7 @@
 namespace Plugin\Api42\GraphQL\Mutation;
 
 use Eccube\Entity\Delivery;
+use Eccube\Entity\Order;
 use Eccube\Entity\Payment;
 use Eccube\ORM\Collections\ArrayCollection;
 use Eccube\ORM\EntityManager;
@@ -66,6 +67,7 @@ class PaymentMethodMutation implements Mutation
     {
         // 受注の存在チェック
         $preOrderId = $this->cartService->getPreOrderId();
+        /** @var Order|null $Order */
         $Order = $this->orderHelper->getPurchaseProcessingOrder($preOrderId);
         if (!$Order) {
             log_info('[注文確認] 購入処理中の受注が存在しません.', [$preOrderId]);
@@ -73,8 +75,17 @@ class PaymentMethodMutation implements Mutation
         }
 
         if (!empty($args['payment_method_id'])) {
+            /** @var Payment|null $Payment */
             $Payment = $this->entityManager->find(Payment::class, $args['payment_method_id']);
+            if (!$Payment) {
+                log_info('[注文確認] 支払い方法が存在しません.', [$args['payment_method_id']]);
+                throw new InvalidArgumentException();
+            }
+            log_info('[注文確認] 支払い方法を変更します.', [$Payment->getMethod()]);
             $Order->setPayment($Payment);
+            $this->entityManager->persist($Order);
+            $this->entityManager->flush();
+
         }
 
         $Deliveries = [];
