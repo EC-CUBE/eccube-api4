@@ -17,7 +17,7 @@ use GraphQL\Error\ClientAware;
 use GraphQL\Error\Error;
 use GraphQL\Language\Source;
 
-class FormValidationException extends Error implements ClientAware
+class Info extends Error implements ClientAware
 {
     public function __construct(
         $message = '',
@@ -28,7 +28,7 @@ class FormValidationException extends Error implements ClientAware
         $previous = null,
         array $extensions = []
     ) {
-        $extensions['level'] = Level::Danger;
+        $extensions['level'] = Level::Info;
         parent::__construct($message, $nodes, $source, $positions, $path, $previous, $extensions);
     }
 
@@ -39,6 +39,6 @@ class FormValidationException extends Error implements ClientAware
 
     public function getCategory()
     {
-        return Category::FormValidation;
+        return Category::Global;
     }
 }

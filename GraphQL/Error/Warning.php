@@ -28,6 +28,7 @@ class Warning extends Error implements ClientAware
         $previous = null,
         array $extensions = []
     ) {
+        $extensions['level'] = Level::Warning;
         parent::__construct($message, $nodes, $source, $positions, $path, $previous, $extensions);
     }
 
@@ -38,6 +39,6 @@ class Warning extends Error implements ClientAware
 
     public function getCategory()
     {
-        return 'GlobalWarning';
+        return Category::Global;
     }
 }
