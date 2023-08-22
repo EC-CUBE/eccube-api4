@@ -152,10 +152,10 @@ abstract class AbstractMutation implements Mutation
     protected  function convertFormValues(FormInterface $form, &$formValues = [], $input = []): void
     {
         $innerTypes = [
-            BirthdayType::class,
             SexType::class,
             RepeatedEmailType::class,
             RepeatedPasswordType::class,
+            BirthdayType::class,
         ];
         $innerType = $form->getConfig()->getType()->getInnerType();
         $typeClass = get_class($innerType);
@@ -174,12 +174,9 @@ abstract class AbstractMutation implements Mutation
             if (array_key_exists($prop.$form->getName(), $input) && $input[$prop.$form->getName()] !== null) {
                 switch ($typeClass) {
                     case BirthdayType::class:
-                        $formValues = [
-                            'year' => ($input[$prop.$form->getName()])->format('Y'),
-                            'month' => ($input[$prop.$form->getName()])->format('n'),
-                            'day' => ($input[$prop.$form->getName()])->format('j'),
-                        ];
+                        $formValues = $input[$prop.$form->getName()]->format('Y-m-d\TH:i:sP');
                         break;
+
                     case RepeatedEmailType::class:
                     case RepeatedPasswordType::class:
                         $formValues = [
