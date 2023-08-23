@@ -264,7 +264,7 @@ class SchemaTest extends EccubeTestCase
         $result = $this->executeQuery($query);
 
         if ($expectedErrorMessage) {
-            self::assertMatchesRegularExpression($expectedErrorMessage, $result['errors'][0]['message']);
+            self::assertMatchesRegularExpression($expectedErrorMessage, $result['errors'][0]['extensions']['errorDetails'][0]['message']);
         } else {
             self::assertFalse(isset($result['errors']));
         }
@@ -274,8 +274,8 @@ class SchemaTest extends EccubeTestCase
     {
         return [
             ['1', '1'],
-            ['0', '1', '/page: 0より大きくなければなりません。;/'],
-            ['1', '0', '/limit: 0より大きくなければなりません。;/'],
+            ['0', '1', '/0より大きくなければなりません。/'],
+            ['1', '0', '/0より大きくなければなりません。/'],
         ];
     }
 

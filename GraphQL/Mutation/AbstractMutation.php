@@ -18,10 +18,13 @@ use Eccube\Form\Type\Master\SexType;
 use Eccube\Form\Type\RepeatedEmailType;
 use Eccube\Form\Type\RepeatedPasswordType;
 use Eccube\Util\StringUtil;
+use GraphQL\Error\Error;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Error\FormValidationException;
+use Plugin\Api42\GraphQL\Error\Info;
+use Plugin\Api42\GraphQL\Error\Warning;
 use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Type\Definition\DateTimeType;
 use Plugin\Api42\GraphQL\Types;
@@ -36,6 +39,12 @@ abstract class AbstractMutation implements Mutation
     private FormFactoryInterface $formFactory;
 
     private Types $types;
+
+    /** @var Error[] */
+    private array $warnings = [];
+
+    /** @var Error[] */
+    private array $infos = [];
 
     abstract public function getName(): string;
 
@@ -197,14 +206,22 @@ abstract class AbstractMutation implements Mutation
         $form->submit($formValues);
         if (!$form->isValid()) {
             $message = '';
+            $extensions = [];
             foreach ($form->getErrors(true) as $error) {
-                $message .= sprintf('%s: %s;', $error->getOrigin()->getName(), $error->getMessage());
+                $extensions['errorDetails'][] = [
+                    'field' => $error->getOrigin()->getName(),
+                    'message' => $error->getMessage(),
+                ];
             }
 
-            throw new InvalidArgumentException($message);
+            throw new FormValidationException('Form validation failed', null, null, [], null, null, $extensions);
         }
 
-        return $this->executeMutation($value, $form->getData());
+        $result = $this->executeMutation($value, $form->getData());
+        $context['warnings'] = $this->getWarnings();
+        $context['infos'] = $this->getInfos();
+
+        return $result;
     }
 
     public function setTypes(Types $types): self
@@ -229,5 +246,32 @@ abstract class AbstractMutation implements Mutation
     public function getFormFactory(): FormFactoryInterface
     {
         return $this->formFactory;
+    }
+
+    public function addInfo(string $message): self
+    {
+        $this->infos[] = new Info($message);
+
+        return $this;
+    }
+
+    public function getInfos(): array
+    {
+        return $this->infos;
+    }
+
+    public function addWarning(string $message): self
+    {
+        $this->warnings[] = new Warning($message);
+
+        return $this;
+    }
+
+    /**
+     * @return Warning[]
+     */
+    public function getWarnings(): array
+    {
+        return $this->warnings;
     }
 }

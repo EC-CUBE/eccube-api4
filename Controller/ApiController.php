@@ -17,6 +17,7 @@ use Eccube\Controller\AbstractController;
 use Eccube\Http\JsonResponse;
 use Eccube\Http\Response;
 use GraphQL\Error\DebugFlag;
+use GraphQL\Error\Error;
 use GraphQL\GraphQL;
 use GraphQL\Validator\DocumentValidator;
 use Plugin\Api42\GraphQL\Schema;
@@ -90,7 +91,20 @@ class ApiController extends AbstractController
 
         DocumentValidator::addRule($this->scopeValidationRule);
 
-        $result = GraphQL::executeQuery($this->schema, $query, null, null, $variableValues);
+        /** @var Error[] $warnings */
+        $warnings = [];
+        /** @var Error[] $infos */
+        $infos = [];
+
+        $result = GraphQL::executeQuery(
+            $this->schema, $query, null,
+            [
+                'warnings' => &$warnings,
+                'infos' => &$infos,
+            ],
+            $variableValues
+        );
+        $result->errors = array_merge($result->errors, $warnings, $infos);
 
         if ($this->kernel->isDebug()) {
             $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE;

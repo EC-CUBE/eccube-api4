@@ -17,7 +17,7 @@ use GraphQL\Error\ClientAware;
 use GraphQL\Error\Error;
 use GraphQL\Language\Source;
 
-class InvalidArgumentException extends Error implements ClientAware
+class Warning extends Error implements ClientAware
 {
     public function __construct(
         $message = '',
@@ -28,6 +28,7 @@ class InvalidArgumentException extends Error implements ClientAware
         $previous = null,
         array $extensions = []
     ) {
+        $extensions['level'] = Level::Warning;
         parent::__construct($message, $nodes, $source, $positions, $path, $previous, $extensions);
     }
 
@@ -38,6 +39,6 @@ class InvalidArgumentException extends Error implements ClientAware
 
     public function getCategory()
     {
-        return 'Invalid argument';
+        return Category::Global;
     }
 }
