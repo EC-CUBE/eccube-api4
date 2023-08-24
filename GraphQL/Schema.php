@@ -23,12 +23,12 @@ class Schema extends \GraphQL\Type\Schema
         Types $types,
         \ArrayObject $queries,
         \ArrayObject $mutations,
-        ScopeUtils $scopeUtils
+        EntityAccessPolicy $entityAccessPolicy
     ) {
         parent::__construct([
             'query' => new ObjectType([
                 'name' => 'Query',
-                'fields' => static fn () => array_reduce($queries->getArrayCopy(), function ($acc, Query $query) use ($scopeUtils) {
+                'fields' => static fn () => array_reduce($queries->getArrayCopy(), function ($acc, Query $query) use ($entityAccessPolicy) {
                     $q = $query->getQuery();
                     $entityClass = null;
                     switch (get_class($q['type'])) {
@@ -43,7 +43,7 @@ class Schema extends \GraphQL\Type\Schema
                             break;
                     }
 
-                    if ($scopeUtils->canReadEntity($entityClass)) {
+                    if ($entityAccessPolicy->canReadEntity($entityClass)) {
                         $acc[$query->getName()] = $q;
                     }
 

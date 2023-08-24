@@ -30,22 +30,15 @@ class Types
 
     private $types = [];
 
-    private $allowLists = [];
-
-    private ScopeUtils $scopeUtils;
+    private EntityAccessPolicy $entityAccessPolicy;
 
     /**
      * Types constructor.
      */
-    public function __construct(EntityManagerInterface $entityManager, ScopeUtils $scopeUtils)
+    public function __construct(EntityManagerInterface $entityManager, EntityAccessPolicy $entityAccessPolicy)
     {
         $this->entityManager = $entityManager;
-        $this->scopeUtils = $scopeUtils;
-    }
-
-    public function addAllowList(AllowList $allowList)
-    {
-        $this->allowLists[] = $allowList;
+        $this->entityAccessPolicy = $entityAccessPolicy;
     }
 
     /**
@@ -83,10 +76,7 @@ class Types
                 $fields = array_reduce($classMetadata->fieldMappings, function ($acc, $mapping) use ($classMetadata) {
                     $fieldName = $mapping['fieldName'];
 
-                    $allowed = array_filter($this->allowLists, function (AllowList $al) use ($classMetadata, $fieldName) {
-                        return $al->isAllowed($classMetadata->name, $fieldName);
-                    });
-                    if (!$allowed) {
+                    if (!$this->entityAccessPolicy->canReadProperty($classMetadata->name, $fieldName)) {
                         return $acc;
                     }
 
@@ -98,15 +88,11 @@ class Types
                     return $acc;
                 }, []);
 
-                $fields = array_reduce($classMetadata->associationMappings, function ($acc, $mapping) use ($classMetadata) {
+                $fields = array_reduce($classMetadata->associationMappings, function ($acc, $mapping) use ($className) {
                     $fieldName = $mapping['fieldName'];
                     $targetEntity = $mapping['targetEntity'];
 
-                    $allowed = array_filter($this->allowLists, function (AllowList $al) use ($classMetadata, $fieldName) {
-                        return $al->isAllowed($classMetadata->name, $fieldName);
-                    }) && $this->scopeUtils->canReadEntity($targetEntity);
-
-                    if ($allowed) {
+                    if ($this->entityAccessPolicy->canReadEntity($targetEntity) && $this->entityAccessPolicy->canReadProperty($className, $fieldName)) {
                         $acc[$fieldName] = [
                             'type' => $this->convertAssociationMappingToType($mapping),
                         ];

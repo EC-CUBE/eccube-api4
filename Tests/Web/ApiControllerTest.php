@@ -14,14 +14,14 @@
 namespace Plugin\Api42\Tests\Web;
 
 use Eccube\Tests\Web\AbstractWebTestCase;
-use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Entity\Scope;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
 class ApiControllerTest extends AbstractWebTestCase
 {
@@ -74,10 +74,13 @@ class ApiControllerTest extends AbstractWebTestCase
         return [
             [['read:Product'],  '{ product(id:1) { id, name } }'],
             [['read:Product'],  '{ customer(id:1) { id } }', 'Cannot query field "customer" on type "Query".'],
-            [['read:Product', 'read:Customer'],  '{ customer(id:1) { id } }'],
+            [['read:Customer'],  '{ customer(id:1) { id } }'],
             [['read:Product'],  '{ product(id:1) { id, name, ProductClasses { id } } }', 'Cannot query field "ProductClasses" on type "Product".'],
             [['read:Product', 'read:ProductClass'],  '{ product(id:1) { id, name, ProductClasses { id } } }'],
+            [['read:Product', 'read:Member'],  '{ product(id:1) { id, name, Creator { id } } }'],
+            [['read:Customer'],  '{ customer(id:1) { id, password } }', 'Cannot query field "password" on type "Customer".'],
             [null,  '{ product(id:1) { id, name } }'],
+            [null,  '{ product(id:1) { id, name, Creator { id } } }', 'Cannot query field "Creator" on type "Product".'],
         ];
     }
 

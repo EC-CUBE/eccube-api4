@@ -157,6 +157,52 @@ services:
                 Eccube\Entity\Master\TaxType: ['id', 'name', 'sort_no']
                 Eccube\Entity\Master\Work: ['id', 'name', 'sort_no']
 
+    core.api.front.allow_list:
+      class: ArrayObject
+      tags: ['eccube.api.front.allow_list']
+      arguments:
+        - #
+          Eccube\Entity\BaseInfo: ['company_name', 'company_kana', 'postal_code', 'addr01', 'addr02', 'phone_number', 'business_hour', 'email01', 'email02', 'email03', 'email04', 'shop_name', 'shop_kana', 'shop_name_eng', 'good_traded', 'message', 'Country', 'Pref']
+          Eccube\Entity\Cart: ['id', 'cart_key', 'pre_order_id', 'total_price', 'delivery_fee_total', 'sort_no', 'add_point', 'use_point', 'Customer', 'CartItems']
+          Eccube\Entity\CartItem: ['id', 'price', 'quantity', 'point_rate', 'ProductClass', 'Cart']
+          Eccube\Entity\Category: ['id', 'name', 'hierarchy', 'sort_no', 'ProductCategories', 'Children', 'Parent']
+          Eccube\Entity\ClassCategory: ['id', 'backend_name', 'name', 'sort_no', 'ClassName']
+          Eccube\Entity\ClassName: ['id', 'backend_name', 'name', 'sort_no', 'ClassCategories']
+          Eccube\Entity\Customer: ['id', 'name01', 'name02', 'kana01', 'kana02', 'company_name', 'postal_code', 'addr01', 'addr02', 'email', 'phone_number', 'birth', 'first_buy_date', 'last_buy_date', 'buy_times', 'buy_total', 'note', 'reset_expire', 'point', 'CustomerFavoriteProducts', 'CustomerAddresses', 'Orders', 'Status', 'Sex', 'Job', 'Country', 'Pref']
+          Eccube\Entity\CustomerAddress: ['id', 'name01', 'name02', 'kana01', 'kana02', 'company_name', 'postal_code', 'addr01', 'addr02', 'phone_number', 'Customer', 'Country', 'Pref']
+          Eccube\Entity\CustomerFavoriteProduct: ['id', 'Customer', 'Product']
+          Eccube\Entity\Delivery: ['id', 'name', 'service_name', 'description', 'confirm_url', 'sort_no', 'PaymentOptions', 'DeliveryFees', 'DeliveryTimes', 'SaleType']
+          Eccube\Entity\DeliveryDuration: ['id', 'name', 'duration', 'sort_no']
+          Eccube\Entity\DeliveryFee: ['id', 'fee', 'Delivery', 'Pref']
+          Eccube\Entity\DeliveryTime: ['id', 'delivery_time', 'sort_no', 'Delivery']
+          Eccube\Entity\MailHistory: ['id', 'send_date', 'mail_subject', 'mail_body', 'mail_html_body', 'Order']
+          Eccube\Entity\News: ['id', 'publish_date', 'title', 'description', 'url', 'link_method']
+          Eccube\Entity\Order: ['id', 'pre_order_id', 'order_no', 'message', 'name01', 'name02', 'kana01', 'kana02', 'company_name', 'email', 'phone_number', 'postal_code', 'addr01', 'addr02', 'birth', 'subtotal', 'discount', 'delivery_fee_total', 'charge', 'tax', 'total', 'payment_total', 'payment_method', 'note', 'order_date', 'payment_date', 'currency_code', 'complete_message', 'complete_mail_message', 'add_point', 'use_point', 'OrderItems', 'Shippings', 'MailHistories', 'Customer', 'Country', 'Pref', 'Sex', 'Job', 'Payment', 'CustomerOrderStatus', 'OrderStatus']
+          Eccube\Entity\OrderItem: ['id', 'product_name', 'product_code', 'class_name1', 'class_name2', 'class_category_name1', 'class_category_name2', 'price', 'quantity', 'tax', 'tax_rate', 'tax_adjust', 'tax_rule_id', 'currency_code', 'processor_name', 'point_rate', 'Order', 'Product', 'ProductClass', 'Shipping', 'RoundingType', 'TaxType', 'TaxDisplayType', 'OrderItemType']
+          Eccube\Entity\Payment: ['id', 'method', 'charge', 'rule_max', 'sort_no', 'fixed', 'payment_image', 'rule_min', 'PaymentOptions']
+          Eccube\Entity\PaymentOption: ['delivery_id', 'payment_id', 'Delivery', 'Payment']
+          Eccube\Entity\Product: ['id', 'name', 'note', 'description_list', 'description_detail', 'search_word', 'free_area', 'ProductCategories', 'ProductClasses', 'ProductImage', 'ProductTag', 'CustomerFavoriteProducts', 'Status']
+          Eccube\Entity\ProductCategory: ['product_id', 'category_id', 'Product', 'Category']
+          Eccube\Entity\ProductClass: ['id', 'code', 'stock', 'stock_unlimited', 'sale_limit', 'price01', 'price02', 'delivery_fee', 'currency_code', 'point_rate', 'ProductStock', 'TaxRule', 'Product', 'SaleType', 'ClassCategory1', 'ClassCategory2', 'DeliveryDuration']
+          Eccube\Entity\ProductImage: ['id', 'file_name', 'sort_no', 'Product']
+          Eccube\Entity\ProductStock: ['id', 'stock', 'ProductClass']
+          Eccube\Entity\ProductTag: ['id', 'Product', 'Tag']
+          Eccube\Entity\Shipping: ['id', 'name01', 'name02', 'kana01', 'kana02', 'company_name', 'phone_number', 'postal_code', 'addr01', 'addr02', 'shipping_delivery_name', 'time_id', 'shipping_delivery_time', 'shipping_delivery_date', 'shipping_date', 'tracking_number', 'note', 'sort_no', 'mail_send_date', 'Order', 'OrderItems', 'Country', 'Pref', 'Delivery']
+          Eccube\Entity\Tag: ['id', 'name', 'sort_no', 'ProductTag']
+          Eccube\Entity\TaxRule: ['id', 'tax_rate', 'tax_adjust', 'apply_date', 'ProductClass', 'Country', 'Pref', 'Product', 'RoundingType']
+          Eccube\Entity\Master\Country: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\CustomerOrderStatus: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\Job: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\OrderItemType: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\OrderStatus: ['display_order_count', 'id', 'name', 'sort_no']
+          Eccube\Entity\Master\Pref: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\ProductStatus: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\RoundingType: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\SaleType: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\Sex: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\TaxDisplayType: ['id', 'name', 'sort_no']
+          Eccube\Entity\Master\TaxType: ['id', 'name', 'sort_no']
+
     api.queries:
         class: ArrayObject
 
@@ -168,4 +214,4 @@ services:
             - '@Plugin\Api42\GraphQL\Types'
             - '@api.queries'
             - '@api.mutations'
-            - '@Plugin\Api42\GraphQL\ScopeUtils'
+            - '@Plugin\Api42\GraphQL\EntityAccessPolicy'
