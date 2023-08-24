@@ -29,6 +29,7 @@ class Event implements EventSubscriberInterface
     {
         return [
             KernelEvents::RESPONSE => 'onKernelRequest',
+            KernelEvents::EXCEPTION => 'onKernelRequest',
         ];
     }
 
@@ -40,7 +41,7 @@ class Event implements EventSubscriberInterface
     public function onKernelRequest(ResponseEvent $event)
     {
         $request = $event->getRequest();
-        if ($request->getMethod() === 'OPTIONS' || ($request->attributes->get('_route') === 'oauth2_token' && $request->getMethod() === 'POST')) {
+        if ($request->getMethod() === 'OPTIONS' || $request->getMethod() === 'POST' && ($request->attributes->get('_route') === 'oauth2_token' || $request->attributes->get('_route') === 'oauth2_authorize') || $request->attributes->get('_route') === 'api') {
             $response = $event->getResponse();
             $response->headers->add([
                 'Access-Control-Allow-Origin' => '*',
