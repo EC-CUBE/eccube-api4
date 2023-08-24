@@ -144,7 +144,6 @@ class EntryTypeTest extends AbstractTypeTestCase
     public function testInvalidemailBlank()
     {
         $this->formData['email'] = '';
-        $this->formData['email'] = '';
 
         $this->form->submit($this->formData);
         $this->assertFalse($this->form->isValid());
@@ -153,7 +152,6 @@ class EntryTypeTest extends AbstractTypeTestCase
     public function testInvalidPasswordEqualEmail()
     {
         $this->formData['email'] = 'user123@example.com';
-        $this->formData['plain_password'] = $this->formData['email'];
         $this->formData['plain_password'] = $this->formData['email'];
         $this->form->submit($this->formData);
         $this->assertEquals(trans('common.password_eq_email'), $this->form->getErrors(true)[0]->getMessage());
