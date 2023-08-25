@@ -13,6 +13,7 @@
 
 namespace Plugin\Api42\GraphQL;
 
+use Eccube\Request\Context;
 use Eccube\Security\SecurityContext;
 
 class EntityAccessPolicy
@@ -23,9 +24,12 @@ class EntityAccessPolicy
 
     private SecurityContext $securityContext;
 
-    public function __construct(SecurityContext $securityContext)
+    private Context $requestContext;
+
+    public function __construct(SecurityContext $securityContext, Context $requestContext)
     {
         $this->securityContext = $securityContext;
+        $this->requestContext = $requestContext;
     }
 
     public function canReadEntity(string $entityClass): bool
@@ -34,6 +38,11 @@ class EntityAccessPolicy
             return !empty(array_filter($this->frontAllowLists, function (AllowList $al) use ($entityClass) {
                 return $al->isAllowed($entityClass);
             }));
+        }
+
+        // TODO 管理画面をAPIで実装するまでは管理者画面URL以下でアクセスした場合はすべてのEntityを許可する
+        if ($this->requestContext->isAdmin()) {
+            return true;
         }
 
         $role = 'ROLE_OAUTH2_READ:'.strtoupper((new \ReflectionClass($entityClass))->getShortName());
