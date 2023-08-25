@@ -14,6 +14,7 @@
 namespace Plugin\Api42\GraphQL;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -31,12 +32,15 @@ class Types
 
     private $allowLists = [];
 
+    private ScopeUtils $scopeUtils;
+
     /**
      * Types constructor.
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ScopeUtils $scopeUtils)
     {
         $this->entityManager = $entityManager;
+        $this->scopeUtils = $scopeUtils;
     }
 
     public function addAllowList(AllowList $allowList)
@@ -96,10 +100,11 @@ class Types
 
                 $fields = array_reduce($classMetadata->associationMappings, function ($acc, $mapping) use ($classMetadata) {
                     $fieldName = $mapping['fieldName'];
+                    $targetEntity = $mapping['targetEntity'];
 
                     $allowed = array_filter($this->allowLists, function (AllowList $al) use ($classMetadata, $fieldName) {
                         return $al->isAllowed($classMetadata->name, $fieldName);
-                    });
+                    }) && $this->scopeUtils->canReadEntity($targetEntity);
 
                     if ($allowed) {
                         $acc[$fieldName] = [
@@ -112,6 +117,7 @@ class Types
 
                 return $fields;
             },
+            'entityClass' => $className,
         ]);
     }
 

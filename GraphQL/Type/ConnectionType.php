@@ -50,6 +50,7 @@ class ConnectionType extends ObjectType
                     },
                 ],
             ],
+            'entityClass' => $className,
         ];
         parent::__construct($config);
     }

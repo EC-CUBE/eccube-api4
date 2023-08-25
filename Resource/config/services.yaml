@@ -54,10 +54,8 @@ services:
             - { name: kernel.event_listener, event: league.oauth2_server.event.user_resolve, method: onUserResolve }
 
     Plugin\Api42\GraphQL\Types:
-        class: Plugin\Api42\GraphQL\Types
-        arguments: ["@doctrine.orm.entity_manager"]
+        autowire: true
         lazy: true
-
 
     # Register nyholm/psr7 services for autowiring with PSR-17 (HTTP factories)
     Psr\Http\Message\RequestFactoryInterface: '@nyholm.psr7.psr17_factory'
@@ -170,3 +168,4 @@ services:
             - '@Plugin\Api42\GraphQL\Types'
             - '@api.queries'
             - '@api.mutations'
+            - '@Plugin\Api42\GraphQL\ScopeUtils'
