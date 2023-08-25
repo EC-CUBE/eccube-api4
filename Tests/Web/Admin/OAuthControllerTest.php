@@ -90,8 +90,8 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->verify();
 
         $scopes = $client->getScopes();
-        $this->assertTrue(in_array('read', $scopes));
-        $this->assertTrue(in_array('write', $scopes));
+        $this->assertTrue(in_array('read:Product', $scopes));
+        $this->assertTrue(in_array('write:Product', $scopes));
 
         // authorization code grant が選択されていた場合には refresh token grant も付与される
         $grants = $client->getGrants();
@@ -144,7 +144,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
             '_token' => 'dummy',
             'identifier' => hash('md5', random_bytes(16)),
             'secret' => hash('sha512', random_bytes(32)),
-            'scopes' => ['read', 'write'],
+            'scopes' => ['read:Product', 'write:Product'],
             'redirect_uris' => 'http://127.0.0.1:8000/',
             'grants' => ['authorization_code'],
         ];
