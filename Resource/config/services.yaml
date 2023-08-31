@@ -36,8 +36,8 @@ league_oauth2_server:
         public_key: '%env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY)%'
 
     scopes:
-        available: ['read', 'write']
-        default: ['read']
+        available: ['dummy_scope']
+        default: ['dummy_scope']
 
     persistence:
         doctrine: null
@@ -215,3 +215,8 @@ services:
             - '@api.queries'
             - '@api.mutations'
             - '@Plugin\Api42\GraphQL\EntityAccessPolicy'
+
+    League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface:
+        class: Plugin\Api42\Service\ScopeManager
+        autowire: true
+        lazy: true
