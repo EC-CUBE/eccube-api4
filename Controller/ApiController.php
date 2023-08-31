@@ -19,9 +19,7 @@ use Eccube\Http\Response;
 use GraphQL\Error\DebugFlag;
 use GraphQL\Error\Error;
 use GraphQL\GraphQL;
-use GraphQL\Validator\DocumentValidator;
 use Plugin\Api42\GraphQL\Schema;
-use Plugin\Api42\GraphQL\ScopeValidationRule;
 use Plugin\Api42\GraphQL\Types;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,21 +43,14 @@ class ApiController extends AbstractController
      */
     private $schema;
 
-    /**
-     * @var ScopeValidationRule
-     */
-    private $scopeValidationRule;
-
     public function __construct(
         Types $types,
         KernelInterface $kernel,
         Schema $schema,
-        ScopeValidationRule $scopeValidationRule
     ) {
         $this->types = $types;
         $this->kernel = $kernel;
         $this->schema = $schema;
-        $this->scopeValidationRule = $scopeValidationRule;
     }
 
     /**
@@ -88,8 +79,6 @@ class ApiController extends AbstractController
             default:
                 throw new \RuntimeException();
         }
-
-        DocumentValidator::addRule($this->scopeValidationRule);
 
         /** @var Error[] $warnings */
         $warnings = [];
