@@ -15,25 +15,18 @@ namespace Plugin\Api42\GraphQL\Mutation;
 
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Cart;
-use Eccube\Entity\Master\ProductStatus;
-use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Security\SecurityContext;
 use Eccube\Service\CartService;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseFlow;
-use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
 use Plugin\Api42\Form\Type\Front\AddCartType;
 use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api42\GraphQL\Mutation;
+use Plugin\Api42\GraphQL\Error\Level;
 use Plugin\Api42\GraphQL\Types;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\Validator\Validation;
 
 class CartModifyMutation extends AbstractMutation
 {
@@ -105,6 +98,7 @@ class CartModifyMutation extends AbstractMutation
 
         // 明細の正規化
         $Carts = $this->cartService->getCarts();
+        $errorMessages = [];
         foreach ($Carts as $Cart) {
             $result = $this->purchaseFlow->validate($Cart, new PurchaseContext($Cart, $this->securityContext->getLoginUser()));
             // 復旧不可のエラーが発生した場合は追加した明細を削除.
@@ -114,8 +108,8 @@ class CartModifyMutation extends AbstractMutation
                     $errorMessages[] = $error->getMessage();
                 }
             }
-            foreach ($result->getWarning() as $warning) {
-                $errorMessages[] = $warning->getMessage();
+            foreach ($result->getWarning() as $error) {
+                $errorMessages[] = $error->getMessage();
             }
         }
 
@@ -129,6 +123,17 @@ class CartModifyMutation extends AbstractMutation
                 'quantity' => $args['quantity'],
             ]
         );
+
+        if ($result->hasError()) {
+            throw new InvalidArgumentException(
+                implode('; ', $errorMessages),
+                null, null, [], null, null,
+                [
+                    'level' => Level::Danger,
+                    'errorDetails' => $errorMessages,
+                ]
+            );
+        }
 
         // @TODO: Cartの配列を返すようにする
          return $Carts[0];

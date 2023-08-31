@@ -13,27 +13,16 @@
 
 namespace Plugin\Api42\Form\Type\Front;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Common\EccubeConfig;
-use Eccube\Entity\CartItem;
 use Eccube\Entity\Master\ProductStatus;
 use Eccube\Entity\ProductClass;
-use Eccube\Form\DataTransformer\EntityToIdTransformer;
-use Eccube\Form\Form;
 use Eccube\Form\FormBuilder;
 use Eccube\Form\FormError;
 use Eccube\Form\FormEvent;
-use Eccube\Form\FormView;
 use Eccube\Form\Type\AbstractType;
-use Eccube\Form\Type\EntityType;
-use Eccube\ORM\EntityManager;
-use Eccube\OptionsResolver\OptionsResolver;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Validator\Constraints as Assert;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Validator\Context\ExecutionContext;
 
 class AddCartType extends AbstractType
 {
@@ -80,21 +69,18 @@ class AddCartType extends AbstractType
                 ],
             ]);
 
-        $builder->onPreSubmit(function (FormEvent $event) {
-
-        });
-
         $builder->onPostSubmit(function (FormEvent $event) {
             /** @var ProductClass $ProductClass */
             $ProductClass = $this->productClassRepository->find($event->getData()['product_class_id']);
             if (null === $ProductClass) {
                 $event->getForm()->addError(new FormError('商品が見つかりませんでした。'));
-            }
-            if (!$ProductClass->isVisible()) {
-                $event->getForm()->addError(new FormError('この商品は現在購入できません。'));
-            }
-            if ($ProductClass->getProduct()->getStatus()->getId() !== ProductStatus::DISPLAY_SHOW) {
-                $event->getForm()->addError(new FormError('この商品は現在購入できません。'));
+            } else {
+                if (!$ProductClass->isVisible()) {
+                    $event->getForm()->addError(new FormError('この商品は現在購入できません。'));
+                }
+                if ($ProductClass->getProduct()->getStatus()->getId() !== ProductStatus::DISPLAY_SHOW) {
+                    $event->getForm()->addError(new FormError('この商品は現在購入できません。'));
+                }
             }
         });
     }
