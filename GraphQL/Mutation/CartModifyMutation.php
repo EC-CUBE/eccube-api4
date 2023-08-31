@@ -23,16 +23,19 @@ use Eccube\Security\SecurityContext;
 use Eccube\Service\CartService;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseFlow;
+use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
+use Plugin\Api42\Form\Type\Front\AddCartType;
 use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Types;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validation;
 
-class CartModifyMutation implements Mutation
+class CartModifyMutation extends AbstractMutation
 {
     private Types $types;
     private CartService $cartService;
@@ -47,7 +50,8 @@ class CartModifyMutation implements Mutation
         ProductClassRepository $productClassRepository,
         EccubeConfig $eccubeConfig,
         SecurityContext $securityContext,
-        PurchaseFlow $cartPurchaseFlow
+        PurchaseFlow $cartPurchaseFlow,
+        FormFactoryInterface $formFactory
     ) {
         $this->types = $types;
         $this->cartService = $cartService;
@@ -55,6 +59,8 @@ class CartModifyMutation implements Mutation
         $this->eccubeConfig = $eccubeConfig;
         $this->purchaseFlow = $cartPurchaseFlow;
         $this->securityContext = $securityContext;
+        $this->setTypes($types);
+        $this->setFormFactory($formFactory);
     }
 
     public function getName(): string
@@ -62,71 +68,14 @@ class CartModifyMutation implements Mutation
         return 'cartModify';
     }
 
-    public function getMutation(): array
+    public function getArgsType(): string
     {
-        return [
-            'type' => $this->types->get(Cart::class),
-            'args' => [
-                'product_class_id' => [
-                    'type' => Type::nonNull(Type::id()),
-                    'description' => trans('api.cart_modify.args.description.product_class_id'),
-                ],
-                'quantity' => [
-                    'type' => Type::nonNull(Type::int()),
-                    'description' => trans('api.cart_modify.args.description.quantity'),
-                ],
-            ],
-            'resolve' => [$this, 'updateCart'],
-        ];
+        return AddCartType::class;
     }
 
-    /**
-     * 引数の検証
-     *
-     * @throws InvalidArgumentException
-     */
-    private function validateArgs(array $args): void
+    public function getTypesClass(): string
     {
-        $validator = Validation::createValidator();
-        $constraint = $this->getConstraint();
-        $violations = $validator->validate($args, $constraint);
-
-        if (count($violations)) {
-            $message = '';
-            /** @var ConstraintViolationInterface $violation */
-            foreach ($violations as $violation) {
-                $message .= sprintf('%s: %s;', $violation->getPropertyPath(), $violation->getMessage());
-            }
-            throw new InvalidArgumentException($message);
-        }
-    }
-
-    private function getConstraint(): Constraint
-    {
-        return new Assert\Collection([
-            'fields' => [
-                'product_class_id' => new Assert\GreaterThan(0),
-                'quantity' => new Assert\GreaterThanOrEqual(0),
-            ],
-            'allowMissingFields' => false,
-        ]);
-    }
-
-    /**
-     * 閲覧可能な商品かどうかを判定
-     *
-     * @param Product $Product
-     *
-     * @return boolean 閲覧可能な場合はtrue
-     */
-    protected function checkVisibility(Product $Product): bool
-    {
-        // 公開ステータスでない商品は表示しない.
-        if ($Product->getStatus()->getId() !== ProductStatus::DISPLAY_SHOW) {
-            return false;
-        }
-
-        return true;
+        return Cart::class;
     }
 
     /**
@@ -137,25 +86,10 @@ class CartModifyMutation implements Mutation
      *
      * @throws InvalidArgumentException
      */
-    public function updateCart($root, $args)
+    public function executeMutation($root, array $args): mixed
     {
-        // 引数の検証
-        $this->validateArgs($args);
-
         /** @var ProductClass|null $productClass */
         $productClass = $this->productClassRepository->find($args['product_class_id']);
-
-        if (!$productClass) {
-            // @TODO: エラーメッセージを作成
-            throw new InvalidArgumentException();
-        }
-
-        // エラーメッセージの配列
-        $errorMessages = [];
-        if (!$this->checkVisibility($productClass->getProduct())) {
-            // @TODO: エラーメッセージを作成
-            throw new InvalidArgumentException();
-        }
 
         log_info(
             'カート追加処理開始',
@@ -196,20 +130,7 @@ class CartModifyMutation implements Mutation
             ]
         );
 
-        // 初期化
-        $messages = [];
-
-        if (empty($errorMessages)) {
-            // エラーが発生していない場合
-            $done = true;
-            array_push($messages, trans('front.product.add_cart_complete'));
-        } else {
-            // エラーが発生している場合
-            $done = false;
-            $messages = $errorMessages;
-        }
-
         // @TODO: Cartの配列を返すようにする
-        return $Carts[0];
+         return $Carts[0];
     }
 }
