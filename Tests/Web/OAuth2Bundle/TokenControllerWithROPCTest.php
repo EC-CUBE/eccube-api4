@@ -46,7 +46,7 @@ class TokenControllerWithROPCTest extends AbstractWebTestCase
                 'client_id' => $this->OAuth2Client->getIdentifier(),
                 'username' => $this->Customer->getEmail(),
                 'password' => 'password',
-                'scope' => 'read write'
+                'scope' => 'read:Product write:Product'
             ]
         );
 
@@ -73,8 +73,8 @@ class TokenControllerWithROPCTest extends AbstractWebTestCase
         $Client = new Client('', $client_id, null); // public client
         $Client
             ->setScopes(
-                new Scope('read'),
-                new Scope('write')
+                new Scope('read:Product'),
+                new Scope('write:Product')
             )
             ->setRedirectUris(new RedirectUri('http://127.0.0.1:8000/'))
             ->setGrants(

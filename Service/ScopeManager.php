@@ -54,4 +54,9 @@ class ScopeManager implements ScopeManagerInterface
     {
         // NOP
     }
+
+    public function getScopes(): array
+    {
+        return $this->scopes;
+    }
 }

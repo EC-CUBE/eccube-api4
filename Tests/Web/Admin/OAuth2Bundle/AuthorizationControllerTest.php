@@ -46,7 +46,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
                                        'client_id' => $Client->getIdentifier(),
                                        'redirect_uri' => (string) current($Client->getRedirectUris()),
                                        'response_type' => 'code',
-                                       'scope' => 'read',
+                                       'scope' => 'read:Product',
                                        'state' => 'xxx',
                                    ]
                                )
@@ -69,7 +69,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
                 'client_id' => $Client->getIdentifier(),
                 'redirect_uri' => (string) current($Client->getRedirectUris()),
                 'response_type' => 'code',
-                'scope' => 'read',
+                'scope' => 'read:Product',
                 'state' => 'xxx',
             ]
         );
@@ -82,7 +82,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
                 'client_secret' => $Client->getSecret(),
                 'redirect_uri' => current($Client->getRedirectUris()),
                 'response_type' => 'code',
-                'scope' => 'read',
+                'scope' => 'read:Product',
                 'state' => 'xxx',
                 'approve' => '',
                 Constant::TOKEN_NAME => 'dummy',
@@ -114,7 +114,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
                 'client_id' => $Client->getIdentifier(),
                 'redirect_uri' => (string) current($Client->getRedirectUris()),
                 'response_type' => 'code',
-                'scope' => 'read',
+                'scope' => 'read:Product',
                 'state' => 'xxx',
             ]
         );
@@ -127,7 +127,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
                 'client_secret' => $Client->getSecret(),
                 'redirect_uri' => current($Client->getRedirectUris()),
                 'response_type' => 'code',
-                'scope' => 'read',
+                'scope' => 'read:Product',
                 'state' => 'xxx',
                 'deny' => '',
                 Constant::TOKEN_NAME => 'dummy',
@@ -187,7 +187,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         $client_secret = hash('sha256', random_bytes(32));
         $Client = new Client('', $client_id, $client_secret);
         $Client
-            ->setScopes(new Scope('read'))
+            ->setScopes(new Scope('read:Product'))
             ->setRedirectUris(new RedirectUri('http://127.0.0.1:8000/'))
             ->setGrants(
                 new Grant(OAuth2Grants::AUTHORIZATION_CODE),

@@ -19,9 +19,8 @@ use Eccube\Form\FormError;
 use Eccube\Form\FormEvent;
 use Eccube\Form\Type\AbstractType;
 use Eccube\Validator\Constraints as Assert;
-use GraphQL\Type\Definition\ObjectType;
 use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api42\Service\ScopeManager;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -31,7 +30,8 @@ class ClientType extends AbstractType
      * @var EccubeConfig
      */
     protected $eccubeConfig;
-    private Types $types;
+
+    private ScopeManager $scopeManager;
 
     /**
      * ClientType constructor.
@@ -40,10 +40,10 @@ class ClientType extends AbstractType
      */
     public function __construct(
         EccubeConfig $eccubeConfig,
-        Types $types
+        ScopeManager $scopeManager
     ) {
         $this->eccubeConfig = $eccubeConfig;
-        $this->types = $types;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
@@ -53,21 +53,11 @@ class ClientType extends AbstractType
      */
     public function buildForm(FormBuilder $builder, array $options)
     {
-        $allTypes = array_filter($this->types->getAll(), function (ObjectType $type) {
-            return !empty($type->getFields());
-        });
-        asort($allTypes);
-        $scopes = array_reduce(
-            $allTypes,
-            function ($acc, $type) {
-                $read = 'read:'.$type->name;
-                $write = 'write:'.$type->name;
-                $acc[$read] = $read;
-                $acc[$write] = $write;
-
-                return $acc;
-            },
-            []);
+        $scopes = array_reduce($this->scopeManager->getScopes(), function ($acc, $val) {
+            $scope = (string) $val;
+            $acc[$scope] = $scope;
+            return $acc;
+        }, []);
 
         $builder
             ->add('identifier', TextType::class, [
