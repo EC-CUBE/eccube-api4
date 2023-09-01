@@ -165,17 +165,20 @@
   }
 }
 `;
-      const graphQLFetcher = graphQLParams =>
-        fetch('{{ url('admin_api_graphiql_api') }}', {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json',
-            'ECCUBE-CSRF-TOKEN': '{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}'
-          },
-          body: JSON.stringify(graphQLParams),
-        })
-          .then(response => response.json())
-          .catch(() => response.text());
+     const graphQLFetcher = (graphQLParams, opts) => {
+         const { headers = {} } = opts;
+         return fetch('{{ url('admin_api_graphiql_api') }}', {
+             method: 'post',
+             headers: {
+                 'Content-Type': 'application/json',
+                 'ECCUBE-CSRF-TOKEN': '{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}',
+                 ...headers,
+             },
+             body: JSON.stringify(graphQLParams),
+         })
+             .then(response => response.json())
+             .catch(() => response.text());
+     };
       ReactDOM.render(
         React.createElement(GraphiQL, { fetcher: graphQLFetcher, defaultQuery: defaultQuery }),
         document.getElementById('graphiql'),
