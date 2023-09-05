@@ -13,21 +13,40 @@
 
 namespace Plugin\Api42\GraphQL;
 
-use ArrayObject;
+use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\ObjectType;
+use Plugin\Api42\GraphQL\Type\ConnectionType;
 
 class Schema extends \GraphQL\Type\Schema
 {
     public function __construct(
         Types $types,
-        ArrayObject $queries,
-        ArrayObject $mutations
+        \ArrayObject $queries,
+        \ArrayObject $mutations,
+        EntityAccessPolicy $entityAccessPolicy
     ) {
         parent::__construct([
             'query' => new ObjectType([
                 'name' => 'Query',
-                'fields' => array_reduce($queries->getArrayCopy(), function ($acc, Query $query) {
-                    $acc[$query->getName()] = $query->getQuery();
+                'fields' => static fn () => array_reduce($queries->getArrayCopy(), function ($acc, Query $query) use ($entityAccessPolicy) {
+                    $q = $query->getQuery();
+                    $entityClass = null;
+                    switch (get_class($q['type'])) {
+                        case ObjectType::class:
+                        case ConnectionType::class:
+                            $entityClass = $q['type']->config['entityClass'];
+                            break;
+                        case ListOfType::class:
+                            $entityClass = $q['type']->getOfType()->config['entityClass'];
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if ($entityAccessPolicy->canReadEntity($entityClass)) {
+                        $acc[$query->getName()] = $q;
+                    }
+
                     return $acc;
                 }, []),
                 'typeLoader' => function ($name) use ($types) {
@@ -38,6 +57,7 @@ class Schema extends \GraphQL\Type\Schema
                 'name' => 'Mutation',
                 'fields' => array_reduce($mutations->getArrayCopy(), function ($acc, Mutation $mutation) {
                     $acc[$mutation->getName()] = $mutation->getMutation();
+
                     return $acc;
                 }, []),
                 'typeLoader' => function ($name) use ($types) {

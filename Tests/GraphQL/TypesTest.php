@@ -34,7 +34,7 @@ class TypesTest extends EccubeTestCase
     /**
      * @dataProvider hideSensitiveFieldsProvider
      */
-    public function testHideSensitiveFields($entityClass, $field, $expectExists)
+    public function testHideSensitiveFieldsForGuestUser($entityClass, $field, $expectExists)
     {
         $type = $this->types->get($entityClass);
 
@@ -45,13 +45,13 @@ class TypesTest extends EccubeTestCase
     {
         return [
             [Product::class, 'name', true],
-            [Product::class, 'Creator', true],
+            [Product::class, 'Creator', false],
             [Customer::class, 'name01', true],
             [Customer::class, 'password', false],
             [Customer::class, 'reset_key', false],
             [Customer::class, 'salt', false],
             [Customer::class, 'secret_key', false],
-            [Member::class, 'name', true],
+            [Member::class, 'name', false],
             [Member::class, 'password', false],
             [Member::class, 'salt', false],
             [BaseInfo::class, 'authentication_key', false],

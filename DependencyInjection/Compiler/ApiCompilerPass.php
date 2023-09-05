@@ -15,6 +15,7 @@ namespace Plugin\Api42\DependencyInjection\Compiler;
 
 use League\OAuth2\Server\CryptKey;
 use Plugin\Api42\GraphQL\AllowList;
+use Plugin\Api42\GraphQL\EntityAccessPolicy;
 use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Query;
 use Plugin\Api42\GraphQL\Types;
@@ -68,12 +69,18 @@ class ApiCompilerPass implements CompilerPassInterface
 
     private function configureAllowList(ContainerBuilder $container)
     {
-        $ids = $container->findTaggedServiceIds('eccube.api.allow_list');
-        $typesDef = $container->getDefinition(Types::class);
-        foreach ($ids as $id => $tags) {
-            $definition = $container->getDefinition($id);
-            $definition->setClass(AllowList::class);
-            $typesDef->addMethodCall('addAllowList', [new Reference($id)]);
+        $config = [
+            'eccube.api.allow_list' => 'addAllowList',
+            'eccube.api.front.allow_list' => 'addFrontAllowList',
+        ];
+        $policyDef = $container->getDefinition(EntityAccessPolicy::class);
+        foreach ($config as $key => $method) {
+            $ids = $container->findTaggedServiceIds($key);
+            foreach ($ids as $id => $tags) {
+                $definition = $container->getDefinition($id);
+                $definition->setClass(AllowList::class);
+                $policyDef->addMethodCall($method, [new Reference($id)]);
+            }
         }
     }
 
