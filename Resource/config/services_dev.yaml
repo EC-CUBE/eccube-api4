@@ -1,0 +1,4 @@
+services:
+    Eccube\Security\SecurityContext:
+        class: Plugin\Api42\Security\GraphiQLSecurityContext
+        autowire: true

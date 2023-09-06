@@ -14,14 +14,14 @@
 namespace Plugin\Api42\Tests\Web;
 
 use Eccube\Tests\Web\AbstractWebTestCase;
-use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Entity\Scope;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
 class ApiControllerTest extends AbstractWebTestCase
 {
@@ -51,11 +51,12 @@ class ApiControllerTest extends AbstractWebTestCase
      */
     public function testPermission($scopes, $query, $expectedErrorMessage = null)
     {
-        $this->markTestSkipped('一時的にScopeValidationRuleを無効にしているのでスキップする');
-        $token = $this->newAccessToken($scopes);
-        $this->client->request('POST', $this->generateUrl('api'), [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ], json_encode(['query' => $query]));
+        $headers = [];
+        if ($scopes) {
+            $token = $this->newAccessToken($scopes);
+            $headers = ['HTTP_AUTHORIZATION' => 'Bearer '.$token];
+        }
+        $this->client->request('POST', $this->generateUrl('api'), [], [], $headers, json_encode(['query' => $query]));
 
         self::assertEquals(200, $this->client->getResponse()->getStatusCode());
 
@@ -64,22 +65,22 @@ class ApiControllerTest extends AbstractWebTestCase
         if ($expectedErrorMessage) {
             self::assertEquals($expectedErrorMessage, $payload['errors'][0]['message']);
         } else {
-            self::assertFalse(isset($payload['errors']));
+            self::assertFalse(isset($payload['errors']), json_encode(@$payload['errors']));
         }
     }
 
     public function permissionProvider()
     {
-        $query = '{ product(id:1) { id, name } }';
-        $mutation = 'mutation { updateProductStock(code: "sand-01", stock: 10, stock_unlimited:false) { id } }';
-
         return [
-            [['read'],  $query],
-            [['write'], $query, 'Insufficient permission. (read)'],
-            [['read', 'write'], $query],
-            [['read'], $mutation, 'Insufficient permission. (read,write)'],
-            [['write'], $mutation, 'Insufficient permission. (read,write)'],
-            [['read', 'write'], $mutation],
+            [['read:Product'],  '{ product(id:1) { id, name } }'],
+            [['read:Product'],  '{ customer(id:1) { id } }', 'Cannot query field "customer" on type "Query".'],
+            [['read:Customer'],  '{ customer(id:1) { id } }'],
+            [['read:Product'],  '{ product(id:1) { id, name, ProductClasses { id } } }', 'Cannot query field "ProductClasses" on type "Product".'],
+            [['read:Product', 'read:ProductClass'],  '{ product(id:1) { id, name, ProductClasses { id } } }'],
+            [['read:Product', 'read:Member'],  '{ product(id:1) { id, name, Creator { id } } }'],
+            [['read:Customer'],  '{ customer(id:1) { id, password } }', 'Cannot query field "password" on type "Customer".'],
+            [null,  '{ product(id:1) { id, name } }'],
+            [null,  '{ product(id:1) { id, name, Creator { id } } }', 'Cannot query field "Creator" on type "Product".'],
         ];
     }
 

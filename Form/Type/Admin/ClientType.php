@@ -14,15 +14,15 @@
 namespace Plugin\Api42\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
-use Eccube\Form\FormError;
-use Exception;
 use Eccube\Form\FormBuilder;
+use Eccube\Form\FormError;
 use Eccube\Form\FormEvent;
 use Eccube\Form\Type\AbstractType;
 use Eccube\Validator\Constraints as Assert;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
+use Plugin\Api42\Service\ScopeManager;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 
 class ClientType extends AbstractType
 {
@@ -31,24 +31,34 @@ class ClientType extends AbstractType
      */
     protected $eccubeConfig;
 
+    private ScopeManager $scopeManager;
+
     /**
      * ClientType constructor.
      *
      * @param EccubeConfig $eccubeConfig
      */
     public function __construct(
-        EccubeConfig $eccubeConfig
+        EccubeConfig $eccubeConfig,
+        ScopeManager $scopeManager
     ) {
         $this->eccubeConfig = $eccubeConfig;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
      * {@inheritdoc}
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function buildForm(FormBuilder $builder, array $options)
     {
+        $scopes = array_reduce($this->scopeManager->getScopes(), function ($acc, $val) {
+            $scope = (string) $val;
+            $acc[$scope] = $scope;
+            return $acc;
+        }, []);
+
         $builder
             ->add('identifier', TextType::class, [
                 'mapped' => false,
@@ -68,10 +78,7 @@ class ClientType extends AbstractType
                 ],
             ])
             ->add('scopes', ChoiceType::class, [
-                'choices'  => [
-                    'read' => 'read',
-                    'write' => 'write',
-                ],
+                'choices' => $scopes,
                 'expanded' => true,
                 'multiple' => true,
                 'mapped' => false,
@@ -88,7 +95,7 @@ class ClientType extends AbstractType
                 ],
             ])
             ->add('grants', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Authorization code' => OAuth2Grants::AUTHORIZATION_CODE,
                     'Password' => OAuth2Grants::PASSWORD,
                 ],

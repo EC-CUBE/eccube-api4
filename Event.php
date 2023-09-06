@@ -28,8 +28,7 @@ class Event implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::RESPONSE => 'onKernelRequest',
-            KernelEvents::EXCEPTION => 'onKernelRequest',
+            KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }
 
@@ -38,7 +37,7 @@ class Event implements EventSubscriberInterface
      *
      * @return void
      */
-    public function onKernelRequest(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
         if ($request->getMethod() === 'OPTIONS' || $request->getMethod() === 'POST' && ($request->attributes->get('_route') === 'oauth2_token' || $request->attributes->get('_route') === 'oauth2_authorize') || $request->attributes->get('_route') === 'api') {
