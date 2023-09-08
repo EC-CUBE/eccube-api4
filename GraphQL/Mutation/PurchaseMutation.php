@@ -84,20 +84,22 @@ class PurchaseMutation implements Mutation
     {
         $Customer = $this->securityContext->getLoginUser();
         if (!$Customer instanceof Customer) {
-            throw new InvalidArgumentException('ログインしていません');
+            throw new ShoppingException('ログインしていません');
         }
         // ログイン状態のチェック.
         if ($this->orderHelper->isLoginRequired()) {
-            log_info('[注文処理] 未ログインもしくはRememberMeログインのため, ログイン画面に遷移します.');
-            throw new InvalidArgumentException();
+            $message = '[注文処理] 未ログインもしくはRememberMeログインのため, ログイン画面に遷移します.';
+            log_info($message);
+            throw new ShoppingException($message);
         }
 
         // 受注の存在チェック
         $preOrderId = $this->cartService->getPreOrderId();
         $Order = $this->orderHelper->getPurchaseProcessingOrder($preOrderId);
         if (!$Order) {
-            log_info('[注文処理] 購入処理中の受注が存在しません.', [$preOrderId]);
-            throw new InvalidArgumentException();
+            $message = '[注文処理] 購入処理中の受注が存在しません.';
+            log_info($message, [$preOrderId]);
+            throw new ShoppingException($message);
         }
 
         log_info('[注文処理] 注文処理を開始します.', [$Order->getId()]);
@@ -163,13 +165,13 @@ class PurchaseMutation implements Mutation
 
             $this->entityManager->rollback();
 
-            throw new InvalidArgumentException($e->getMessage());
+            throw new ShoppingException($e->getMessage());
         } catch (\Exception $e) {
             log_error('[注文処理] 予期しないエラーが発生しました.', [$e->getMessage()]);
 
             // $this->entityManager->rollback(); FIXME ユニットテストで There is no active transaction エラーになってしまう
 
-            throw new InvalidArgumentException($e->getMessage());
+            throw new ShoppingException($e->getMessage());
         }
 
         // カート削除
@@ -216,10 +218,10 @@ class PurchaseMutation implements Mutation
         /** @var PurchaseFlowResult $flowResult */
         $flowResult = $this->purchaseFlow->validate($itemHolder, new PurchaseContext(clone $itemHolder, $itemHolder->getCustomer()));
         foreach ($flowResult->getWarning() as $warning) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException(); // FIXME AbstractMutation::addWarning()を実装する
         }
         foreach ($flowResult->getErrors() as $error) {
-            throw new InvalidArgumentException();
+            throw new ShoppingException($error->getMessage());
         }
 
         if (!$returnResponse) {
@@ -307,7 +309,7 @@ class PurchaseMutation implements Mutation
         if (!$PaymentResult->isSuccess()) {
             $this->entityManager->rollback();
             foreach ($PaymentResult->getErrors() as $error) {
-                throw new InvalidArgumentException($error->getMessage());
+                throw new ShoppingException($error->getMessage());
             }
 
             log_info('[注文処理] PaymentMethod::checkoutのエラーのため, 購入エラー画面へ遷移します.', [$PaymentResult->getErrors()]);

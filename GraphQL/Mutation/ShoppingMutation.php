@@ -26,6 +26,7 @@ use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseFlow;
 use Eccube\Service\PurchaseFlow\PurchaseFlowResult;
 use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Error\ShoppingException;
 use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Types;
 
@@ -80,15 +81,17 @@ class ShoppingMutation implements Mutation
 
         // ログイン状態のチェック.
         if ($this->orderHelper->isLoginRequired()) {
-            log_info('[注文手続] 未ログインもしくはRememberMeログインのため, ログイン画面に遷移します.');
-            throw new InvalidArgumentException();
+            $message = '[注文手続] 未ログインもしくはRememberMeログインのため, ログイン画面に遷移します.';
+            log_info($mssage);
+            throw new ShoppingException($message);
         }
 
         // カートチェック.
         $Cart = $this->cartService->getCart();
         if (!($Cart && $this->orderHelper->verifyCart($Cart))) {
-            log_info('[注文手続] カートが購入フローへ遷移できない状態のため, カート画面に遷移します.');
-            throw new InvalidArgumentException();
+            $message = '[注文手続] カートが購入フローへ遷移できない状態のため, カート画面に遷移します.';
+            log_info($mssage);
+            throw new ShoppingException($message);
         }
 
         // 受注の初期化.
@@ -102,8 +105,9 @@ class ShoppingMutation implements Mutation
         $this->entityManager->flush();
 
         if ($flowResult->hasError()) {
-            log_info('[注文手続] Errorが発生したため購入エラー画面へ遷移します.', [$flowResult->getErrors()]);
-            throw new InvalidArgumentException();
+            $message = '[注文手続] Errorが発生したため購入エラー画面へ遷移します.';
+            log_info($message, [$flowResult->getErrors()]);
+            throw new ShoppingException($message);
         }
 
         if ($flowResult->hasWarning()) {
@@ -138,24 +142,14 @@ class ShoppingMutation implements Mutation
     {
         $flowResult = $this->cartPurchaseFlow->validate($itemHolder, new PurchaseContext(clone $itemHolder, $itemHolder->getCustomer()));
         foreach ($flowResult->getWarning() as $warning) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException(); // TODO AbstractMutation::addWaring を使用する
         }
         foreach ($flowResult->getErrors() as $error) {
-            throw new InvalidArgumentException();
+            throw new ShoppingException($error->getMessage());
         }
 
         if (!$returnResponse) {
             return $flowResult;
-        }
-
-        if ($flowResult->hasError()) {
-            log_info('Errorが発生したため購入エラー画面へ遷移します.', [$flowResult->getErrors()]);
-            throw new InvalidArgumentException();
-        }
-
-        if ($flowResult->hasWarning()) {
-            log_info('Warningが発生したため注文手続き画面へ遷移します.', [$flowResult->getWarning()]);
-            throw new InvalidArgumentException();
         }
 
         return null;
