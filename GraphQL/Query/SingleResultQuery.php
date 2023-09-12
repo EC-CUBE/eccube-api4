@@ -13,7 +13,6 @@
 
 namespace Plugin\Api42\GraphQL\Query;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use GraphQL\Type\Definition\Type;
 use Plugin\Api42\GraphQL\Error\ItemNotFoundException;
@@ -77,7 +76,7 @@ abstract class SingleResultQuery implements Query
             ],
             'resolve' => function ($root, $args) {
                 return $this->entityManager->getRepository($this->entityClass)->find($args['id']) === null ?
-                    throw new ItemNotFoundException(entityName: $this->entityClass) : $this->entityManager->getRepository($this->entityClass)->find($args['id']);
+                    throw new ItemNotFoundException(message: "$this->entityClass not found") : $this->entityManager->getRepository($this->entityClass)->find($args['id']);
             },
         ];
     }
