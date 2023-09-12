@@ -19,9 +19,6 @@ class ItemNotFoundException extends Danger implements ClientAware
 {
     public function __construct($message = '', $nodes = null, $source = null, $positions = [], $path = null, $previous = null, $extensions = [], $entityName = '')
     {
-        if ($message === '' && $entityName !== '') {
-            $message = "$entityName not found";
-        }
         parent::__construct(message: $message, extensions: array_merge($extensions, ['type' => 'ItemNotFound']));
     }
 }
