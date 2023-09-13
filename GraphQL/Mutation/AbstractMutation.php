@@ -58,6 +58,7 @@ abstract class AbstractMutation implements Mutation
     {
         $fields = [];
         $this->convertArgs($form, $fields);
+
         return new InputObjectType([
             'name' => $form->getName().'Input',
             'fields' => $fields,
@@ -133,16 +134,18 @@ abstract class AbstractMutation implements Mutation
 
     public function getMutation(): array
     {
+        $args = [];
         $builder = $this->formFactory->createBuilder($this->getArgsType(), null, ['csrf_protection' => false]);
         $form = $builder->getForm();
+        if ($form->getName() !== 'form') {
+            $args['input'] = [
+                'type' => $this->getInputObject($form),
+            ];
+        }
 
         return [
             'type' => $this->types->get($this->getTypesClass()),
-            'args' => [
-                'input' => [
-                    'type' => $this->getInputObject($form),
-                ],
-            ],
+            'args' => $args,
             'resolve' => function ($value, array $args, $context, ResolveInfo $info) use ($form) {
                 return $this->resolver($value, $args, $context, $info, $form);
             }
@@ -198,7 +201,9 @@ abstract class AbstractMutation implements Mutation
     protected function resolver($value, array $args, $context, ResolveInfo $info, FormInterface $form): mixed
     {
         $formValues = [];
-        $this->convertFormValues($form, $formValues, $args['input']);
+        if (array_key_exists('input', $args)) {
+            $this->convertFormValues($form, $formValues, $args['input']);
+        }
 
         $form->submit($formValues);
         if (!$form->isValid()) {

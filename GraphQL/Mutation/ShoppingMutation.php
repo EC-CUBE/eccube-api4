@@ -27,10 +27,11 @@ use Eccube\Service\PurchaseFlow\PurchaseFlow;
 use Eccube\Service\PurchaseFlow\PurchaseFlowResult;
 use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api42\GraphQL\Error\ShoppingException;
-use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Types;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormFactoryInterface;
 
-class ShoppingMutation implements Mutation
+class ShoppingMutation extends AbstractMutation
 {
     private Types $types;
 
@@ -47,13 +48,15 @@ class ShoppingMutation implements Mutation
         OrderHelper $orderHelper,
         SecurityContext $securityContext,
         PurchaseFlow $cartPurchaseFlow,
+        FormFactoryInterface $formFactory,
     ) {
-        $this->types = $types;
         $this->entityManager = $entityManager;
         $this->cartService = $cartService;
         $this->orderHelper = $orderHelper;
         $this->securityContext = $securityContext;
         $this->cartPurchaseFlow = $cartPurchaseFlow;
+        $this->setTypes($types);
+        $this->setFormFactory($formFactory);
     }
 
     public function getName(): string
@@ -61,21 +64,23 @@ class ShoppingMutation implements Mutation
         return 'orderMutation';
     }
 
-    public function getMutation(): array
+    public function getTypesClass(): string
     {
-        return [
-            'type' => $this->types->get(Order::class),
-            'args' => [],
-            'resolve' => [$this, 'orderMutation'],
-        ];
+        return Order::class;
+    }
+
+    public function getArgsType(): string
+    {
+        return FormType::class;
     }
 
     /**
+     * @return Order|null
      * @throws InvalidArgumentException
      * @throws ORMException
      * @throws ForeignKeyConstraintViolationException
      */
-    public function orderMutation($root, $args): ?Order
+    public function executeMutation($root, $args): mixed
     {
         $user = $this->securityContext->getLoginUser();
 
@@ -142,7 +147,7 @@ class ShoppingMutation implements Mutation
     {
         $flowResult = $this->cartPurchaseFlow->validate($itemHolder, new PurchaseContext(clone $itemHolder, $itemHolder->getCustomer()));
         foreach ($flowResult->getWarning() as $warning) {
-            throw new InvalidArgumentException(); // TODO AbstractMutation::addWaring を使用する
+            $this->addWarning($warning->getMessage());
         }
         foreach ($flowResult->getErrors() as $error) {
             throw new ShoppingException($error->getMessage());

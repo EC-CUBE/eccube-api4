@@ -31,13 +31,12 @@ use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseFlow;
 use Eccube\Service\PurchaseFlow\PurchaseFlowResult;
 use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Types;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormFactoryInterface;
 
-class PurchaseMutation implements Mutation
+class PurchaseMutation extends AbstractMutation
 {
-    private Types $types;
-
     private EntityManager $entityManager;
     private CartService $cartService;
     private OrderHelper $orderHelper;
@@ -55,8 +54,8 @@ class PurchaseMutation implements Mutation
         PurchaseFlow $cartPurchaseFlow,
         PaymentMethodLocator $locator,
         MailService $mailService,
+        FormFactoryInterface $formFactory,
     ) {
-        $this->types = $types;
         $this->entityManager = $entityManager;
         $this->cartService = $cartService;
         $this->orderHelper = $orderHelper;
@@ -64,6 +63,8 @@ class PurchaseMutation implements Mutation
         $this->cartPurchaseFlow = $cartPurchaseFlow;
         $this->locator = $locator;
         $this->mailService = $mailService;
+        $this->setTypes($types);
+        $this->setFormFactory($formFactory);
     }
 
     public function getName(): string
@@ -71,16 +72,17 @@ class PurchaseMutation implements Mutation
         return 'purchaseMutation';
     }
 
-    public function getMutation(): array
+    public function getTypesClass(): string
     {
-        return [
-            'type' => $this->types->get(Order::class),
-            'args' => [],
-            'resolve' => [$this, 'purchaseMutation'],
-        ];
+        return Order::class;
     }
 
-    public function purchaseMutation()
+    public function getArgsType(): string
+    {
+        return FormType::class;
+    }
+
+    public function executeMutation($root, array $args): mixed
     {
         $Customer = $this->securityContext->getLoginUser();
         if (!$Customer instanceof Customer) {
@@ -218,7 +220,7 @@ class PurchaseMutation implements Mutation
         /** @var PurchaseFlowResult $flowResult */
         $flowResult = $this->purchaseFlow->validate($itemHolder, new PurchaseContext(clone $itemHolder, $itemHolder->getCustomer()));
         foreach ($flowResult->getWarning() as $warning) {
-            throw new InvalidArgumentException(); // FIXME AbstractMutation::addWarning()を実装する
+            $this->addWarning($warning->getMessage());
         }
         foreach ($flowResult->getErrors() as $error) {
             throw new ShoppingException($error->getMessage());
