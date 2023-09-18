@@ -90,17 +90,3 @@ abstract class MultipleResultQuery implements Query
         ];
     }
 }
-
-/*public function getQuery()
-{
-    return [
-        'type' => $this->types->get($this->entityClass),
-        'args' => [
-            'id' => Type::nonNull(Type::id()),
-        ],
-        'resolve' => function ($root, $args) {
-            return $this->entityManager->getRepository($this->entityClass)->find($args['id']);
-        },
-    ];
-
-}*/

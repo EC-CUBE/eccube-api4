@@ -13,9 +13,9 @@
 
 namespace Plugin\Api42\GraphQL\Query;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use GraphQL\Type\Definition\Type;
+use Plugin\Api42\GraphQL\Error\ItemNotFoundException;
 use Plugin\Api42\GraphQL\Query;
 use Plugin\Api42\GraphQL\Types;
 
@@ -24,17 +24,17 @@ abstract class SingleResultQuery implements Query
     /**
      * @var string
      */
-    private $entityClass;
+    private string $entityClass;
 
     /**
      * @var Types
      */
-    private $types;
+    private Types $types;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * SingleResultQuery constructor.
@@ -46,15 +46,17 @@ abstract class SingleResultQuery implements Query
 
     /**
      * @param EntityManagerInterface $entityManager
+     *
      * @required
      */
-    public function setEntityManager(EntityManagerInterface $entityManager)
+    public function setEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->entityManager = $entityManager;
     }
 
     /**
      * @param Types $types
+     *
      * @required
      */
     public function setTypes(Types $types): void
@@ -62,7 +64,10 @@ abstract class SingleResultQuery implements Query
         $this->types = $types;
     }
 
-    public function getQuery()
+    /**
+     * @return array
+     */
+    public function getQuery(): array
     {
         return [
             'type' => $this->types->get($this->entityClass),
@@ -70,9 +75,9 @@ abstract class SingleResultQuery implements Query
                 'id' => Type::nonNull(Type::id()),
             ],
             'resolve' => function ($root, $args) {
-                return $this->entityManager->getRepository($this->entityClass)->find($args['id']);
+                return $this->entityManager->getRepository($this->entityClass)->find($args['id']) === null ?
+                    throw new ItemNotFoundException(message: "$this->entityClass not found") : $this->entityManager->getRepository($this->entityClass)->find($args['id']);
             },
         ];
-
     }
 }

@@ -74,7 +74,7 @@ class ApiControllerTest extends AbstractWebTestCase
         return [
             [['read:Product'],  '{ product(id:1) { id, name } }'],
             [['read:Product'],  '{ customer(id:1) { id } }', 'Cannot query field "customer" on type "Query".'],
-            [['read:Customer'],  '{ customer(id:1) { id } }'],
+            [['read:Customer'],  '{ customer(id:1) { id } }', 'Eccube\\Entity\\Customer not found'],
             [['read:Product'],  '{ product(id:1) { id, name, ProductClasses { id } } }', 'Cannot query field "ProductClasses" on type "Product".'],
             [['read:Product', 'read:ProductClass'],  '{ product(id:1) { id, name, ProductClasses { id } } }'],
             [['read:Product', 'read:Member'],  '{ product(id:1) { id, name, Creator { id } } }'],
