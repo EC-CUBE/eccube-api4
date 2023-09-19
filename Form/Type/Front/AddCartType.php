@@ -22,6 +22,7 @@ use Eccube\Form\FormEvent;
 use Eccube\Form\Type\AbstractType;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Validator\Constraints as Assert;
+use Plugin\Api42\Form\Type\IdType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class AddCartType extends AbstractType
@@ -48,7 +49,7 @@ class AddCartType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         $builder
-            ->add('product_class_id', IntegerType::class, [
+            ->add('product_class_id', IdType::class, [
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Regex(['pattern' => '/^\d+$/']),

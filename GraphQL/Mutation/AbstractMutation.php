@@ -22,6 +22,7 @@ use GraphQL\Error\Error;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Plugin\Api42\Form\Type\IdType;
 use Plugin\Api42\GraphQL\Error\FormValidationException;
 use Plugin\Api42\GraphQL\Error\Info;
 use Plugin\Api42\GraphQL\Error\Warning;
@@ -81,6 +82,7 @@ abstract class AbstractMutation implements Mutation
             RepeatedEmailType::class,
             RepeatedPasswordType::class,
             IntegerType::class,
+            IdType::class,
         ];
         $innerType = $formConfig->getType()->getInnerType();
 
@@ -96,9 +98,12 @@ abstract class AbstractMutation implements Mutation
         if (in_array($typeClass, $innerTypes) || count($form) === 0) {
             $type = Type::string();
             if ($innerType->getParent() === MasterType::class) {
-                $type = Type::int();
+                $type = Type::Id();
             }
             switch ($typeClass) {
+                case IdType::class:
+                    $type = Type::id();
+                    break;
                 case IntegerType::class:
                     $type = Type::int();
                     break;
