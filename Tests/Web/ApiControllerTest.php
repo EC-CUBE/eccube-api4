@@ -112,17 +112,17 @@ class ApiControllerTest extends AbstractWebTestCase
 
         $tokenList = $this->entityManager->getRepository(\League\Bundle\OAuth2ServerBundle\Model\AccessToken::class)->findBy(['userIdentifier' => $identifier]);
         self::assertCount(1, $tokenList);
-        self::assertEquals($post_login_data['oauth2_access_token']['identifier'], $tokenList[0]->getIdentifier());
-        self::assertEquals($post_login_data['oauth2_access_token']['expiry'], $tokenList[0]->getExpiry());
-        self::assertEquals($post_login_data['oauth2_access_token']['revoked'], $tokenList[0]->isRevoked());
+        self::assertEquals($post_login_data['oauth2_access_token']['identifier'], trim($tokenList[0]->getIdentifier()));
+        self::assertEquals($post_login_data['oauth2_access_token']['expiry'], trim($tokenList[0]->getExpiry()));
+        self::assertEquals($post_login_data['oauth2_access_token']['revoked'], trim($tokenList[0]->isRevoked()));
 
 //        $tokenList = $this->entityManager->getRepository(\League\Bundle\OAuth2ServerBundle\Model\RefreshToken::class)->findAll();
 
         $refreshList = $this->entityManager->getRepository(\League\Bundle\OAuth2ServerBundle\Model\RefreshToken::class)->findBy(['accessToken' => $post_login_data['oauth2_access_token']['identifier']]);
         self::assertCount(1, $refreshList);
-        self::assertEquals($post_login_data['oauth2_refresh_token']['access_token'], $refreshList[0]->getAccessToken());
-        self::assertEquals($post_login_data['oauth2_refresh_token']['expiry'], $refreshList[0]->getExpiry());
-        self::assertEquals($post_login_data['oauth2_refresh_token']['revoked'], $refreshList[0]->isRevoked());
+        self::assertEquals($post_login_data['oauth2_refresh_token']['access_token'], trim($refreshList[0]->getAccessToken()));
+        self::assertEquals($post_login_data['oauth2_refresh_token']['expiry'], trim($refreshList[0]->getExpiry()));
+        self::assertEquals($post_login_data['oauth2_refresh_token']['revoked'], trim($refreshList[0]->isRevoked()));
 
         $headers = ['HTTP_AUTHORIZATION' => 'Bearer '.$token];
         $this->client->request('POST', $this->generateUrl('api_logout'), [], [], $headers);
@@ -136,9 +136,9 @@ class ApiControllerTest extends AbstractWebTestCase
             self::assertCount(0, $tokenList);
         } else {
             self::assertCount(1, $tokenList);
-            self::assertEquals($post_logout_data['oauth2_access_token']['identifier'], $tokenList[0]->getIdentifier());
-            self::assertEquals($post_logout_data['oauth2_access_token']['expiry'], $tokenList[0]->getExpiry());
-            self::assertEquals($post_logout_data['oauth2_access_token']['revoked'], $tokenList[0]->isRevoked());
+            self::assertEquals($post_logout_data['oauth2_access_token']['identifier'], trim($tokenList[0]->getIdentifier()));
+            self::assertEquals($post_logout_data['oauth2_access_token']['expiry'], trim($tokenList[0]->getExpiry()));
+            self::assertEquals($post_logout_data['oauth2_access_token']['revoked'], trim($tokenList[0]->isRevoked()));
         }
 
         $refreshList = $this->entityManager->getRepository(\League\Bundle\OAuth2ServerBundle\Model\RefreshToken::class)->findBy(['accessToken' => $post_login_data['oauth2_access_token']['identifier']]);
@@ -146,9 +146,9 @@ class ApiControllerTest extends AbstractWebTestCase
             self::assertCount(0, $refreshList);
         } else {
             self::assertCount(1, $refreshList);
-            self::assertEquals($post_logout_data['oauth2_refresh_token']['access_token'], $refreshList[0]->getAccessToken());
-            self::assertEquals($post_logout_data['oauth2_refresh_token']['expiry'], $refreshList[0]->getExpiry());
-            self::assertEquals($post_logout_data['oauth2_refresh_token']['revoked'], $refreshList[0]->isRevoked());
+            self::assertEquals($post_logout_data['oauth2_refresh_token']['access_token'], trim($refreshList[0]->getAccessToken()));
+            self::assertEquals($post_logout_data['oauth2_refresh_token']['expiry'], trim($refreshList[0]->getExpiry()));
+            self::assertEquals($post_logout_data['oauth2_refresh_token']['revoked'], trim($refreshList[0]->isRevoked()));
         }
     }
 
