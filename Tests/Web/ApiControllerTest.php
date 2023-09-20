@@ -125,7 +125,8 @@ class ApiControllerTest extends AbstractWebTestCase
         self::assertEquals($post_login_data['oauth2_refresh_token']['revoked'], $refreshList[0]->isRevoked());
 
         $headers = ['HTTP_AUTHORIZATION' => 'Bearer '.$token];
-        $this->client->request('POST', 'http://localhost:8080/api/logout', [], [], $headers, null);
+        $this->client->request('POST', $this->generateUrl('api_logout'), [], [], $headers);
+
         self::assertEquals(200, $this->client->getResponse()->getStatusCode());
         self::assertEquals('application/json', $this->client->getResponse()->headers->get('Content-Type'));
         self::assertEquals('{"success":true}', $this->client->getResponse()->getContent());
@@ -264,7 +265,7 @@ class ApiControllerTest extends AbstractWebTestCase
         $accessTokenEntity = new AccessToken();
         $accessTokenEntity->setIdentifier($identifier);
         $accessTokenEntity->setClient($clientEntity);
-        $accessTokenEntity->setExpiryDateTime($expiryDateTime);
+        $accessTokenEntity->setExpiryDateTime($expiryDateTime ?? new \DateTimeImmutable('+1 days', new \DateTimeZone('Asia/Tokyo')));
         $accessTokenEntity->setUserIdentifier($name !== '' ? $name : 'admin');
         $accessTokenEntity->setPrivateKey(new CryptKey(self::$container->getParameter('kernel.project_dir').'/app/PluginData/Api42/oauth/private.key'));
 
