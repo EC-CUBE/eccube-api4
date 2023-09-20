@@ -133,6 +133,7 @@ class ApiController extends AbstractController
     }
 
     /**
+     * ログアウトしてOAuth2のセッションを無効化する.
      * @Route("/api/logout", name="api_logout", methods={"POST", "OPTIONS"})
      */
     public function logoutAndInvalidateOAuth2Session(): JsonResponse
