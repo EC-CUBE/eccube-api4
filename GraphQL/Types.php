@@ -118,9 +118,10 @@ class Types
                         return $acc;
                     }
 
-                    $acc[$prop->getName()] = [
-                        'type' => $this->convertPhpTypeToType($prop->getType()),
-                    ];
+                    $type = $this->convertPhpTypeToType($prop->getType());
+                    if ($type) {
+                        $acc[$prop->getName()] = $type;
+                    }
 
                     return $acc;
                 }, $fields);
