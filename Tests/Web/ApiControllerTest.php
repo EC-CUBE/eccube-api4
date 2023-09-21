@@ -96,7 +96,7 @@ class ApiControllerTest extends AbstractWebTestCase
     /**
      * @dataProvider logAndInvalidate0Auth2SessionProvider
      */
-    public function testLogoutAndInvalidateOAuth2Session(string $identifier, array $client, array $post_login_data, array $post_logout_data)
+    public function testLogoutAndInvalidateOAuth2Session(string $identifier, array $post_login_data, array $post_logout_data)
     {
         $this->deleteAllRows(['oauth2_refresh_token', 'oauth2_access_token']);
 
@@ -157,20 +157,10 @@ class ApiControllerTest extends AbstractWebTestCase
     {
         $clientInfo = [
             'test_active_user@example.com' => [
-                'client' => [
-                    'identifier' => hash('md5', random_bytes(16)),
-                    'secret' => hash('sha512', random_bytes(32)),
-                    'redirect_uri' => 'http://localhost:8080' . $this->generateUrl('homepage'),
-                ],
                 'identifier' => hash('md5', random_bytes(16)),
                 'expiry' => new \DateTimeImmutable('+1 days', new \DateTimeZone('Asia/Tokyo')),
             ],
             'inactive_user@example.com' => [
-                'client' => [
-                    'identifier' => hash('md5', random_bytes(16)),
-                    'secret' => hash('sha512', random_bytes(32)),
-                    'redirect_uri' => 'http://localhost:8080' . $this->generateUrl('homepage'),
-                ],
                 'identifier' => hash('md5', random_bytes(16)),
                 'secret' => hash('sha512', random_bytes(32)),
                 'expiry' => new \DateTimeImmutable('-1 days', new \DateTimeZone('Asia/Tokyo')),
@@ -180,7 +170,6 @@ class ApiControllerTest extends AbstractWebTestCase
         return [
             [
                 'identifier' => 'test_active_user@example.com',
-                'client' => $clientInfo['test_active_user@example.com']['client'],
                 'post_login_data' => [
                     'oauth2_access_token' => [
                         'user_identifier' => 'test_active_user@example.com',
@@ -213,7 +202,6 @@ class ApiControllerTest extends AbstractWebTestCase
                 ],
             ], [
                 'identifier' => 'inactive_user@example.com',
-                'client' => $clientInfo['inactive_user@example.com']['client'],
                 'post_login_data' => [
                     'oauth2_access_token' => [
                         'user_identifier' => 'inactive_user@example.com',
