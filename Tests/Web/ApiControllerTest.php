@@ -100,8 +100,6 @@ class ApiControllerTest extends AbstractWebTestCase
     {
         $this->deleteAllRows(['oauth2_refresh_token', 'oauth2_access_token']);
 
-//        $token = $this->newAccessToken(['read:Cart', 'write:Cart', 'read:CartItem', 'write:CartItem', 'read:Category', 'read:ClassCategory', 'read:ClassName', 'read:Country', 'read:Customer', 'write:Customer', 'read:CustomerAddress', 'read:CustomerFavoriteProduct', 'read:CustomerOrderStatus', 'read:CustomerStatus', 'read:Delivery', 'read:News', 'read:Order', 'read:OrderItem', 'read:OrderItemType', 'read:OrderPdf', 'read:OrderStatus', 'read:Pref', 'read:Product', 'read:ProductCategory', 'read:ProductClass', 'read:ProductImage', 'read:ProductListMax', 'read:ProductListOrderBy', 'read:ProductStatus', 'read:ProductStock', 'read:ProductTag', 'read:Shipping']);
-
         $customer = $this->createCustomer();
 
         $token = $this->newAccessToken(
@@ -295,8 +293,6 @@ class ApiControllerTest extends AbstractWebTestCase
         if ($requireRefreshToken === true) {
             $this->newRefreshToken(accessTokenEntity: $accessTokenEntity, expiry: $expiryDateTime);
         }
-
-        $this->entityManager->flush();
 
         return $accessTokenEntity->__toString();
     }
