@@ -180,7 +180,7 @@ class EntryTypeTest extends AbstractTypeTestCase
             ],
             'phone_number' => $faker->phoneNumber,
             'email' => $faker->safeEmail(),
-            'plain_password' => $faker->password($this->eccubeConfig['eccube_password_min_len'], $this->eccubeConfig['eccube_password_max_len']).'1A',
+            'plain_password' => $faker->password($this->eccubeConfig['eccube_password_min_len'], $this->eccubeConfig['eccube_password_max_len'] - 2).'1A',
             'birth' => $faker->dateTimeBetween('-100 years', '-1 days')->format('Y-m-d\TH:i:sP'),
             'sex' => $faker->numberBetween(1, 3),
             'job' => $faker->numberBetween(1, 18),

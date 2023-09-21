@@ -101,6 +101,31 @@ class Types
                     return $acc;
                 }, $fields);
 
+                // Entityのプロパティの型定義からスキーマを生成する
+                $props = $classMetadata->getReflectionClass()->getProperties();
+                $fields = array_reduce($props, function ($acc, \ReflectionProperty $prop) use ($className) {
+
+                    if (!$this->entityAccessPolicy->canReadProperty($className, $prop->getName())) {
+                        return $acc;
+                    }
+
+                    if (!$prop->hasType()) {
+                        return $acc;
+                    }
+
+                    // Attributeがある場合はDoctrineのAttributeが指定されているものとみなす
+                    if (count($prop->getAttributes()) > 0) {
+                        return $acc;
+                    }
+
+                    $type = $this->convertPhpTypeToType($prop->getType());
+                    if ($type) {
+                        $acc[$prop->getName()] = $type;
+                    }
+
+                    return $acc;
+                }, $fields);
+
                 return $fields;
             },
             'entityClass' => $className,
@@ -134,5 +159,22 @@ class Types
     private function isToManyAssociation($mapping)
     {
         return $mapping['type'] & ClassMetadata::TO_MANY;
+    }
+
+    private function convertPhpTypeToType(\ReflectionNamedType $refType)
+    {
+        $type = match ($refType->getName()) {
+            'int' => Type::int(),
+            'string' => Type::string(),
+            'bool' => Type::boolean(),
+            'float' => Type::float(),
+            default => null,
+        };
+
+        if ($type) {
+            return $refType->allowsNull() ? $type : Type::nonNull($type);
+        }
+
+        return null;
     }
 }
