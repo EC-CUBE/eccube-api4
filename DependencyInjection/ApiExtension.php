@@ -32,6 +32,14 @@ class ApiExtension extends Extension implements PrependExtensionInterface
                 foreach ($names as $name) {
                     // adminの前にapiを追加する
                     if ($name === 'admin') {
+                        // ログアウトの設定を追加
+                        $replaced['api_logout'] = [
+                            'pattern' => '^/api/logout',
+                            'security' => true,
+                            'stateless' => true,
+                            'oauth2' => true,
+                            'provider' => 'user_provider'
+                        ];
                         $replaced['api'] = [
                             'pattern' => '^/api',
                             'security' => true,
