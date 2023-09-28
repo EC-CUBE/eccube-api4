@@ -90,6 +90,9 @@ class ApiControllerTest extends AbstractWebTestCase
             [['read:Customer'], '{ customer(id:1) { id, password } }', 'Cannot query field "password" on type "Customer".'],
             [null, '{ product(id:1) { id, name } }'],
             [null, '{ product(id:1) { id, name, Creator { id } } }', 'Cannot query field "Creator" on type "Product".'],
+            [['read:ProductClass'], 'mutation { updateProductStock(code: "sand-01", stock: 10, stock_unlimited:false) { id } }', 'Cannot write entity. `Eccube\\Entity\\ProductClass`'],
+            [['read:ProductClass', 'write:ProductClass'], 'mutation { updateProductStock(code: "sand-01", stock: 10, stock_unlimited:false) { id } }', 'Cannot write entity. `Eccube\\Entity\\ProductStock`'],
+            [['read:ProductClass', 'write:ProductClass', 'write:ProductStock'], 'mutation { updateProductStock(code: "sand-01", stock: 10, stock_unlimited:false) { id } }'],
         ];
     }
 

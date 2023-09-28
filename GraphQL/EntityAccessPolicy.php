@@ -15,6 +15,7 @@ namespace Plugin\Api42\GraphQL;
 
 use Eccube\Request\Context;
 use Eccube\Security\SecurityContext;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class EntityAccessPolicy
 {
@@ -26,28 +27,23 @@ class EntityAccessPolicy
 
     private Context $requestContext;
 
-    public function __construct(SecurityContext $securityContext, Context $requestContext)
+    private RequestStack $requestStack;
+
+    public function __construct(SecurityContext $securityContext, Context $requestContext, RequestStack $requestStack)
     {
         $this->securityContext = $securityContext;
         $this->requestContext = $requestContext;
+        $this->requestStack = $requestStack;
     }
 
     public function canReadEntity(string $entityClass): bool
     {
-        if (is_null($this->securityContext->getLoginUser())) {
-            return !empty(array_filter($this->frontAllowLists, function (AllowList $al) use ($entityClass) {
-                return $al->isAllowed($entityClass);
-            }));
-        }
-
         // TODO 管理画面をAPIで実装するまでは管理者画面URL以下でアクセスした場合はすべてのEntityを許可する
         if ($this->requestContext->isAdmin()) {
             return true;
         }
 
-        $role = 'ROLE_OAUTH2_READ:'.strtoupper((new \ReflectionClass($entityClass))->getShortName());
-
-        return $this->securityContext->isGranted($role);
+        return $this->canAccessEntity($entityClass, false);
     }
 
     public function canReadProperty(string $entityClass, $fieldName): bool
@@ -64,13 +60,41 @@ class EntityAccessPolicy
         return !empty($allowed);
     }
 
-    public function addAllowList(AllowList $allowList)
+    public function canWriteEntity(string $entityClass): bool
+    {
+        if (!$this->isApiRequest()) {
+            return true;
+        }
+
+        return $this->canAccessEntity($entityClass, true);
+    }
+
+    private function canAccessEntity(string $entityClass, bool $write): bool
+    {
+        if (is_null($this->securityContext->getLoginUser())) {
+            return !empty(array_filter($this->frontAllowLists, function (AllowList $al) use ($entityClass) {
+                return $al->isAllowed($entityClass);
+            }));
+        }
+
+        $access = $write ? 'WRITE' : 'READ';
+        $role = "ROLE_OAUTH2_{$access}:".strtoupper((new \ReflectionClass($entityClass))->getShortName());
+
+        return $this->securityContext->isGranted($role);
+    }
+    public function addAllowList(AllowList $allowList): void
     {
         $this->allowLists[] = $allowList;
     }
 
-    public function addFrontAllowList(AllowList $allowList)
+    public function addFrontAllowList(AllowList $allowList): void
     {
         $this->frontAllowLists[] = $allowList;
+    }
+
+    private function isApiRequest(): bool
+    {
+        $mainRequest = $this->requestStack->getMainRequest();
+        return $mainRequest != null && $mainRequest->getPathInfo() === '/api';
     }
 }
