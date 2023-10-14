@@ -21,7 +21,7 @@ use Eccube\ORM\EntityManager;
 use Eccube\Service\CartService;
 use Eccube\Service\OrderHelper;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Error\ShoppingException;
 use Plugin\Api42\GraphQL\Mutation;
 use Plugin\Api42\GraphQL\Types;
 
@@ -70,16 +70,18 @@ class PaymentMethodMutation implements Mutation
         /** @var Order|null $Order */
         $Order = $this->orderHelper->getPurchaseProcessingOrder($preOrderId);
         if (!$Order) {
-            log_info('[注文確認] 購入処理中の受注が存在しません.', [$preOrderId]);
-            throw new InvalidArgumentException();
+            $message = '[注文確認] 購入処理中の受注が存在しません.';
+            log_info($message, [$preOrderId]);
+            throw new ShoppingException($message);
         }
 
         if (!empty($args['payment_method_id'])) {
             /** @var Payment|null $Payment */
             $Payment = $this->entityManager->find(Payment::class, $args['payment_method_id']);
             if (!$Payment) {
-                log_info('[注文確認] 支払い方法が存在しません.', [$args['payment_method_id']]);
-                throw new InvalidArgumentException();
+                $message = '[注文確認] 支払い方法が存在しません.';
+                log_info($message, [$args['payment_method_id']]);
+                throw new ShoppingException($message);
             }
             log_info('[注文確認] 支払い方法を変更します.', [$Payment->getMethod()]);
             $Order->setPayment($Payment);

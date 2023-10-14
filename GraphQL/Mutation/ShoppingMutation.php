@@ -26,10 +26,12 @@ use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseFlow;
 use Eccube\Service\PurchaseFlow\PurchaseFlowResult;
 use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api42\GraphQL\Mutation;
+use Plugin\Api42\GraphQL\Error\ShoppingException;
 use Plugin\Api42\GraphQL\Types;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormFactoryInterface;
 
-class ShoppingMutation implements Mutation
+class ShoppingMutation extends AbstractMutation
 {
     private Types $types;
 
@@ -46,13 +48,15 @@ class ShoppingMutation implements Mutation
         OrderHelper $orderHelper,
         SecurityContext $securityContext,
         PurchaseFlow $cartPurchaseFlow,
+        FormFactoryInterface $formFactory,
     ) {
-        $this->types = $types;
         $this->entityManager = $entityManager;
         $this->cartService = $cartService;
         $this->orderHelper = $orderHelper;
         $this->securityContext = $securityContext;
         $this->cartPurchaseFlow = $cartPurchaseFlow;
+        $this->setTypes($types);
+        $this->setFormFactory($formFactory);
     }
 
     public function getName(): string
@@ -60,35 +64,39 @@ class ShoppingMutation implements Mutation
         return 'orderMutation';
     }
 
-    public function getMutation(): array
+    public function getTypesClass(): string
     {
-        return [
-            'type' => $this->types->get(Order::class),
-            'args' => [],
-            'resolve' => [$this, 'orderMutation'],
-        ];
+        return Order::class;
+    }
+
+    public function getArgsType(): string
+    {
+        return FormType::class;
     }
 
     /**
+     * @return Order|null
      * @throws InvalidArgumentException
      * @throws ORMException
      * @throws ForeignKeyConstraintViolationException
      */
-    public function orderMutation($root, $args): ?Order
+    public function executeMutation($root, $args): mixed
     {
         $user = $this->securityContext->getLoginUser();
 
         // ログイン状態のチェック.
         if ($this->orderHelper->isLoginRequired()) {
-            log_info('[注文手続] 未ログインもしくはRememberMeログインのため, ログイン画面に遷移します.');
-            throw new InvalidArgumentException();
+            $message = '[注文手続] 未ログインもしくはRememberMeログインのため, ログイン画面に遷移します.';
+            log_info($mssage);
+            throw new ShoppingException($message);
         }
 
         // カートチェック.
         $Cart = $this->cartService->getCart();
         if (!($Cart && $this->orderHelper->verifyCart($Cart))) {
-            log_info('[注文手続] カートが購入フローへ遷移できない状態のため, カート画面に遷移します.');
-            throw new InvalidArgumentException();
+            $message = '[注文手続] カートが購入フローへ遷移できない状態のため, カート画面に遷移します.';
+            log_info($mssage);
+            throw new ShoppingException($message);
         }
 
         // 受注の初期化.
@@ -102,8 +110,9 @@ class ShoppingMutation implements Mutation
         $this->entityManager->flush();
 
         if ($flowResult->hasError()) {
-            log_info('[注文手続] Errorが発生したため購入エラー画面へ遷移します.', [$flowResult->getErrors()]);
-            throw new InvalidArgumentException();
+            $message = '[注文手続] Errorが発生したため購入エラー画面へ遷移します.';
+            log_info($message, [$flowResult->getErrors()]);
+            throw new ShoppingException($message);
         }
 
         if ($flowResult->hasWarning()) {
@@ -138,24 +147,14 @@ class ShoppingMutation implements Mutation
     {
         $flowResult = $this->cartPurchaseFlow->validate($itemHolder, new PurchaseContext(clone $itemHolder, $itemHolder->getCustomer()));
         foreach ($flowResult->getWarning() as $warning) {
-            throw new InvalidArgumentException();
+            $this->addWarning($warning->getMessage());
         }
         foreach ($flowResult->getErrors() as $error) {
-            throw new InvalidArgumentException();
+            throw new ShoppingException($error->getMessage());
         }
 
         if (!$returnResponse) {
             return $flowResult;
-        }
-
-        if ($flowResult->hasError()) {
-            log_info('Errorが発生したため購入エラー画面へ遷移します.', [$flowResult->getErrors()]);
-            throw new InvalidArgumentException();
-        }
-
-        if ($flowResult->hasWarning()) {
-            log_info('Warningが発生したため注文手続き画面へ遷移します.', [$flowResult->getWarning()]);
-            throw new InvalidArgumentException();
         }
 
         return null;
