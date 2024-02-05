@@ -18,7 +18,7 @@ use Eccube\Entity\AuthorityRole;
 use Eccube\Entity\Master\Authority;
 use Eccube\Plugin\AbstractPluginManager;
 use Eccube\Repository\AuthorityRoleRepository;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class PluginManager extends AbstractPluginManager
 {
