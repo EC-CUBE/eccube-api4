@@ -42,7 +42,7 @@ services:
     Plugin\Api42\EventListener\UserResolveListener:
         arguments:
             - '@Eccube\Security\Core\User\MemberProvider'
-            - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher'
+            - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface'
         tags:
             - { name: kernel.event_listener, event: league.oauth2_server.event.user_resolve, method: onUserResolve }
 
