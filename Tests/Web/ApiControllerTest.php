@@ -44,6 +44,11 @@ class ApiControllerTest extends AbstractWebTestCase
         $this->clientRepository = self::$container->get(ClientRepositoryInterface::class);
         $this->accessTokenRepository = self::$container->get(AccessTokenRepositoryInterface::class);
         $this->authorizationServer = self::$container->get(AuthorizationServer::class);
+        $this->clientManager = self::getContainer()->get(ClientManager::class);
+        $this->clientRepository = self::getContainer()->get(ClientRepositoryInterface::class);
+        $this->accessTokenRepository = self::getContainer()->get(AccessTokenRepositoryInterface::class);
+        $this->authorizationServer = self::getContainer()->get(AuthorizationServer::class);
+        $this->scopeRepositoryInterface =  self::getContainer()->get(ScopeRepositoryInterface::class);
     }
 
     /**
@@ -89,7 +94,7 @@ class ApiControllerTest extends AbstractWebTestCase
 
         $client = new Client('', $identifier, $secret);
         $client->setScopes(...array_map(function ($s) {
-            return new \League\Bundle\OAuth2ServerBundle\Model\Scope($s);
+            return new \League\Bundle\OAuth2ServerBundle\ValueObject\Scope($s);
         }, $scopes));
         $this->clientManager->save($client);
         $clientEntity = $this->clientRepository->getClientEntity($identifier, 'authorization_code', $secret);
@@ -100,6 +105,7 @@ class ApiControllerTest extends AbstractWebTestCase
         $accessTokenEntity->setExpiryDateTime(new \DateTimeImmutable('+1 days', new \DateTimeZone('Asia/Tokyo')));
         $accessTokenEntity->setUserIdentifier('admin');
         $accessTokenEntity->setPrivateKey(new CryptKey(self::$container->getParameter('kernel.project_dir').'/app/PluginData/Api42/oauth/private.key'));
+        $accessTokenEntity->setPrivateKey(new CryptKey(self::getContainer()->get(EccubeConfig::class)->get('kernel.project_dir').'/app/PluginData/Api42/oauth/private.key'));
 
         array_walk($scopes, function ($s) use ($accessTokenEntity) {
             $scope = new Scope();

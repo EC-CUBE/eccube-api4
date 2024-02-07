@@ -23,13 +23,13 @@ use ReflectionException;
 class WebHookServiceTest extends EccubeTestCase
 {
     /** @var WebHookService */
-    private $service;
+    private mixed $service;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->service = self::$container->get(WebHookService::class);
+        $this->service = self::getContainer()->get(WebHookService::class);
     }
 
     public function testCreateRequest_withSecret()
