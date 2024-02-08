@@ -23,7 +23,7 @@ use ReflectionException;
 class WebHookServiceTest extends EccubeTestCase
 {
     /** @var WebHookService */
-    private mixed $service;
+    private ?WebHookService $service;
 
     public function setUp(): void
     {
