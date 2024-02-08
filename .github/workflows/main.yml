@@ -21,9 +21,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        eccube_version: [ '4.2', '4.3-symfony6' ]
         php: [ '7.4', '8.0', '8.1', '8.2', '8.3']
         db: [ 'mysql', 'mysql8', 'pgsql' ]
-        eccube_version: [ '4.2', '4.3' ]
         plugin_code: [ 'Api42' ]
         include:
           - db: mysql
@@ -43,9 +43,9 @@ jobs:
               php: 8.2
           -   eccube_version: 4.2
               php: 8.3
-          -   eccube_version: 4.3
+          -   eccube_version: 4.3-symfony6
               php: 7.4
-          -   eccube_version: 4.3
+          -   eccube_version: 4.3-symfony6
               php: 8.0
     services:
       mysql:
@@ -174,7 +174,7 @@ jobs:
       working-directory: 'ec-cube'
       run: |
         bin/console cache:clear --no-warmup
-        bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist app/Plugin/${PLUGIN_CODE}/Tests
+        ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist app/Plugin/${PLUGIN_CODE}/Tests
 
 
     - name: Disable Plugin
