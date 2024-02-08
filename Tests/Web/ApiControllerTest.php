@@ -45,8 +45,6 @@ class ApiControllerTest extends AbstractWebTestCase
     public function setUp(): void
     {
         parent::setUp();
-        // containerの取得を修正
-        // Error: Access to undeclared static property Plugin\Api42\Tests\Web\ApiControllerTest::$container
         $this->clientManager = self::getContainer()->get(ClientManager::class);
         $this->clientRepository = self::getContainer()->get(ClientRepositoryInterface::class);
         $this->accessTokenRepository = self::getContainer()->get(AccessTokenRepositoryInterface::class);
@@ -107,7 +105,6 @@ class ApiControllerTest extends AbstractWebTestCase
         $accessTokenEntity->setClient($clientEntity);
         $accessTokenEntity->setExpiryDateTime(new \DateTimeImmutable('+1 days', new \DateTimeZone('Asia/Tokyo')));
         $accessTokenEntity->setUserIdentifier('admin');
-        //Error: Access to undeclared static property Plugin\Api42\Tests\Web\ApiControllerTest::$container
         $accessTokenEntity->setPrivateKey(new CryptKey(self::getContainer()->get(EccubeConfig::class)->get('kernel.project_dir').'/app/PluginData/Api42/oauth/private.key'));
 
         array_walk($scopes, function ($s) use ($accessTokenEntity) {
