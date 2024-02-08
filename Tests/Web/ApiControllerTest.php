@@ -28,20 +28,19 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 class ApiControllerTest extends AbstractWebTestCase
 {
     /** @var ClientManager */
-    private ClientManager $clientManager;
+    private ?ClientManager $clientManager;
 
     /** @var ClientRepositoryInterface */
-    private ClientRepositoryInterface $clientRepository;
+    private ?ClientRepositoryInterface $clientRepository;
 
     /** @var AccessTokenRepositoryInterface */
-    private $accessTokenRepository;
-    private AccessTokenRepositoryInterface $accessTokenRepository;
+    private ?AccessTokenRepositoryInterface $accessTokenRepository;
 
     /** @var ScopeRepositoryInterface */
-    private ScopeRepositoryInterface $scopeRepositoryInterface;
+    private ?ScopeRepositoryInterface $scopeRepositoryInterface;
 
     /** @var AuthorizationServer */
-    private AuthorizationServer $authorizationServer;
+    private ?AuthorizationServer $authorizationServer;
 
     public function setUp(): void
     {
