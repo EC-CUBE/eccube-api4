@@ -71,7 +71,6 @@ jobs:
           - 1080:1080
           - 1025:1025
     steps:
-    - run: sudo apt-get purge -y hhvm
     - name: Checkout
       uses: actions/checkout@v2
 
