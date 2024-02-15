@@ -212,7 +212,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
 
         // XSSが発火しないことを確認（XSSが発火するとscriptタグが文字列として表示されない）
         $accsessMessage = $crawler->filter('p.text-start')->eq(0);
-        $this->assertEquals($snippet.'へのアクセスを許可しますか？?', $accsessMessage->text());
+        $this->assertEquals('アプリから'.$snippet.'へのアクセスを許可しますか？', $accsessMessage->text());
 
         // XSSが発火しないことを確認（XSSが発火するとscriptタグが文字列として表示されない）
         $readMessage = $crawler->filter('ul li.text-start')->eq(0);
