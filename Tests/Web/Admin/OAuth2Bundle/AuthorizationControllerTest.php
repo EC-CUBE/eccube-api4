@@ -164,7 +164,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * * @dataProvider SnippetsProvider
+     * * @dataProvider xssSnippetsProvider
      */
     public function testRoutingAdminOauth2Authorize_XSS($snippet)
     {
@@ -247,7 +247,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         $this->assertEquals($snippet.' / TOPページ', $title);
     }
 
-    public function SnippetsProvider($snippet)
+    public function xssSnippetsProvider($snippet)
     {
         return [
             ['<script>alert(1)</script>'],
