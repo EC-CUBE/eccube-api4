@@ -43,9 +43,9 @@ jobs:
               php: 8.2
           -   eccube_version: 4.2
               php: 8.3
-          -   eccube_version: 4.3-symfony6
+          -   eccube_version: 4.3
               php: 7.4
-          -   eccube_version: 4.3-symfony6
+          -   eccube_version: 4.3
               php: 8.0
     services:
       mysql:
