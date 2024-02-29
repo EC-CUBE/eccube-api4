@@ -17,11 +17,10 @@ on:
 jobs:
   run-on-linux:
     name: Run on Linux
-    runs-on: ${{ matrix.operating-system }}
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ ubuntu-18.04 ]
         php: [ '7.2', '7.3', '7.4' ]
         db: [ mysql, pgsql ]
         eccube_version: [ '4.0.6-p1', '4.1' ]
