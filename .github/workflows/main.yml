@@ -108,6 +108,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-composer-
 
+    - if: matrix.composer == 'v2'
+      run: sudo composer selfupdate 2.6.6
+      
     - if: matrix.composer == 'v1'
       run: sudo composer selfupdate --1
 
@@ -117,7 +120,9 @@ jobs:
 
     - if: matrix.composer == 'v1'
       working-directory: 'ec-cube'
-      run: composer require kiy0taka/eccube4-test-fixer "dev-main@dev"
+      run: |
+        composer update symfony/flex --no-plugins --no-scripts
+        composer require kiy0taka/eccube4-test-fixer "dev-main@dev"
 
     - name: Setup EC-CUBE
       env:
