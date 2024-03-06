@@ -30,6 +30,7 @@ jobs:
             composer: 'v1'
           - eccube_version: '4.1'
             composer: 'v2'
+            php: [ '7.3', '7.4' ]
           - db: mysql
             dbport: '3306'
             dbuser: 'root'
