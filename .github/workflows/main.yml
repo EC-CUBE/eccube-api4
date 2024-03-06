@@ -154,7 +154,6 @@ jobs:
           rm codeception/_support/*Tester.php
 
       - name: Run PHPUnit
-        if: matrix.composer == 'v1'
         env:
           PLUGIN_CODE: ${{ matrix.plugin_code }}
         working-directory: 'ec-cube'
@@ -275,7 +274,6 @@ jobs:
         working-directory: 'ec-cube'
         run: |
           composer update symfony/flex --no-plugins --no-scripts
-          composer require kiy0taka/eccube4-test-fixer "dev-main@dev"
 
       - name: Setup EC-CUBE
         env:
@@ -331,4 +329,3 @@ jobs:
           PLUGIN_CODE: ${{ matrix.plugin_code }}
         working-directory: 'ec-cube'
         run: bin/console eccube:plugin:uninstall --code=${PLUGIN_CODE}
-        
