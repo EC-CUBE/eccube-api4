@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ ubuntu-18.04 ]
+        operating-system: [ ubuntu-22.04 ]
         php: [ '7.2', '7.3', '7.4' ]
         db: [ mysql, pgsql ]
         eccube_version: [ '4.0.6-p3', '4.1' ]
@@ -71,7 +71,6 @@ jobs:
           - 1080:1080
           - 1025:1025
     steps:
-    - run: sudo apt-get purge -y hhvm
     - name: Checkout
       uses: actions/checkout@v2
 
