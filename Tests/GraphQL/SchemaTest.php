@@ -48,7 +48,8 @@ class SchemaTest extends EccubeTestCase
         }';
 
         $result = $this->executeQuery($query);
-
+        
+        // 4.0系と4.1系でGraphQLの結果が異なる
         self::assertTrue(
             $result === [
                 'data' => [
@@ -95,6 +96,7 @@ class SchemaTest extends EccubeTestCase
 
         $result = $this->executeQuery($query, json_encode($variables));
 
+        // 4.0系と4.1系でGraphQLの結果が異なる
         self::assertTrue(
             $result === [
                 'data' => [
@@ -132,6 +134,7 @@ class SchemaTest extends EccubeTestCase
 
         $result = $this->executeQuery($query);
 
+        // 4.0系と4.1系でGraphQLの結果が異なる
         self::assertTrue(
             $result === [
                 'data' => [
@@ -183,6 +186,7 @@ class SchemaTest extends EccubeTestCase
 
         $result = $this->executeQuery($query);
 
+        // 4.0系と4.1系でGraphQLの結果が異なる
         self::assertTrue(
             $result === [
                 'data' => [
@@ -231,6 +235,7 @@ class SchemaTest extends EccubeTestCase
 
         $result = $this->executeQuery($query);
 
+        // 4.0系と4.1系でGraphQLの結果が異なる
         self::assertTrue(
             $result === [
                 'data' => [
@@ -289,6 +294,7 @@ class SchemaTest extends EccubeTestCase
 
         $result = $this->executeQuery($query);
 
+        // 4.0系と4.1系でGraphQLの結果が異なる
         self::assertTrue(
             $result === [
                 'data' => [
@@ -341,6 +347,7 @@ class SchemaTest extends EccubeTestCase
 
         $result = $this->executeQuery($query);
 
+        // 4.0系と4.1系でGraphQLの結果が異なる
         self::assertTrue(
             $result === [
                 'data' => [

@@ -14,6 +14,7 @@ on:
     paths:
       - '**'
       - '!*.md'
+# 4.1系では、composerの依存関係により、PHPのバージョンが7.3.0以上が必要となるため、jobを分けたて実施
 jobs:
   run-on-linux-4-0:
     name: Run on Linux with Eccube 4.0.6-p1
@@ -264,7 +265,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Changing Composer version
-        run: sudo composer selfupdate 2.6.6
+        run: sudo composer self-update --2.2
 
       - name: Install to composer
         working-directory: 'ec-cube'
