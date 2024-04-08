@@ -31,17 +31,17 @@ class WebHookService implements EventSubscriberInterface
     /**
      * @var RouterInterface
      */
-    private $router;
+    private RouterInterface $router;
 
     /**
      * @var WebHookRepository
      */
-    private $webHookRepository;
+    private WebHookRepository $webHookRepository;
 
     /**
      * @var WebHookEvents
      */
-    private $webHookEvents;
+    private WebHookEvents $webHookEvents;
 
     /**
      * WebHookService constructor.

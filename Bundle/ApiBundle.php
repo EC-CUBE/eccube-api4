@@ -16,6 +16,7 @@ namespace Plugin\Api42\Bundle;
 use Plugin\Api42\DependencyInjection\ApiExtension;
 use Plugin\Api42\DependencyInjection\Compiler\ApiCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ApiBundle extends Bundle
@@ -27,7 +28,7 @@ class ApiBundle extends Bundle
         $container->addCompilerPass(new ApiCompilerPass());
     }
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new ApiExtension();
     }
