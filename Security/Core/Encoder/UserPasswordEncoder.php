@@ -17,7 +17,7 @@ use Eccube\Security\Core\Encoder\PasswordEncoder;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class UserPasswordEncoder implements UserPasswordEncoderInterface
+class UserPasswordEncoder
 {
     /**
      * @var PasswordEncoder

@@ -98,7 +98,7 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
                     $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_DENIED);
                 }
             } else {
-                $event->setResponse(Response::create($content));
+                $event->setResponse(new Response($content));
             }
         }
     }
