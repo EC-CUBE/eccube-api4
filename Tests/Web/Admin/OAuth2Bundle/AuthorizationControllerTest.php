@@ -247,7 +247,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         $this->assertEquals($snippet.' / TOPページ', $title);
     }
 
-    public function xssSnippetsProvider($snippet)
+    public function xssSnippetsProvider()
     {
         return [
             ['<script>alert(1)</script>'],
