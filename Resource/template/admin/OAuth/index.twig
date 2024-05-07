@@ -145,7 +145,7 @@ file that was distributed with this source code.
                                                                 <h5 class="modal-title font-weight-bold">
                                                                     {{ 'api.admin.oauth.delete__confirm_title'|trans }}
                                                                 </h5>
-                                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                                <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">×</span>
                                                                 </button>
                                                             </div>
@@ -153,7 +153,7 @@ file that was distributed with this source code.
                                                                 <p class="text-left">{{ 'api.admin.oauth.delete__confirm_message'|trans }}</p>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button class="btn btn-ec-sub" type="button" data-dismiss="modal">
+                                                                <button class="btn btn-ec-sub" type="button" data-bs-dismiss="modal">
                                                                     {{ 'admin.common.cancel'|trans }}
                                                                 </button>
                                                                 <a class="btn btn-ec-delete" href="{{ url('admin_api_oauth_delete', {identifier: client.identifier}) }}"
