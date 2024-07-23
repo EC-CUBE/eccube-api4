@@ -47,16 +47,30 @@ class SchemaTest extends EccubeTestCase
           }
         }';
 
-        self::assertEquals([
-            'data' => [
-                'products' => [
-                    'nodes' => [
-                        ['id' => '1'],
-                        ['id' => '2']
-                    ]
+        $result = $this->executeQuery($query);
+        
+        // 4.0系と4.1系で、GraphQLにおけるIDのソート順が異なる
+        self::assertTrue(
+            $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            ['id' => '1'],
+                            ['id' => '2']
+                        ]
+                    ],
                 ],
-            ],
-        ], $this->executeQuery($query));
+            ] || $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            ['id' => '2'],
+                            ['id' => '1']
+                        ]
+                    ],
+                ],
+            ]
+        );
     }
 
     public function testQueryProducts_withVariables()
@@ -82,16 +96,28 @@ class SchemaTest extends EccubeTestCase
 
         $result = $this->executeQuery($query, json_encode($variables));
 
-        self::assertEquals([
-            'data' => [
-                'products' => [
-                    'nodes' => [
-                        ['id' => '1'],
-                        ['id' => '2']
-                    ]
+        // 4.0系と4.1系で、GraphQLにおけるIDのソート順が異なる
+        self::assertTrue(
+            $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            ['id' => '1'],
+                            ['id' => '2']
+                        ]
+                    ],
                 ],
-            ],
-        ], $result);
+            ] || $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            ['id' => '2'],
+                            ['id' => '1']
+                        ]
+                    ],
+                ],
+            ]
+        );
     }
 
     public function testQueryConnection_withEdges()
@@ -106,24 +132,46 @@ class SchemaTest extends EccubeTestCase
             }
         }';
 
-        self::assertEquals([
-            'data' => [
-                'products' => [
-                    'edges' => [
-                        [
-                            'node' => [
-                                'id' => '1',
+        $result = $this->executeQuery($query);
+
+        // 4.0系と4.1系で、GraphQLにおけるIDのソート順が異なる
+        self::assertTrue(
+            $result === [
+                'data' => [
+                    'products' => [
+                        'edges' => [
+                            [
+                                'node' => [
+                                    'id' => '1',
+                                ],
                             ],
-                        ],
-                        [
-                            'node' => [
-                                'id' => '2',
+                            [
+                                'node' => [
+                                    'id' => '2',
+                                ],
                             ],
                         ],
                     ],
                 ],
-            ],
-        ], $this->executeQuery($query));
+            ] || $result === [
+                'data' => [
+                    'products' => [
+                        'edges' => [
+                            [
+                                'node' => [
+                                    'id' => '2',
+                                ],
+                            ],
+                            [
+                                'node' => [
+                                    'id' => '1',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
     }
 
     public function testQueryConnection_withNodes()
@@ -136,20 +184,38 @@ class SchemaTest extends EccubeTestCase
             }
         }';
 
-        self::assertEquals([
-            'data' => [
-                'products' => [
-                    'nodes' => [
-                        [
-                            'id' => '1',
-                        ],
-                        [
-                            'id' => '2',
+        $result = $this->executeQuery($query);
+
+        // 4.0系と4.1系で、GraphQLにおけるIDのソート順が異なる
+        self::assertTrue(
+            $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            [
+                                'id' => '1',
+                            ],
+                            [
+                                'id' => '2',
+                            ],
                         ],
                     ],
                 ],
-            ],
-        ], $this->executeQuery($query));
+            ] || $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            [
+                                'id' => '2',
+                            ],
+                            [
+                                'id' => '1',
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
     }
 
     public function testQueryPageInfo()
@@ -167,25 +233,48 @@ class SchemaTest extends EccubeTestCase
             }
         }';
 
-        self::assertEquals([
-            'data' => [
-                'products' => [
-                    'nodes' => [
-                        [
-                            'id' => '1',
+        $result = $this->executeQuery($query);
+
+        // 4.0系と4.1系で、GraphQLにおけるIDのソート順が異なる
+        self::assertTrue(
+            $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            [
+                                'id' => '1',
+                            ],
+                            [
+                                'id' => '2',
+                            ],
                         ],
-                        [
-                            'id' => '2',
+                        'totalCount' => 2,
+                        'pageInfo' => [
+                            'hasNextPage' => false,
+                            'hasPreviousPage' => false,
                         ],
-                    ],
-                    'totalCount' => 2,
-                    'pageInfo' => [
-                        'hasNextPage' => false,
-                        'hasPreviousPage' => false,
                     ],
                 ],
-            ],
-        ], $this->executeQuery($query));
+            ] || $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            [
+                                'id' => '2',
+                            ],
+                            [
+                                'id' => '1',
+                            ],
+                        ],
+                        'totalCount' => 2,
+                        'pageInfo' => [
+                            'hasNextPage' => false,
+                            'hasPreviousPage' => false,
+                        ],
+                    ],
+                ],
+            ]
+        );
     }
 
     public function testQueryPageInfo_firstPage()
@@ -203,22 +292,42 @@ class SchemaTest extends EccubeTestCase
             }
         }';
 
-        self::assertEquals([
-            'data' => [
-                'products' => [
-                    'nodes' => [
-                        [
-                            'id' => '1',
+        $result = $this->executeQuery($query);
+
+        // 4.0系と4.1系で、GraphQLにおけるIDのソート順が異なる
+        self::assertTrue(
+            $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            [
+                                'id' => '1',
+                            ],
+                        ],
+                        'totalCount' => 2,
+                        'pageInfo' => [
+                            'hasNextPage' => true,
+                            'hasPreviousPage' => false,
                         ],
                     ],
-                    'totalCount' => 2,
-                    'pageInfo' => [
-                        'hasNextPage' => true,
-                        'hasPreviousPage' => false,
+                ],
+            ] || $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            [
+                                'id' => '2',
+                            ],
+                        ],
+                        'totalCount' => 2,
+                        'pageInfo' => [
+                            'hasNextPage' => true,
+                            'hasPreviousPage' => false,
+                        ],
                     ],
                 ],
-            ],
-        ], $this->executeQuery($query));
+            ]
+        );
     }
 
     public function testQueryPageInfo_LastPage()
@@ -236,22 +345,42 @@ class SchemaTest extends EccubeTestCase
             }
         }';
 
-        self::assertEquals([
-            'data' => [
-                'products' => [
-                    'nodes' => [
-                        [
-                            'id' => '2',
+        $result = $this->executeQuery($query);
+
+        // 4.0系と4.1系で、GraphQLにおけるIDのソート順が異なる
+        self::assertTrue(
+            $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            [
+                                'id' => '2',
+                            ],
+                        ],
+                        'totalCount' => 2,
+                        'pageInfo' => [
+                            'hasNextPage' => false,
+                            'hasPreviousPage' => true,
                         ],
                     ],
-                    'totalCount' => 2,
-                    'pageInfo' => [
-                        'hasNextPage' => false,
-                        'hasPreviousPage' => true,
+                ],
+            ] || $result === [
+                'data' => [
+                    'products' => [
+                        'nodes' => [
+                            [
+                                'id' => '1',
+                            ],
+                        ],
+                        'totalCount' => 2,
+                        'pageInfo' => [
+                            'hasNextPage' => false,
+                            'hasPreviousPage' => true,
+                        ],
                     ],
                 ],
-            ],
-        ], $this->executeQuery($query));
+            ]
+        );
     }
 
     /**
