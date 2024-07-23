@@ -163,6 +163,99 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         $this->assertFalse($this->client->getResponse()->isRedirection());
     }
 
+    /**
+     * * @dataProvider xssSnippetsProvider
+     */
+    public function testRoutingAdminOauth2Authorize_XSS($snippet)
+    {
+        //基本設定＞店舗設定へ移動
+        $shop_url = $this->generateUrl('admin_setting_shop');
+        $this->client->request('GET', $shop_url);
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+
+        //店舗名を入力
+        $form = [
+            'shop_name' => $snippet,
+            'email01' => 'admin@example.com',
+            'email03' => 'admin@example.com',
+            'email04' => 'admin@example.com',
+            'email02' => 'admin@example.com',
+            '_token' => 'dummy',
+        ];
+
+        $this->client->enableProfiler();
+        $crawler = $this->client->request(
+            'POST',
+            $shop_url,
+            ['shop_master' => $form]
+        );
+
+        /** @var Response $response */
+        $response = $this->client->getResponse();
+        $this->assertTrue($response->isRedirection());
+
+        //OAuth画面へ移動
+        /** @var Client $Client */
+        $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
+        $authorize_url = $this->generateUrl(
+            'oauth2_authorize',
+            [
+                'client_id' => $Client->getIdentifier(),
+                'redirect_uri' => (string) current($Client->getRedirectUris()),
+                'response_type' => 'code',
+                'scope' => 'read write',
+                'state' => 'xxx',
+            ]
+        );
+
+        $crawler  = $this->client->request('GET', $authorize_url);
+
+        // XSSが発火しないことを確認（XSSが発火するとscriptタグが文字列として表示されない）
+        $accsessMessage = $crawler->filter('p.text-start')->eq(0);
+        $this->assertEquals('アプリから'.$snippet.'へのアクセスを許可しますか？', $accsessMessage->text());
+
+        // XSSが発火しないことを確認（XSSが発火するとscriptタグが文字列として表示されない）
+        $readMessage = $crawler->filter('ul li.text-start')->eq(0);
+        $this->assertEquals($snippet.'のデータに対する読み取り', $readMessage->text());
+
+        // XSSが発火しないことを確認（XSSが発火するとscriptタグが文字列として表示されない）
+        $writeMessage = $crawler->filter('ul li.text-start')->eq(1);
+        $this->assertEquals($snippet.'のデータに対する書き込み', $writeMessage->text());
+
+        // 店舗URLへ遷移することを確認
+        $accsessLink = $accsessMessage->filter('a')->eq(0)->attr('href');
+        $this->client->request('GET', $accsessLink);
+
+        $crawler = $this->client->getCrawler();
+        $title = $crawler->filter('title')->text();
+        $this->assertEquals($snippet.' / TOPページ', $title);
+
+        // 店舗URLへ遷移することを確認
+        $readLink = $readMessage->filter('a')->eq(0)->attr('href');
+        $this->client->request('GET', $readLink);
+
+        $crawler = $this->client->getCrawler();
+        $title = $crawler->filter('title')->text();
+        $this->assertEquals($snippet.' / TOPページ', $title);
+
+        // 店舗URLへ遷移することを確認
+        $writeLink = $writeMessage->filter('a')->eq(0)->attr('href');
+        $this->client->request('GET', $writeLink);
+
+        $crawler = $this->client->getCrawler();
+        $title = $crawler->filter('title')->text();
+        $this->assertEquals($snippet.' / TOPページ', $title);
+    }
+
+    public function xssSnippetsProvider()
+    {
+        return [
+            ['<script>alert(1)</script>'],
+            ['<img src="javascript:alert(\'XSS\');">'],
+            ['<body onload="alert(\'XSS\')">']
+        ];
+    }
+
     private function parseCallbackParams(Response $response)
     {
         $url = parse_url($response->headers->get('Location'));
