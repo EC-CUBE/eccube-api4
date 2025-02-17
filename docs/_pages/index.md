@@ -19,7 +19,7 @@ EC-CUBE4 対応の Web API プラグイン
 - *Windows 環境での動作は未確認です*
 - *SQLite3 には未対応です*
 - *システム間連携を想定したAPIを前提としています。 ネイティブアプリケーションや、 SPA(Single Page Application)、シングルサインオン(SSO)などの用途は想定されていません*
-- *Authorization code Grant 以外の Grant には未対応です*
+- *Authorization code Grant と Refresh Token Grant 以外の Grant には未対応です*
 - *OAuth2.0(RFC6749) や OpenID Connect には完全に準拠していません。今後のバージョンアップで準拠を目指していく予定です*
 
 
@@ -43,9 +43,10 @@ EC-CUBE で Web API を実行する際、顧客情報を参照したり、受注
 
 ### 対応するフロー
 
-Authorization Code Flow のみに対応しています。
+Authorization Code Flow と Refresh Token Flow に対応しています。
 
-- [Authorization Code Flow](authZ_code_grant) の設定方法
+- [Authorization Code Flow](authZ_code_grant)
+- [Refresh Token Flow](authZ_refresh_token_grant)
 
 ### エンドポイント
 
