@@ -62,6 +62,12 @@ api:
         product_code: SKU
         stock: Stock (If the stock_unlimited is set to false, please set the value more than 0.)
         stock_unlimited: 'Stock unlimited (Specify false: Limited or true: Unlimited)'
+  update_product_price:
+    args:
+      description:
+        product_code: SKU
+        price01: Regular Price
+        price02: Selling Price
   update_shipped:
     args:
       description:
