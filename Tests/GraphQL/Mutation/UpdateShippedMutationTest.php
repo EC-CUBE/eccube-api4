@@ -42,11 +42,11 @@ class UpdateShippedMutationTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $mailService = self::$container->get(MailService::class);
-        $orderStateMachine = self::$container->get(OrderStateMachine::class);
-        $orderStatusRepository = self::$container->get(OrderStatusRepository::class);
-        $types = self::$container->get(Types::class);
-        $shippingRepository = self::$container->get(ShippingRepository::class);
+        $mailService = self::getContainer()->get(MailService::class);
+        $orderStateMachine = self::getContainer()->get(OrderStateMachine::class);
+        $orderStatusRepository = self::getContainer()->get(OrderStatusRepository::class);
+        $types = self::getContainer()->get(Types::class);
+        $shippingRepository = self::getContainer()->get(ShippingRepository::class);
 
         $this->updateShippedMutation = new UpdateShippedMutation(
             $this->eccubeConfig,
