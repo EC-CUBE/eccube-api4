@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\GraphQL\Type\Definition;
+namespace Plugin\Api42\GraphQL\Type\Definition;
 
 use DateTime;
 use DateTimeInterface;
@@ -20,7 +20,7 @@ use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
-use Plugin\Api\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
 
 class DateTimeType extends ScalarType
 {

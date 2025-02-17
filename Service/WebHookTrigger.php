@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Service;
+namespace Plugin\Api42\Service;
 
 interface WebHookTrigger
 {

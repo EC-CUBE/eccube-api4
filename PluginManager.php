@@ -11,14 +11,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api;
+namespace Plugin\Api42;
 
 use Doctrine\ORM\EntityManager;
 use Eccube\Entity\AuthorityRole;
 use Eccube\Entity\Master\Authority;
 use Eccube\Plugin\AbstractPluginManager;
 use Eccube\Repository\AuthorityRoleRepository;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class PluginManager extends AbstractPluginManager
 {

@@ -106,13 +106,13 @@ file that was distributed with this source code.
                             <tbody>
                             {% for client in clients %}
                                 <tr id="client-{{ client.identifier }}">
-                                    <td class="align-middle text-center pl-3">
+                                    <td class="align-middle text-center ps-3">
                                         <input type="text" class="form-control copy-secret" value="{{ client.identifier }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
                                     </td>
                                     <td class="align-middle text-center">
                                         <input type="text" class="form-control copy-secret" value="{{ client.Secret }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
                                     </td>
-                                    <td class="align-middle text-center pl-3">
+                                    <td class="align-middle text-center ps-3">
                                         {% for scope in client.scopes %}
                                             {{ scope }}<br>
                                         {% endfor %}
@@ -122,18 +122,18 @@ file that was distributed with this source code.
                                             {{ redirectUri }}<br>
                                         {% endfor %}
                                     </td>
-                                    <td class="align-middle text-center pl-3">
-                                        {% for grant in client.grants if grant != 'refresh_token' %}
+                                    <td class="align-middle text-center ps-3">
+                                        {% for grant in client.grants|filter(grant => grant != 'refresh_token') %}
                                             {{ grant }}<br>
                                         {% endfor %}
                                     </td>
-                                    <td class="align-middle pr-3">
-                                        <div class="text-right">
+                                    <td class="align-middle pe-3">
+                                        <div class="text-end">
                                             <div class="px-1 d-inline-block">
                                                 <div class="d-inline-block mr-2" data-tooltip="true"
                                                      data-placement="top" title="{{ 'admin.common.delete'|trans }}">
-                                                    <a class="btn btn-ec-actionIcon action-delete" data-toggle="modal"
-                                                       data-target="#oauth_delete_{{ client.identifier }}">
+                                                    <a class="btn btn-ec-actionIcon action-delete" data-bs-toggle="modal"
+                                                       data-bs-target="#oauth_delete_{{ client.identifier }}">
                                                         <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
                                                     </a>
                                                 </div>
@@ -142,18 +142,16 @@ file that was distributed with this source code.
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title font-weight-bold">
+                                                                <h5 class="modal-title fw-bold">
                                                                     {{ 'api.admin.oauth.delete__confirm_title'|trans }}
                                                                 </h5>
-                                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">×</span>
-                                                                </button>
+                                                                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
-                                                            <div class="modal-body text-left">
-                                                                <p class="text-left">{{ 'api.admin.oauth.delete__confirm_message'|trans }}</p>
+                                                            <div class="modal-body text-start">
+                                                                <p class="text-start">{{ 'api.admin.oauth.delete__confirm_message'|trans }}</p>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button class="btn btn-ec-sub" type="button" data-dismiss="modal">
+                                                                <button class="btn btn-ec-sub" type="button" data-bs-dismiss="modal">
                                                                     {{ 'admin.common.cancel'|trans }}
                                                                 </button>
                                                                 <a class="btn btn-ec-delete" href="{{ url('admin_api_oauth_delete', {identifier: client.identifier}) }}"

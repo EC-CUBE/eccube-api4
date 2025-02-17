@@ -1,9 +1,12 @@
+security:
+  enable_authenticator_manager: true
 parameters:
-    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/app/PluginData/Api/oauth/private.key'
-    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api/oauth/public.key'
+    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/app/PluginData/Api42/oauth/private.key'
+    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api42/oauth/public.key'
     env(ECCUBE_OAUTH2_ENCRYPTION_KEY): '<change.me>'
 
-trikoder_oauth2:
+league_oauth2_server:
+    role_prefix: ROLE_OAUTH2_
 
     authorization_server:
         private_key: '%env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY)%'
@@ -28,21 +31,23 @@ trikoder_oauth2:
     resource_server:
         public_key: '%env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY)%'
 
-    scopes: ['read', 'write']
+    scopes:
+        available: ['read', 'write']
+        default: ['read']
 
     persistence:
         doctrine: null
 
 services:
-    Plugin\Api\EventListener\UserResolveListener:
+    Plugin\Api42\EventListener\UserResolveListener:
         arguments:
             - '@Eccube\Security\Core\User\MemberProvider'
-            - '@Plugin\Api\Security\Core\Encoder\UserPasswordEncoder'
+            - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface'
         tags:
-            - { name: kernel.event_listener, event: trikoder.oauth2.user_resolve, method: onUserResolve }
+            - { name: kernel.event_listener, event: league.oauth2_server.event.user_resolve, method: onUserResolve }
 
-    Plugin\Api\GraphQL\Types:
-        class: Plugin\Api\GraphQL\Types
+    Plugin\Api42\GraphQL\Types:
+        class: Plugin\Api42\GraphQL\Types
         arguments: ["@doctrine.orm.entity_manager"]
         lazy: true
 
@@ -67,9 +72,6 @@ services:
 
     nyholm.psr7.httplug_factory:
         class: Nyholm\Psr7\Factory\HttplugFactory
-
-
-    Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory: '@sensio_framework_extra.psr7.http_message_factory'
 
     core.api.allow_list:
         class: ArrayObject
@@ -144,8 +146,8 @@ services:
     api.mutations:
         class: ArrayObject
 
-    Plugin\Api\GraphQL\Schema:
+    Plugin\Api42\GraphQL\Schema:
         arguments:
-            - '@Plugin\Api\GraphQL\Types'
+            - '@Plugin\Api42\GraphQL\Types'
             - '@api.queries'
             - '@api.mutations'

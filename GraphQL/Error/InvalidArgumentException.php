@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\GraphQL\Error;
+namespace Plugin\Api42\GraphQL\Error;
 
 use GraphQL\Error\ClientAware;
 

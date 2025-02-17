@@ -11,14 +11,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\GraphQL\Mutation;
+namespace Plugin\Api42\Tests\GraphQL\Mutation;
 
 use Eccube\Entity\ProductClass;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Api\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api\GraphQL\Mutation\UpdateProductStockMutation;
-use Plugin\Api\GraphQL\Types;
+use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Mutation\UpdateProductStockMutation;
+use Plugin\Api42\GraphQL\Types;
 
 class UpdateProductStockMutationTest extends EccubeTestCase
 {
@@ -28,11 +28,11 @@ class UpdateProductStockMutationTest extends EccubeTestCase
     /** @var UpdateProductStockMutation */
     private $updateProductStockMutation;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $types = self::$container->get(Types::class);
-        $this->productClassRepository = self::$container->get(ProductClassRepository::class);
+        $types = self::getContainer()->get(Types::class);
+        $this->productClassRepository = self::getContainer()->get(ProductClassRepository::class);
         $this->updateProductStockMutation = new UpdateProductStockMutation($types, $this->productClassRepository, $this->entityManager);
 
         // テスト用の商品を作成
@@ -75,7 +75,7 @@ class UpdateProductStockMutationTest extends EccubeTestCase
             self::assertEquals($expectStock, $ProductClass->getProductStock()->getStock());
         } catch (InvalidArgumentException $e) {
             // エラーの確認
-            self::assertRegExp($expectExeption, $e->getMessage());
+            self::assertMatchesRegularExpression($expectExeption, $e->getMessage());
         }
 
         // DBの確認
@@ -120,7 +120,7 @@ class UpdateProductStockMutationTest extends EccubeTestCase
             // 通らない
             self::assertTrue(false);
         } catch (InvalidArgumentException $e) {
-            self::assertRegExp('/Multiple ProductClass found/', $e->getMessage());
+            self::assertMatchesRegularExpression('/Multiple ProductClass found/', $e->getMessage());
         }
     }
 
@@ -134,7 +134,7 @@ class UpdateProductStockMutationTest extends EccubeTestCase
             // 通らない
             self::assertTrue(false);
         } catch (InvalidArgumentException $e) {
-            self::assertRegExp('/No ProductClass found/', $e->getMessage());
+            self::assertMatchesRegularExpression('/No ProductClass found/', $e->getMessage());
         }
     }
 }

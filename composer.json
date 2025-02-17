@@ -1,16 +1,17 @@
 {
-  "name": "ec-cube/api",
-  "version": "2.1.3",
+  "name": "ec-cube/api42",
+  "version": "4.3.0",
   "description": "Web API",
   "type": "eccube-plugin",
   "require": {
-    "ec-cube/plugin-installer": "~0.0.6 || ^2.0",
-    "trikoder/oauth2-bundle": "^2.1",
+    "ec-cube/plugin-installer": "^2.0",
+    "league/oauth2-server-bundle": "^0.5",
     "nyholm/psr7": "^1.2",
+    "php-http/message-factory": "*",
     "webonyx/graphql-php": "^14.0"
   },
   "extra": {
-    "code": "Api",
-    "entity-namespaces": ["Trikoder\\Bundle\\OAuth2Bundle\\Model"]
+    "code": "Api42",
+    "entity-namespaces": ["League\\Bundle\\OAuth2ServerBundle\\Model"]
   }
 }

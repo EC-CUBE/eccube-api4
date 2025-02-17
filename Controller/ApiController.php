@@ -11,20 +11,21 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Controller;
+namespace Plugin\Api42\Controller;
 
 use Eccube\Controller\AbstractController;
 use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
 use GraphQL\Validator\DocumentValidator;
-use Plugin\Api\GraphQL\Schema;
-use Plugin\Api\GraphQL\ScopeValidationRule;
-use Plugin\Api\GraphQL\Types;
+use Plugin\Api42\GraphQL\Schema;
+use Plugin\Api42\GraphQL\ScopeValidationRule;
+use Plugin\Api42\GraphQL\Types;
 use RuntimeException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class ApiController extends AbstractController
 {
@@ -62,8 +63,9 @@ class ApiController extends AbstractController
 
     /**
      * @Route("/api", name="api", methods={"GET", "POST"})
-     * @Security("has_role('ROLE_OAUTH2_READ') or has_role('ROLE_OAUTH2_WRITE')")
+     * @IsGranted("ROLE_OAUTH2_READ", "ROLE_OAUTH2_WRITE")
      */
+
     public function index(Request $request)
     {
         switch ($request->getMethod()) {

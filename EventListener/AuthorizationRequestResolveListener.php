@@ -11,28 +11,24 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\EventListener;
+namespace Plugin\Api42\EventListener;
 
 use Eccube\Entity\Master\Authority;
 use Eccube\Entity\Member;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use Plugin\Api\Form\Type\Admin\OAuth2AuthorizationType;
-use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Plugin\Api42\Form\Type\Admin\OAuth2AuthorizationType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Trikoder\Bundle\OAuth2Bundle\Event\AuthorizationRequestResolveEvent;
-use Trikoder\Bundle\OAuth2Bundle\OAuth2Events;
+use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use Twig\Environment as Twig;
 
 final class AuthorizationRequestResolveListener implements EventSubscriberInterface
 {
     /** @var Twig */
     protected $twig;
-
-    /** @var PsrHttpFactory */
-    protected $psr7Factory;
 
     /** @var FormFactoryInterface */
     protected $formFactory;
@@ -42,12 +38,10 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
 
     public function __construct(
         Twig $twig,
-        PsrHttpFactory $psr7Factory,
         FormFactoryInterface $formFactory,
         RequestStack $requestStack
     ) {
         $this->twig = $twig;
-        $this->psr7Factory = $psr7Factory;
         $this->formFactory = $formFactory;
         $this->requestStack = $requestStack;
     }
@@ -62,7 +56,7 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
     public function onAuthorizationRequestResolve(AuthorizationRequestResolveEvent $event): void
     {
         $user = $event->getUser();
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
 
         // システム管理者以外は承認しない
         if (!$user instanceof Member || $user->getAuthority()->getId() !== Authority::ADMIN) {
@@ -87,7 +81,7 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
             $form['state']->setData($event->getState());
             $form['scope']->setData(join(' ', $event->getScopes()));
             $content = $this->twig->render(
-                '@Api/admin/OAuth/authorization.twig',
+                '@Api42/admin/OAuth/authorization.twig',
                 [
                     'scopes' => $event->getScopes(),
                     'form' => $form->createView(),
@@ -104,8 +98,7 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
                     $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_DENIED);
                 }
             } else {
-                $Response = $this->psr7Factory->createResponse(Response::create($content));
-                $event->setResponse($Response);
+                $event->setResponse(new Response($content));
             }
         }
     }

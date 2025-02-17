@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\Web\Admin;
+namespace Plugin\Api42\Tests\Web\Admin;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Trikoder\Bundle\OAuth2Bundle\Manager\Doctrine\ClientManager;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
-use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
+use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 
 class OAuthControllerTest extends AbstractAdminWebTestCase
 {
@@ -28,11 +28,11 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
     /**
      * @{@inheritdoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->clientManager = self::$container->get(ClientManager::class);
+        $this->clientManager = self::getContainer()->get(ClientManager::class);
     }
 
     public function testRoutingAdminSettingSystemOAuth2Client()
@@ -52,7 +52,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         // before
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
-        $client = new Client($identifier, $secret);
+        $client = new Client('', $identifier, $secret);
         $this->clientManager->save($client);
 
         // main
@@ -64,7 +64,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->assertNull($this->clientManager->find($identifier));
 
         $crawler = $this->client->followRedirect();
-        $this->assertRegExp('/削除しました/u', $crawler->filter('div.alert-success')->text());
+        $this->assertMatchesRegularExpression('/削除しました/u', $crawler->filter('div.alert-success')->text());
     }
 
     public function testOAuth2ClientCreateSubmit()
@@ -99,7 +99,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue(in_array(OAuth2Grants::REFRESH_TOKEN, $grants));
 
         $crawler = $this->client->followRedirect();
-        $this->assertRegExp('/保存しました/u', $crawler->filter('div.alert-success')->text());
+        $this->assertMatchesRegularExpression('/保存しました/u', $crawler->filter('div.alert-success')->text());
     }
 
     public function testOAuth2ClientCreateSubmitFail()
@@ -118,7 +118,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
-        $this->assertRegExp('/入力されていません。/u', $crawler->filter('span.form-error-message')->text());
+        $this->assertMatchesRegularExpression('/入力されていません。/u', $crawler->filter('span.form-error-message')->text());
     }
 
     public function testOAuth2ClientDeleteIdentifierNotFound()
@@ -135,7 +135,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue($this->client->getResponse()->isRedirect($redirectUrl));
 
         $crawler = $this->client->followRedirect();
-        $this->assertRegExp('/既に削除されています/u', $crawler->filter('div.alert-danger')->text());
+        $this->assertMatchesRegularExpression('/既に削除されています/u', $crawler->filter('div.alert-danger')->text());
     }
 
     protected function createFormData()

@@ -40,10 +40,10 @@ file that was distributed with this source code.
                         <tbody>
                         {% for webhook in webhooks %}
                             <tr id="webhook-{{ webhook.id }}" class="d-flex">
-                                <td class="align-middle text-left pl-3 pt-3 w-50">
+                                <td class="align-middle text-start ps-3 pt-3 w-50">
                                     {{ webhook.payloadUrl }}
                                 </td>
-                                <td class="align-middle text-center pl-3 pt-3 w-25">
+                                <td class="align-middle text-center ps-3 pt-3 w-25">
                                     {% if webhook.enabled %}
                                         <span class="text-success">{{ 'common.enabled'|trans }}</span>
                                     {% else %}
@@ -51,7 +51,7 @@ file that was distributed with this source code.
                                     {% endif %}
                                 </td>
                                 <td class="align-middle w-25">
-                                    <div class="text-right">
+                                    <div class="text-end">
                                         <div class="d-inline-block">
                                             <div class="d-inline-block mr-2" data-tooltip="true"
                                                  data-placement="top" title="{{ 'admin.common.edit'|trans }}">
@@ -66,8 +66,8 @@ file that was distributed with this source code.
                                         <div class="px-1 d-inline-block">
                                             <div class="d-inline-block mr-2" data-tooltip="true"
                                                  data-placement="top" title="{{ 'admin.common.delete'|trans }}">
-                                                <a class="btn btn-ec-actionIcon action-delete" data-toggle="modal"
-                                                   data-target="#webhook_delete_{{ webhook.id }}">
+                                                <a class="btn btn-ec-actionIcon action-delete" data-bs-toggle="modal"
+                                                   data-bs-target="#webhook_delete_{{ webhook.id }}">
                                                     <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
                                                 </a>
                                             </div>
@@ -76,18 +76,16 @@ file that was distributed with this source code.
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title font-weight-bold">
+                                                            <h5 class="modal-title fw-bold">
                                                                 {{ 'api.admin.webhook.delete__confirm_title'|trans }}
                                                             </h5>
-                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">×</span>
-                                                            </button>
+                                                            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <div class="modal-body text-left">
-                                                            <p class="text-left">{{ 'api.admin.webhook.delete__confirm_message'|trans }}</p>
+                                                        <div class="modal-body text-start">
+                                                            <p class="text-start">{{ 'api.admin.webhook.delete__confirm_message'|trans }}</p>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button class="btn btn-ec-sub" type="button" data-dismiss="modal">
+                                                            <button class="btn btn-ec-sub" type="button" data-bs-dismiss="modal">
                                                                 {{ 'admin.common.cancel'|trans }}
                                                             </button>
                                                             <a class="btn btn-ec-delete" href="{{ url('admin_api_webhook_delete', {id: webhook.id}) }}"

@@ -11,24 +11,24 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\GraphQL;
+namespace Plugin\Api42\Tests\GraphQL;
 
 use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Member;
 use Eccube\Entity\Product;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Api\GraphQL\Types;
+use Plugin\Api42\GraphQL\Types;
 
 class TypesTest extends EccubeTestCase
 {
     /** @var Types */
     private $types;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $this->types = self::$container->get(Types::class);
+        $this->types = self::getContainer()->get(Types::class);
     }
 
     /**

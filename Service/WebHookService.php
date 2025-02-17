@@ -11,18 +11,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Service;
+namespace Plugin\Api42\Service;
 
 use Eccube\Util\StringUtil;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Plugin\Api\Entity\WebHook;
-use Plugin\Api\Repository\WebHookRepository;
+use Plugin\Api42\Entity\WebHook;
+use Plugin\Api42\Repository\WebHookRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent ;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -31,17 +31,17 @@ class WebHookService implements EventSubscriberInterface
     /**
      * @var RouterInterface
      */
-    private $router;
+    private RouterInterface $router;
 
     /**
      * @var WebHookRepository
      */
-    private $webHookRepository;
+    private WebHookRepository $webHookRepository;
 
     /**
      * @var WebHookEvents
      */
-    private $webHookEvents;
+    private WebHookEvents $webHookEvents;
 
     /**
      * WebHookService constructor.
@@ -60,9 +60,9 @@ class WebHookService implements EventSubscriberInterface
         ];
     }
 
-    public function fire(FilterResponseEvent $event)
+    public function fire(ResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -89,7 +89,7 @@ class WebHookService implements EventSubscriberInterface
                 'fulfilled' => function (Response $reason, $index) use ($availableWebHooks) {
                     log_info('WebHook request successful.', ['Payload URL' => $availableWebHooks[$index]->getPayloadUrl()]);
                 },
-                'rejected' => function (RequestException $e, $index) use ($availableWebHooks) {
+                'rejected' => function (TransferException $e, $index) use ($availableWebHooks) {
                     log_error($e->getMessage(), ['Payload URL' => $availableWebHooks[$index]->getPayloadUrl()]);
                 },
             ]);

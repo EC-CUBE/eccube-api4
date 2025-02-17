@@ -11,15 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\DependencyInjection\Compiler;
+namespace Plugin\Api42\DependencyInjection\Compiler;
 
 use League\OAuth2\Server\CryptKey;
-use Plugin\Api\GraphQL\AllowList;
-use Plugin\Api\GraphQL\Mutation;
-use Plugin\Api\GraphQL\Query;
-use Plugin\Api\GraphQL\Types;
-use Plugin\Api\Service\WebHookEvents;
-use Plugin\Api\Service\WebHookTrigger;
+use Plugin\Api42\GraphQL\AllowList;
+use Plugin\Api42\GraphQL\Mutation;
+use Plugin\Api42\GraphQL\Query;
+use Plugin\Api42\GraphQL\Types;
+use Plugin\Api42\Service\WebHookEvents;
+use Plugin\Api42\Service\WebHookTrigger;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -34,9 +34,9 @@ class ApiCompilerPass implements CompilerPassInterface
         $this->configureSchema($container);
 
         $plugins = $container->getParameter('eccube.plugins.enabled');
-        if (!in_array('Api', $plugins)) {
-            if ($container->hasDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener')) {
-                $def = $container->getDefinition('Trikoder\Bundle\OAuth2Bundle\EventListener\ConvertExceptionToResponseListener');
+        if (!in_array('Api42', $plugins)) {
+            if ($container->hasDefinition('League\Bundle\OAuth2ServerBundle\EventListener\AddClientDefaultScopesListener')) {
+                $def = $container->getDefinition('League\Bundle\OAuth2ServerBundle\EventListener\AddClientDefaultScopesListener');
                 $def->clearTags();
             }
         }
@@ -80,7 +80,7 @@ class ApiCompilerPass implements CompilerPassInterface
     private function configureKeyPair(ContainerBuilder $container)
     {
         $projectDir = $container->getParameter('kernel.project_dir');
-        $oauthConfig = $container->getExtensionConfig('trikoder_oauth2');
+        $oauthConfig = $container->getExtensionConfig('league_oauth2_server');
         $oauthConfig = $container->resolveEnvPlaceholders($oauthConfig, true);
         $privateKey = str_replace('%%kernel.project_dir%%', $projectDir, $oauthConfig[0]['authorization_server']['private_key']);
         $publicKey = str_replace('%%kernel.project_dir%%', $projectDir, $oauthConfig[0]['resource_server']['public_key']);

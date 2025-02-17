@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\Web\Admin;
+namespace Plugin\Api42\Tests\Web\Admin;
 
 use Eccube\Tests\Web\AbstractWebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -41,7 +41,7 @@ class LoginControllerTest extends AbstractWebTestCase
             ]
         );
 
-        $this->assertNotNull(self::$container->get('security.token_storage')->getToken(), 'ログインしているかどうか');
+        $this->assertNotNull(self::getContainer()->get('security.token_storage')->getToken(), 'ログインしているかどうか');
     }
 
     public function testRoutingAdminLogin_ログインしていない場合はログイン画面を表示()

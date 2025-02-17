@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Entity;
+namespace Plugin\Api42\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,7 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\HasLifecycleCallbacks()
- * @ORM\Entity(repositoryClass="Plugin\Api\Repository\WebHookRepository")
+ * @ORM\Entity(repositoryClass="Plugin\Api42\Repository\WebHookRepository")
  */
 class WebHook
 {

@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Repository;
+namespace Plugin\Api42\Repository;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
-use Plugin\Api\Entity\WebHook;
+use Plugin\Api42\Entity\WebHook;
 
 class WebHookRepository extends AbstractRepository
 {

@@ -11,39 +11,45 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\Web;
+namespace Plugin\Api42\Tests\Web;
 
-use DateTime;
+use Eccube\Common\EccubeConfig;
 use Eccube\Tests\Web\AbstractWebTestCase;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use Trikoder\Bundle\OAuth2Bundle\League\Entity\AccessToken;
-use Trikoder\Bundle\OAuth2Bundle\League\Entity\Scope;
-use Trikoder\Bundle\OAuth2Bundle\Manager\Doctrine\ClientManager;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Entity\Scope;
+use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 
 class ApiControllerTest extends AbstractWebTestCase
 {
     /** @var ClientManager */
-    private $clientManager;
+    private ?ClientManager $clientManager;
 
     /** @var ClientRepositoryInterface */
-    private $clientRepository;
+    private ?ClientRepositoryInterface $clientRepository;
 
     /** @var AccessTokenRepositoryInterface */
-    private $accessTokenRepository;
+    private ?AccessTokenRepositoryInterface $accessTokenRepository;
+
+    /** @var ScopeRepositoryInterface */
+    private ?ScopeRepositoryInterface $scopeRepositoryInterface;
 
     /** @var AuthorizationServer */
-    private $authorizationServer;
+    private ?AuthorizationServer $authorizationServer;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $this->clientManager = self::$container->get(ClientManager::class);
-        $this->clientRepository = self::$container->get(ClientRepositoryInterface::class);
-        $this->accessTokenRepository = self::$container->get(AccessTokenRepositoryInterface::class);
-        $this->authorizationServer = self::$container->get(AuthorizationServer::class);
+        $this->clientManager = self::getContainer()->get(ClientManager::class);
+        $this->clientRepository = self::getContainer()->get(ClientRepositoryInterface::class);
+        $this->accessTokenRepository = self::getContainer()->get(AccessTokenRepositoryInterface::class);
+        $this->authorizationServer = self::getContainer()->get(AuthorizationServer::class);
+        $this->scopeRepositoryInterface =  self::getContainer()->get(ScopeRepositoryInterface::class);
     }
 
     /**
@@ -87,9 +93,9 @@ class ApiControllerTest extends AbstractWebTestCase
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
 
-        $client = new Client($identifier, $secret);
+        $client = new Client('', $identifier, $secret);
         $client->setScopes(...array_map(function ($s) {
-            return new \Trikoder\Bundle\OAuth2Bundle\Model\Scope($s);
+            return new \League\Bundle\OAuth2ServerBundle\ValueObject\Scope($s);
         }, $scopes));
         $this->clientManager->save($client);
         $clientEntity = $this->clientRepository->getClientEntity($identifier, 'authorization_code', $secret);
@@ -97,8 +103,10 @@ class ApiControllerTest extends AbstractWebTestCase
         $accessTokenEntity = new AccessToken();
         $accessTokenEntity->setIdentifier($identifier);
         $accessTokenEntity->setClient($clientEntity);
-        $accessTokenEntity->setExpiryDateTime(new DateTime('+1 hour'));
+        $accessTokenEntity->setExpiryDateTime(new \DateTimeImmutable('+1 days', new \DateTimeZone('Asia/Tokyo')));
         $accessTokenEntity->setUserIdentifier('admin');
+        $accessTokenEntity->setPrivateKey(new CryptKey(self::getContainer()->get(EccubeConfig::class)->get('kernel.project_dir').'/app/PluginData/Api42/oauth/private.key'));
+
         array_walk($scopes, function ($s) use ($accessTokenEntity) {
             $scope = new Scope();
             $scope->setIdentifier($s);
@@ -106,10 +114,6 @@ class ApiControllerTest extends AbstractWebTestCase
         });
         $this->accessTokenRepository->persistNewAccessToken($accessTokenEntity);
 
-        $rc = new \ReflectionClass($this->authorizationServer);
-        $property = $rc->getProperty('privateKey');
-        $property->setAccessible(true);
-
-        return $accessTokenEntity->convertToJWT($property->getValue($this->authorizationServer));
+        return $accessTokenEntity->__toString();
     }
 }

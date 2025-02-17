@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\GraphQL;
+namespace Plugin\Api42\Tests\GraphQL;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\Product;
 use PHPUnit\Framework\TestCase;
-use Plugin\Api\GraphQL\AllowList;
+use Plugin\Api42\GraphQL\AllowList;
 
 class AllowListTest extends TestCase
 {

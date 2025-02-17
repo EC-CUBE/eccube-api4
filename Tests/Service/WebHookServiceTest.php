@@ -11,25 +11,25 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\Service;
+namespace Plugin\Api42\Tests\Service;
 
 use Eccube\Tests\EccubeTestCase;
 use Nyholm\Psr7\Request;
-use Plugin\Api\Entity\WebHook;
-use Plugin\Api\Service\WebHookService;
+use Plugin\Api42\Entity\WebHook;
+use Plugin\Api42\Service\WebHookService;
 use ReflectionClass;
 use ReflectionException;
 
 class WebHookServiceTest extends EccubeTestCase
 {
     /** @var WebHookService */
-    private $service;
+    private ?WebHookService $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->service = self::$container->get(WebHookService::class);
+        $this->service = self::getContainer()->get(WebHookService::class);
     }
 
     public function testCreateRequest_withSecret()

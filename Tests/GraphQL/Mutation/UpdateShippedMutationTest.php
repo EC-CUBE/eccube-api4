@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\Tests\GraphQL\Mutation;
+namespace Plugin\Api42\Tests\GraphQL\Mutation;
 
 use DateTime;
 use Eccube\Entity\Master\OrderStatus;
@@ -22,9 +22,9 @@ use Eccube\Repository\ShippingRepository;
 use Eccube\Service\MailService;
 use Eccube\Service\OrderStateMachine;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Api\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api\GraphQL\Mutation\UpdateShippedMutation;
-use Plugin\Api\GraphQL\Types;
+use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api42\GraphQL\Mutation\UpdateShippedMutation;
+use Plugin\Api42\GraphQL\Types;
 
 class UpdateShippedMutationTest extends EccubeTestCase
 {
@@ -38,15 +38,15 @@ class UpdateShippedMutationTest extends EccubeTestCase
      */
     private $Order;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $mailService = self::$container->get(MailService::class);
-        $orderStateMachine = self::$container->get(OrderStateMachine::class);
-        $orderStatusRepository = self::$container->get(OrderStatusRepository::class);
-        $types = self::$container->get(Types::class);
-        $shippingRepository = self::$container->get(ShippingRepository::class);
+        $mailService = self::getContainer()->get(MailService::class);
+        $orderStateMachine = self::getContainer()->get(OrderStateMachine::class);
+        $orderStatusRepository = self::getContainer()->get(OrderStatusRepository::class);
+        $types = self::getContainer()->get(Types::class);
+        $shippingRepository = self::getContainer()->get(ShippingRepository::class);
 
         $this->updateShippedMutation = new UpdateShippedMutation(
             $this->eccubeConfig,
@@ -91,7 +91,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertEquals('notes_0123456789', $Shipping->getNote());
         } catch (InvalidArgumentException $e) {
             // 通らない
-            self::assertTrue(false);
+            self::assertTrue(false, $e->getMessage());
         }
 
         // DB の確認
@@ -119,7 +119,9 @@ class UpdateShippedMutationTest extends EccubeTestCase
         } catch (InvalidArgumentException $e) {
             // エラーの確認
             self::assertEquals('Invalid argument', $e->getCategory());
-            self::assertRegExp($message, $e->getMessage());
+            if ($message !== null) {
+                self::assertStringContainsString($message, $e->getMessage());
+            }
             // Shipping が出荷済みになっていない
             self::assertNull($this->Order->getShippings()->current()->getShippingDate());
         }
@@ -141,11 +143,11 @@ class UpdateShippedMutationTest extends EccubeTestCase
             [['id' => -1], '/id/'],
             [['shipping_date' => $dateTime]],
             [['shipping_delivery_name' => $str_eccube_mtext_len]],
-            [['shipping_delivery_name' => $str_eccube_mtext_len_plus], '/shipping_delivery_name/'],
+            [['shipping_delivery_name' => $str_eccube_mtext_len_plus], 'shipping_delivery_name'],
             [['tracking_number' => $str_eccube_mtext_len]],
-            [['tracking_number' => $str_eccube_mtext_len_plus], '/tracking_number/'],
+            [['tracking_number' => $str_eccube_mtext_len_plus], 'tracking_number'],
             [['note' => $str_eccube_ltext_len]],
-            [['note' => $str_eccube_ltext_len_plus], '/note/'],
+            [['note' => $str_eccube_ltext_len_plus], 'note'],
             [['is_send_mail' => false]],
         ];
     }
@@ -164,7 +166,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
         } catch (InvalidArgumentException $e) {
             // エラーの確認
             self::assertEquals('Invalid argument', $e->getCategory());
-            self::assertRegExp('/No Shipping found/', $e->getMessage());
+            self::assertMatchesRegularExpression('/No Shipping found/', $e->getMessage());
         }
     }
 
@@ -188,7 +190,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
         } catch (InvalidArgumentException $e) {
             // エラーの確認
             self::assertEquals('Invalid argument', $e->getCategory());
-            self::assertRegExp('/Already shipped/', $e->getMessage());
+            self::assertMatchesRegularExpression('/Already shipped/', $e->getMessage());
         }
     }
 
@@ -211,7 +213,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
         } catch (InvalidArgumentException $e) {
             // エラーの確認
             self::assertEquals('Invalid argument', $e->getCategory());
-            self::assertRegExp('/order cannot be shipped/', $e->getMessage());
+            self::assertMatchesRegularExpression('/order cannot be shipped/', $e->getMessage());
         }
     }
 

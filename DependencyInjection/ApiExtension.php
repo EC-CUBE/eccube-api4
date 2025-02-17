@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api\DependencyInjection;
+namespace Plugin\Api42\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -39,6 +39,13 @@ class ApiExtension extends Extension implements PrependExtensionInterface
                             'oauth2' => true,
                             'provider' => 'member_provider'
                         ];
+                        unset($security["firewalls"]["admin"]["form_login"]["csrf_token_generator"]);
+                        unset($security["firewalls"]["admin"]["anonymous"]);
+                    }
+
+                    if ($name === 'customer') {
+                        unset($security["firewalls"]["customer"]["form_login"]["csrf_token_generator"]);
+                        unset($security["firewalls"]["customer"]["anonymous"]);
                     }
                     $replaced[$name] = $security["firewalls"][$name];
                 }
