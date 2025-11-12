@@ -21,13 +21,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ ubuntu-18.04 ]
+        operating-system: [ ubuntu-22.04 ]
         php: [ '7.2', '7.3', '7.4' ]
         db: [ mysql, pgsql ]
-        eccube_version: [ '4.0.6-p1', '4.1' ]
+        eccube_version: [ '4.0.6-p3', '4.1' ]
         plugin_code: [ 'Api' ]
         include:
-          - eccube_version: '4.0.6-p1'
+          - eccube_version: '4.0.6-p3'
             composer: 'v1'
           - eccube_version: '4.1'
             composer: 'v2'
@@ -43,6 +43,9 @@ jobs:
             dbpass: 'password'
             dbname: 'myapp_test'
             dbversion: 9.5
+        exclude:
+            -   eccube_version: 4.1
+                php: 7.2
     services:
       mysql:
         image: mysql:5.7
@@ -68,7 +71,6 @@ jobs:
           - 1080:1080
           - 1025:1025
     steps:
-    - run: sudo apt-get purge -y hhvm
     - name: Checkout
       uses: actions/checkout@v2
 
@@ -113,13 +115,18 @@ jobs:
     - if: matrix.composer == 'v1'
       run: sudo composer selfupdate --1
 
+    - if: matrix.composer == 'v2'
+      run: sudo composer self-update --2.2
+
     - name: Install to composer
       working-directory: 'ec-cube'
       run: composer install --no-interaction -o --apcu-autoloader
 
     - if: matrix.composer == 'v1'
       working-directory: 'ec-cube'
-      run: composer require kiy0taka/eccube4-test-fixer "dev-main@dev"
+      run: |
+        composer update symfony/flex --no-plugins --no-scripts
+        composer require kiy0taka/eccube4-test-fixer "dev-main@dev"
 
     - name: Setup EC-CUBE
       env:

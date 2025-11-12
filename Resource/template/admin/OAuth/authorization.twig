@@ -10,11 +10,11 @@
                 <div class="text-center p-5 bg-white">
                     <form name="form1" id="form1" method="post" action="">
                         {{ form_widget(form._token) }}
-                        <p class="text-left">{{ 'api.admin.oauth.allow__confirm_message'|trans({'%shop_name%': "<a href=\"#{path('homepage')}\">#{BaseInfo.shop_name}</a>"})|raw }}</p>
+                        <p class="text-left">{{ 'api.admin.oauth.allow__confirm_message'|trans({'%shop_name%': "<a href=\"#{path('homepage')}\">#{BaseInfo.shop_name|escape}</a>"})|raw }}</p>
                         <p class="text-left">{{ 'api.admin.oauth.allow__confirm_description'|trans }}</p>
                         <ul>
                         {% for scope in scopes %}
-                        <li class="text-left">{{ "api.admin.oauth.scope.#{scope}.description"|trans({'%shop_name%': "<a href=\"#{path('homepage')}\">#{BaseInfo.shop_name}</a>"})|raw }}</li>
+                        <li class="text-left">{{ "api.admin.oauth.scope.#{scope}.description"|trans({'%shop_name%': "<a href=\"#{path('homepage')}\">#{BaseInfo.shop_name|escape}</a>"})|raw }}</li>
                         {% endfor %}
                         </ul>
 
