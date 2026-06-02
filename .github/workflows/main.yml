@@ -60,13 +60,14 @@ jobs:
           - 1025:1025
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc  # v2
       with:
         php-version: ${{ matrix.php }}
-        extensions: :xdebug
+        github-token: ''
+        extensions: :xdebug, redis
 
     - name: Archive Plugin
       env:
@@ -83,27 +84,23 @@ jobs:
         docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:composer2
 
     - name: Checkout EC-CUBE
-      uses: actions/checkout@v4
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       with:
         repository: 'EC-CUBE/ec-cube'
         ref: ${{ matrix.eccube_version }}
         path: 'ec-cube'
 
-    - name: Get Composer Cache Directory
-      id: composer-cache
-      run: |
-        echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
-
-    - uses: actions/cache@v4
+    - name: Cache Composer
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5
       with:
-        path: ${{ steps.composer-cache.outputs.dir }}
+        path: ${{ github.workspace }}/ec-cube/vendor
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-composer-
 
     - name: Install to composer
       working-directory: 'ec-cube'
-      run: composer install --no-interaction -o --apcu-autoloader
+      run: composer install --dev --no-interaction -o --apcu-autoloader
 
     - name: Setup EC-CUBE
       env:
