@@ -11,13 +11,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Query;
+namespace Plugin\Api44\GraphQL\Query;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Query;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Query;
+use Plugin\Api44\GraphQL\Types;
 
 abstract class SingleResultQuery implements Query
 {

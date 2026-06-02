@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\Service;
+namespace Plugin\Api44\Tests\Service;
 
 use Eccube\Tests\EccubeTestCase;
 use Nyholm\Psr7\Request;
-use Plugin\Api42\Entity\WebHook;
-use Plugin\Api42\Service\WebHookService;
+use Plugin\Api44\Entity\WebHook;
+use Plugin\Api44\Service\WebHookService;
 use ReflectionClass;
 use ReflectionException;
 

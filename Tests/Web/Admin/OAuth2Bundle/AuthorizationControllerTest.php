@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\Web\Admin\OAuth2Bundle;
+namespace Plugin\Api44\Tests\Web\Admin\OAuth2Bundle;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;

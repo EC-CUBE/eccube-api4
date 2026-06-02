@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\GraphQL\Mutation;
+namespace Plugin\Api44\Tests\GraphQL\Mutation;
 
 use DateTime;
 use Eccube\Entity\Master\OrderStatus;
@@ -22,9 +22,9 @@ use Eccube\Repository\ShippingRepository;
 use Eccube\Service\MailService;
 use Eccube\Service\OrderStateMachine;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api42\GraphQL\Mutation\UpdateShippedMutation;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api44\GraphQL\Mutation\UpdateShippedMutation;
+use Plugin\Api44\GraphQL\Types;
 
 class UpdateShippedMutationTest extends EccubeTestCase
 {

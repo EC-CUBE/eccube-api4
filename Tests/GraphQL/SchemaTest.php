@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\GraphQL;
+namespace Plugin\Api44\Tests\GraphQL;
 
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Tests\EccubeTestCase;
@@ -20,7 +20,7 @@ use GraphQL\Executor\ExecutionResult;
 use GraphQL\Server\Helper;
 use GraphQL\Server\OperationParams;
 use GraphQL\Server\ServerConfig;
-use Plugin\Api42\GraphQL\Schema;
+use Plugin\Api44\GraphQL\Schema;
 
 class SchemaTest extends EccubeTestCase
 {

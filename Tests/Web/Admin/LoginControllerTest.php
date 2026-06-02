@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\Web\Admin;
+namespace Plugin\Api44\Tests\Web\Admin;
 
 use Eccube\Tests\Web\AbstractWebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

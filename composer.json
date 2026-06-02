@@ -1,5 +1,5 @@
 {
-  "name": "ec-cube/api42",
+  "name": "ec-cube/api44",
   "version": "4.3.2",
   "description": "Web API",
   "type": "eccube-plugin",
@@ -11,7 +11,7 @@
     "webonyx/graphql-php": "^14.0"
   },
   "extra": {
-    "code": "Api42",
+    "code": "Api44",
     "entity-namespaces": ["League\\Bundle\\OAuth2ServerBundle\\Model"]
   }
 }

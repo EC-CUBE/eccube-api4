@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Mutation;
+namespace Plugin\Api44\GraphQL\Mutation;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\EccubeConfig;
@@ -23,10 +23,10 @@ use Eccube\Repository\ShippingRepository;
 use Eccube\Service\MailService;
 use Eccube\Service\OrderStateMachine;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api42\GraphQL\Mutation;
-use Plugin\Api42\GraphQL\Type\Definition\DateTimeType;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api44\GraphQL\Mutation;
+use Plugin\Api44\GraphQL\Type\Definition\DateTimeType;
+use Plugin\Api44\GraphQL\Types;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationInterface;

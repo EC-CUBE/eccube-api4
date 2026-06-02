@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Service;
+namespace Plugin\Api44\Service;
 
 use Eccube\Util\StringUtil;
 use GuzzleHttp\Client;
@@ -19,8 +19,8 @@ use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Plugin\Api42\Entity\WebHook;
-use Plugin\Api42\Repository\WebHookRepository;
+use Plugin\Api44\Entity\WebHook;
+use Plugin\Api44\Repository\WebHookRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent ;
 use Symfony\Component\HttpKernel\KernelEvents;

@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Security\Core\Encoder;
+namespace Plugin\Api44\Security\Core\Encoder;
 
 use Eccube\Security\Core\Encoder\PasswordEncoder;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;

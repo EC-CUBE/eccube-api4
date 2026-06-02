@@ -11,15 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Controller;
+namespace Plugin\Api44\Controller;
 
 use Eccube\Controller\AbstractController;
 use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
 use GraphQL\Validator\DocumentValidator;
-use Plugin\Api42\GraphQL\Schema;
-use Plugin\Api42\GraphQL\ScopeValidationRule;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Schema;
+use Plugin\Api44\GraphQL\ScopeValidationRule;
+use Plugin\Api44\GraphQL\Types;
 use RuntimeException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;

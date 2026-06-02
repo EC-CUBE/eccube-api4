@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Controller\Admin;
+namespace Plugin\Api44\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Exception;
-use Plugin\Api42\Form\Type\Admin\ClientType;
+use Plugin\Api44\Form\Type\Admin\ClientType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -67,7 +67,7 @@ class OAuthController extends AbstractController
     /**
      * @Route("/%eccube_admin_route%/api/config", name="admin_api_config", methods={"GET"})
      * @Route("/%eccube_admin_route%/api/oauth", name="admin_api_oauth", methods={"GET"})
-     * @Template("@Api42/admin/OAuth/index.twig")
+     * @Template("@Api44/admin/OAuth/index.twig")
      *
      * @param Request $request
      *
@@ -85,7 +85,7 @@ class OAuthController extends AbstractController
 
     /**
      * @Route("/%eccube_admin_route%/api/oauth/new", name="admin_api_oauth_new", methods={"GET", "POST"})
-     * @Template("@Api42/admin/OAuth/edit.twig")
+     * @Template("@Api44/admin/OAuth/edit.twig")
      *
      * @param Request $request
      *

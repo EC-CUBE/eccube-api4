@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\Web;
+namespace Plugin\Api44\Tests\Web;
 
 use Eccube\Common\EccubeConfig;
 use Eccube\Tests\Web\AbstractWebTestCase;
@@ -105,7 +105,7 @@ class ApiControllerTest extends AbstractWebTestCase
         $accessTokenEntity->setClient($clientEntity);
         $accessTokenEntity->setExpiryDateTime(new \DateTimeImmutable('+1 days', new \DateTimeZone('Asia/Tokyo')));
         $accessTokenEntity->setUserIdentifier('admin');
-        $accessTokenEntity->setPrivateKey(new CryptKey(self::getContainer()->get(EccubeConfig::class)->get('kernel.project_dir').'/app/PluginData/Api42/oauth/private.key'));
+        $accessTokenEntity->setPrivateKey(new CryptKey(self::getContainer()->get(EccubeConfig::class)->get('kernel.project_dir').'/app/PluginData/Api44/oauth/private.key'));
 
         array_walk($scopes, function ($s) use ($accessTokenEntity) {
             $scope = new Scope();

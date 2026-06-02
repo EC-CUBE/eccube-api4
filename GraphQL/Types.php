@@ -11,13 +11,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL;
+namespace Plugin\Api44\GraphQL;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Type\Definition\DateTimeType;
+use Plugin\Api44\GraphQL\Type\Definition\DateTimeType;
 
 /**
  * DoctrineのEntityからGraphQLのObjectTypeを変換するクラス.

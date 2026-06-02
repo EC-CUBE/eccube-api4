@@ -11,14 +11,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\GraphQL;
+namespace Plugin\Api44\Tests\GraphQL;
 
 use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Member;
 use Eccube\Entity\Product;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Types;
 
 class TypesTest extends EccubeTestCase
 {

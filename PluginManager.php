@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42;
+namespace Plugin\Api44;
 
 use Doctrine\ORM\EntityManager;
 use Eccube\Entity\AuthorityRole;

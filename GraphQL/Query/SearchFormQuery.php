@@ -11,16 +11,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Query;
+namespace Plugin\Api44\GraphQL\Query;
 
 use Eccube\Common\EccubeConfig;
 use Eccube\Util\StringUtil;
 use GraphQL\Type\Definition\Type;
 use Knp\Component\Pager\PaginatorInterface;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api42\GraphQL\Query;
-use Plugin\Api42\GraphQL\Type\ConnectionType;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api44\GraphQL\Query;
+use Plugin\Api44\GraphQL\Type\ConnectionType;
+use Plugin\Api44\GraphQL\Types;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -97,7 +97,7 @@ abstract class SearchFormQuery implements Query
                     $type = Type::int();
                     break;
                 case DateTimeType::class:
-                    $type = \Plugin\Api42\GraphQL\Type\Definition\DateTimeType::dateTime();
+                    $type = \Plugin\Api44\GraphQL\Type\Definition\DateTimeType::dateTime();
                     break;
                 default:
                     $type = Type::string();
