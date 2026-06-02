@@ -13,7 +13,6 @@
 
 namespace Plugin\Api44\Tests\GraphQL\Mutation;
 
-use DateTime;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Order;
 use Eccube\Entity\Shipping;
@@ -31,12 +30,12 @@ class UpdateShippedMutationTest extends EccubeTestCase
     /**
      * @var UpdateShippedMutation
      */
-    private $updateShippedMutation;
+    private ?UpdateShippedMutation $updateShippedMutation = null;
 
     /**
      * @var Order
      */
-    private $Order;
+    private ?Order $Order = null;
 
     public function setUp(): void
     {
@@ -71,7 +70,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
      */
     public function testResponseAndDB()
     {
-        $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2020-05-18T12:57:08+09:00');
+        $dateTime = \DateTime::createFromFormat(\DateTime::ATOM, '2020-05-18T12:57:08+09:00');
         $args = [
             'id' => $this->Order->getShippings()->current()->getId(),
             'shipping_date' => $dateTime,
@@ -104,10 +103,9 @@ class UpdateShippedMutationTest extends EccubeTestCase
 
     /**
      * 引数のバリデーションチェック
-     *
-     * @dataProvider validateArgsProvider
      */
-    public function testValidateArgs($args = [], string $message = null)
+    #[\PHPUnit\Framework\Attributes\DataProvider('validateArgsProvider')]
+    public function testValidateArgs($args = [], ?string $message = null)
     {
         $args = array_merge($args, ['id' => $this->Order->getShippings()->current()->getId()]);
 
@@ -118,7 +116,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertNotNull($this->Order->getShippings()->current()->getShippingDate());
         } catch (InvalidArgumentException $e) {
             // エラーの確認
-            self::assertEquals('Invalid argument', $e->getCategory());
+            self::assertTrue($e->isClientSafe());
             if ($message !== null) {
                 self::assertStringContainsString($message, $e->getMessage());
             }
@@ -127,7 +125,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
         }
     }
 
-    public function validateArgsProvider()
+    public static function validateArgsProvider()
     {
         // dataProvider 実行時点で eccubeConfig がまだ使えないのでベタがきする。
         $eccube_mtext_len = 200;
@@ -137,7 +135,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
         $str_eccube_ltext_len = str_repeat('a', $eccube_ltext_len);
         $str_eccube_ltext_len_plus = str_repeat('a', $eccube_ltext_len + 1);
 
-        $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2020-05-18T12:57:08+09:00');
+        $dateTime = \DateTime::createFromFormat(\DateTime::ATOM, '2020-05-18T12:57:08+09:00');
 
         return [
             [['id' => -1], '/id/'],
@@ -165,7 +163,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertTrue(false);
         } catch (InvalidArgumentException $e) {
             // エラーの確認
-            self::assertEquals('Invalid argument', $e->getCategory());
+            self::assertTrue($e->isClientSafe());
             self::assertMatchesRegularExpression('/No Shipping found/', $e->getMessage());
         }
     }
@@ -189,7 +187,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertTrue(false);
         } catch (InvalidArgumentException $e) {
             // エラーの確認
-            self::assertEquals('Invalid argument', $e->getCategory());
+            self::assertTrue($e->isClientSafe());
             self::assertMatchesRegularExpression('/Already shipped/', $e->getMessage());
         }
     }
@@ -212,7 +210,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertTrue(false);
         } catch (InvalidArgumentException $e) {
             // エラーの確認
-            self::assertEquals('Invalid argument', $e->getCategory());
+            self::assertTrue($e->isClientSafe());
             self::assertMatchesRegularExpression('/order cannot be shipped/', $e->getMessage());
         }
     }

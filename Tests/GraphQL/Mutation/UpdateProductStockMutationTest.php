@@ -23,10 +23,10 @@ use Plugin\Api44\GraphQL\Types;
 class UpdateProductStockMutationTest extends EccubeTestCase
 {
     /** @var ProductClassRepository */
-    private $productClassRepository;
+    private ?ProductClassRepository $productClassRepository = null;
 
     /** @var UpdateProductStockMutation */
-    private $updateProductStockMutation;
+    private ?UpdateProductStockMutation $updateProductStockMutation = null;
 
     public function setUp(): void
     {
@@ -57,13 +57,12 @@ class UpdateProductStockMutationTest extends EccubeTestCase
     }
 
     /**
-     * @dataProvider updateProductStockProvider
-     *
      * @param $args
      * @param $expectStockUnlimited
      * @param $expectStock
      * @param $expectExeption
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('updateProductStockProvider')]
     public function testUpdateProductStock($args, $expectStockUnlimited, $expectStock, $expectExeption)
     {
         try {
@@ -85,7 +84,7 @@ class UpdateProductStockMutationTest extends EccubeTestCase
         self::assertEquals($expectStock, $ProductClasses[0]->getProductStock()->getStock());
     }
 
-    public function updateProductStockProvider()
+    public static function updateProductStockProvider()
     {
         return [
             [['code' => 'code-limited', 'stock_unlimited' => false, 'stock' => 50], false, 50, null],

@@ -23,7 +23,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
     /**
      * @var ClientManager
      */
-    protected $clientManager;
+    protected ?ClientManager $clientManager = null;
 
     /**
      * @{@inheritdoc}

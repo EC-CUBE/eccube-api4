@@ -15,8 +15,8 @@ namespace Plugin\Api44\Tests\Web\Admin\OAuth2Bundle;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Symfony\Component\HttpFoundation\Response;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizationControllerTest extends AbstractAdminWebTestCase
 {
@@ -25,22 +25,22 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         parent::setUp();
     }
 
-    public function testRoutingAdminOauth2Authorize_ログインしている場合は権限移譲確認画面を表示()
+    public function testRoutingAdminOauth2Authorizeログインしている場合は権限移譲確認画面を表示()
     {
         /** @var Client $Client */
         $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
 
         $this->client->request('GET',
-                               $this->generateUrl(
-                                   'oauth2_authorize',
-                                   [
-                                       'client_id' => $Client->getIdentifier(),
-                                       'redirect_uri' => (string) current($Client->getRedirectUris()),
-                                       'response_type' => 'code',
-                                       'scope' => 'read',
-                                       'state' => 'xxx',
-                                   ]
-                               )
+            $this->generateUrl(
+                'oauth2_authorize',
+                [
+                    'client_id' => $Client->getIdentifier(),
+                    'redirect_uri' => (string) current($Client->getRedirectUris()),
+                    'response_type' => 'code',
+                    'scope' => 'read',
+                    'state' => 'xxx',
+                ]
+            )
         );
 
         // ログイン
@@ -50,7 +50,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         );
     }
 
-    public function testRoutingAdminOauth2Authorize_権限移譲を許可()
+    public function testRoutingAdminOauth2Authorize権限移譲を許可()
     {
         /** @var Client $Client */
         $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
@@ -95,7 +95,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         self::assertTrue(isset($callbackParams['code']));
     }
 
-    public function testRoutingAdminOauth2Authorize_権限移譲を許可しない()
+    public function testRoutingAdminOauth2Authorize権限移譲を許可しない()
     {
         /** @var Client $Client */
         $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
@@ -141,7 +141,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         self::assertEquals('access_denied', $callbackParams['error']);
     }
 
-    public function testRoutingAdminOauth2Authorize_権限移譲を許可_パラメータが足りない場合()
+    public function testRoutingAdminOauth2Authorize権限移譲を許可パラメータが足りない場合()
     {
         $parameters = [
             'oauth_authorization' => [
@@ -163,17 +163,15 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         $this->assertFalse($this->client->getResponse()->isRedirection());
     }
 
-    /**
-     * * @dataProvider xssSnippetsProvider
-     */
-    public function testRoutingAdminOauth2Authorize_XSS($snippet)
+    #[\PHPUnit\Framework\Attributes\DataProvider('xssSnippetsProvider')]
+    public function testRoutingAdminOauth2AuthorizeXSS($snippet)
     {
-        //基本設定＞店舗設定へ移動
+        // 基本設定＞店舗設定へ移動
         $shop_url = $this->generateUrl('admin_setting_shop');
         $this->client->request('GET', $shop_url);
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
-        //店舗名を入力
+        // 店舗名を入力
         $form = [
             'shop_name' => $snippet,
             'email01' => 'admin@example.com',
@@ -194,7 +192,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         $response = $this->client->getResponse();
         $this->assertTrue($response->isRedirection());
 
-        //OAuth画面へ移動
+        // OAuth画面へ移動
         /** @var Client $Client */
         $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
         $authorize_url = $this->generateUrl(
@@ -208,7 +206,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
             ]
         );
 
-        $crawler  = $this->client->request('GET', $authorize_url);
+        $crawler = $this->client->request('GET', $authorize_url);
 
         // XSSが発火しないことを確認（XSSが発火するとscriptタグが文字列として表示されない）
         $accsessMessage = $crawler->filter('p.text-start')->eq(0);
@@ -247,12 +245,12 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         $this->assertEquals($snippet.' / TOPページ', $title);
     }
 
-    public function xssSnippetsProvider()
+    public static function xssSnippetsProvider()
     {
         return [
             ['<script>alert(1)</script>'],
             ['<img src="javascript:alert(\'XSS\');">'],
-            ['<body onload="alert(\'XSS\')">']
+            ['<body onload="alert(\'XSS\')">'],
         ];
     }
 
