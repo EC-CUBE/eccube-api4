@@ -27,7 +27,7 @@ class PluginManager extends AbstractPluginManager
     /**
      * {@inheritdoc}
      */
-    public function enable(array $meta, ContainerInterface $container)
+    public function enable(array $meta, ContainerInterface $container): void
     {
         $this->createAuthorityRole($container);
     }
@@ -35,7 +35,7 @@ class PluginManager extends AbstractPluginManager
     /**
      * {@inheritdoc}
      */
-    public function disable(array $meta, ContainerInterface $container)
+    public function disable(array $meta, ContainerInterface $container): void
     {
         $this->removeAuthorityRole($container);
     }
@@ -53,7 +53,7 @@ class PluginManager extends AbstractPluginManager
         $AuthorityRole->setDenyUrl($this->denyUrl);
 
         $entityManager->persist($AuthorityRole);
-        $entityManager->flush($AuthorityRole);
+        $entityManager->flush();
     }
 
     private function removeAuthorityRole(ContainerInterface $container)
@@ -68,7 +68,7 @@ class PluginManager extends AbstractPluginManager
 
         if (!is_null($AuthorityRole)) {
             $entityManager->remove($AuthorityRole);
-            $entityManager->flush($AuthorityRole);
+            $entityManager->flush();
         }
     }
 }

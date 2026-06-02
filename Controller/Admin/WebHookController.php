@@ -14,24 +14,24 @@
 namespace Plugin\Api44\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
-use Exception;
 use Plugin\Api44\Entity\WebHook;
 use Plugin\Api44\Form\Type\Admin\WebHookType;
 use Plugin\Api44\Repository\WebHookRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 class WebHookController extends AbstractController
 {
     /**
      * @var WebHookRepository
      */
-    private $webHookRepository;
+    private WebHookRepository $webHookRepository;
 
     /**
      * WebHookController constructor.
+     *
      * @param WebHookRepository $webHookRepository
      */
     public function __construct(WebHookRepository $webHookRepository)
@@ -39,29 +39,25 @@ class WebHookController extends AbstractController
         $this->webHookRepository = $webHookRepository;
     }
 
-    /**
-     * @Route("/%eccube_admin_route%/api/webhook", name="admin_api_webhook", methods={"GET"})
-     * @Template("@Api44/admin/WebHook/index.twig")
-     */
+    #[Route(path: '/%eccube_admin_route%/api/webhook', name: 'admin_api_webhook', methods: ['GET'])]
     public function index()
     {
         $WebHooks = $this->webHookRepository->findAll();
 
-        return [
+        return $this->render('@Api44/admin/WebHook/index.twig', [
             'webhooks' => $WebHooks,
-        ];
+        ]);
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/webhook/new", name="admin_api_webhook_new", methods={"GET", "POST"})
-     * @Route("/%eccube_admin_route%/api/webhook/edit/{id}", requirements={"id" = "\d+"}, name="admin_api_webhook_edit", methods={"GET", "POST"})
-     * @Template("@Api44/admin/WebHook/edit.twig")
-     *
      * @param Request $request
      * @param WebHook|null $WebHook
-     * @return array
+     *
+     * @return Response|RedirectResponse
      */
-    public function edit(Request $request, WebHook $WebHook = null)
+    #[Route(path: '/%eccube_admin_route%/api/webhook/new', name: 'admin_api_webhook_new', methods: ['GET', 'POST'])]
+    #[Route(path: '/%eccube_admin_route%/api/webhook/edit/{id}', requirements: ['id' => '\d+'], name: 'admin_api_webhook_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, ?WebHook $WebHook = null)
     {
         $WebHook = $WebHook ?: new WebHook();
         $builder = $this->formFactory->createBuilder(WebHookType::class, $WebHook);
@@ -78,17 +74,17 @@ class WebHookController extends AbstractController
             return $this->redirectToRoute('admin_api_webhook_edit', ['id' => $WebHook->getId()]);
         }
 
-        return [
+        return $this->render('@Api44/admin/WebHook/edit.twig', [
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/webhook/delete/{id}", requirements={"id" = "\d+"}, name="admin_api_webhook_delete", methods={"DELETE"})
-     *
      * @param WebHook $WebHook
+     *
      * @return RedirectResponse
      */
+    #[Route(path: '/%eccube_admin_route%/api/webhook/delete/{id}', requirements: ['id' => '\d+'], name: 'admin_api_webhook_delete', methods: ['DELETE'])]
     public function delete(WebHook $WebHook)
     {
         $this->isTokenValid();
@@ -97,7 +93,7 @@ class WebHookController extends AbstractController
             $this->webHookRepository->delete($WebHook);
             $this->entityManager->flush();
             $this->addSuccess('admin.common.delete_complete', 'admin');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->addError('admin.common.delete_error', 'admin');
             log_error('WebHook削除エラー', [$WebHook->getId(), $e]);
         }

@@ -25,7 +25,7 @@ class ProductQuery extends SingleResultQuery
         parent::__construct(Product::class);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'product';
     }

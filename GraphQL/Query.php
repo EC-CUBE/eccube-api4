@@ -18,10 +18,10 @@ interface Query
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @return array
      */
-    public function getQuery();
+    public function getQuery(): array;
 }

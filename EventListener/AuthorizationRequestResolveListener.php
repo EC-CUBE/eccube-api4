@@ -15,31 +15,31 @@ namespace Plugin\Api44\EventListener;
 
 use Eccube\Entity\Master\Authority;
 use Eccube\Entity\Member;
+use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Plugin\Api44\Form\Type\Admin\OAuth2AuthorizationType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
-use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use Twig\Environment as Twig;
 
 final class AuthorizationRequestResolveListener implements EventSubscriberInterface
 {
     /** @var Twig */
-    protected $twig;
+    private Twig $twig;
 
     /** @var FormFactoryInterface */
-    protected $formFactory;
+    private FormFactoryInterface $formFactory;
 
     /** @var RequestStack */
-    protected $requestStack;
+    private RequestStack $requestStack;
 
     public function __construct(
         Twig $twig,
         FormFactoryInterface $formFactory,
-        RequestStack $requestStack
+        RequestStack $requestStack,
     ) {
         $this->twig = $twig;
         $this->formFactory = $formFactory;

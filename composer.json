@@ -1,14 +1,14 @@
 {
   "name": "ec-cube/api44",
-  "version": "4.3.2",
+  "version": "4.4.0",
   "description": "Web API",
   "type": "eccube-plugin",
   "require": {
     "ec-cube/plugin-installer": "^2.0",
-    "league/oauth2-server-bundle": "^0.5",
+    "league/oauth2-server-bundle": "^1.1",
     "nyholm/psr7": "^1.2",
     "php-http/message-factory": "*",
-    "webonyx/graphql-php": "^14.0"
+    "webonyx/graphql-php": "^15.0"
   },
   "extra": {
     "code": "Api44",

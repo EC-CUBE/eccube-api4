@@ -17,6 +17,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
 use Plugin\Api44\Entity\WebHook;
 
+/**
+ * @extends AbstractRepository<WebHook>
+ */
 class WebHookRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry, $entityClass = WebHook::class)

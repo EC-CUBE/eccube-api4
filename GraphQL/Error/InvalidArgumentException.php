@@ -17,13 +17,8 @@ use GraphQL\Error\ClientAware;
 
 class InvalidArgumentException extends \Exception implements ClientAware
 {
-    public function isClientSafe()
+    public function isClientSafe(): bool
     {
         return true;
-    }
-
-    public function getCategory()
-    {
-        return 'Invalid argument';
     }
 }

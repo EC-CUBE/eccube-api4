@@ -13,21 +13,21 @@
 
 namespace Plugin\Api44\GraphQL;
 
-use ArrayObject;
 use GraphQL\Type\Definition\ObjectType;
 
 class Schema extends \GraphQL\Type\Schema
 {
     public function __construct(
         Types $types,
-        ArrayObject $queries,
-        ArrayObject $mutations
+        \ArrayObject $queries,
+        \ArrayObject $mutations,
     ) {
         parent::__construct([
             'query' => new ObjectType([
                 'name' => 'Query',
                 'fields' => array_reduce($queries->getArrayCopy(), function ($acc, Query $query) {
                     $acc[$query->getName()] = $query->getQuery();
+
                     return $acc;
                 }, []),
                 'typeLoader' => function ($name) use ($types) {
@@ -38,6 +38,7 @@ class Schema extends \GraphQL\Type\Schema
                 'name' => 'Mutation',
                 'fields' => array_reduce($mutations->getArrayCopy(), function ($acc, Mutation $mutation) {
                     $acc[$mutation->getName()] = $mutation->getMutation();
+
                     return $acc;
                 }, []),
                 'typeLoader' => function ($name) use ($types) {

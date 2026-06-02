@@ -22,7 +22,7 @@ class ProductsQuery extends SearchFormQuery
     /**
      * @var ProductRepository
      */
-    private $productRepository;
+    private ProductRepository $productRepository;
 
     /**
      * ProductQuery constructor.
@@ -34,12 +34,12 @@ class ProductsQuery extends SearchFormQuery
         $this->productRepository = $productRepository;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'products';
     }
 
-    public function getQuery()
+    public function getQuery(): array
     {
         return $this->createQuery(Product::class, SearchProductType::class, function ($searchData) {
             return $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);

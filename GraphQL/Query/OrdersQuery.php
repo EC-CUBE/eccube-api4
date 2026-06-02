@@ -22,7 +22,7 @@ class OrdersQuery extends SearchFormQuery
     /**
      * @var OrderRepository
      */
-    private $orderRepository;
+    private OrderRepository $orderRepository;
 
     /**
      * OrdersQuery constructor.
@@ -34,12 +34,12 @@ class OrdersQuery extends SearchFormQuery
         $this->orderRepository = $orderRepository;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'orders';
     }
 
-    public function getQuery()
+    public function getQuery(): array
     {
         return $this->createQuery(Order::class, SearchOrderType::class, function ($searchData) {
             return $this->orderRepository->getQueryBuilderBySearchDataForAdmin($searchData);

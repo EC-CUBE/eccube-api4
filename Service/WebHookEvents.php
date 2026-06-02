@@ -24,7 +24,7 @@ class WebHookEvents
     /**
      * @var WebHookTrigger[]
      */
-    private $triggers = [];
+    private array $triggers = [];
 
     public function onCreated($entity)
     {

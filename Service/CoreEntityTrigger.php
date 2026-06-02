@@ -32,9 +32,10 @@ class CoreEntityTrigger implements WebHookTrigger
 {
     /**
      * @param $entity
+     *
      * @return Customer|Order|Product|null
      */
-    public function emitFor($entity)
+    public function emitFor($entity): Customer|Order|Product|null
     {
         // Product
         if ($entity instanceof ProductClass) {

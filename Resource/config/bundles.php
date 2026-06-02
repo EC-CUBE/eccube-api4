@@ -13,5 +13,5 @@
 
 return [
     Plugin\Api44\Bundle\ApiBundle::class => ['all' => true],
-    League\Bundle\OAuth2ServerBundle\LeagueOAuth2ServerBundle::class => ['all' => true]
+    League\Bundle\OAuth2ServerBundle\LeagueOAuth2ServerBundle::class => ['all' => true],
 ];

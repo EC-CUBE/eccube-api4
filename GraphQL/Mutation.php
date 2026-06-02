@@ -18,10 +18,10 @@ interface Mutation
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @return array
      */
-    public function getMutation();
+    public function getMutation(): array;
 }

@@ -15,19 +15,19 @@ namespace Plugin\Api44\Command;
 
 use GraphQL\Utils\SchemaPrinter;
 use Plugin\Api44\GraphQL\Schema;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'eccube:api:dump-schema', description: 'Dump GraphQL schema.')]
 class DumpSchemaCommand extends Command
 {
-    protected static $defaultName = 'eccube:api:dump-schema';
-
     /**
      * @var Schema
      */
-    private $schema;
+    private Schema $schema;
 
     /**
      * DumpSchemaCommand constructor.
@@ -40,11 +40,10 @@ class DumpSchemaCommand extends Command
 
     protected function configure()
     {
-        $this->addArgument('type', InputArgument::OPTIONAL, 'Type name to dump schema')
-            ->setDescription('Dump GraphQL schema.');
+        $this->addArgument('type', InputArgument::OPTIONAL, 'Type name to dump schema');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $type = $input->getArgument('type');
         if ($type) {
@@ -52,5 +51,7 @@ class DumpSchemaCommand extends Command
         } else {
             $output->writeln(SchemaPrinter::doPrint($this->schema));
         }
+
+        return Command::SUCCESS;
     }
 }

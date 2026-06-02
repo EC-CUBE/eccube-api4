@@ -16,8 +16,8 @@ namespace Plugin\Api44\GraphQL;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\AST\OperationDefinitionNode;
+use GraphQL\Validator\QueryValidationContext;
 use GraphQL\Validator\Rules\ValidationRule;
-use GraphQL\Validator\ValidationContext;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ScopeValidationRule extends ValidationRule
@@ -25,7 +25,7 @@ class ScopeValidationRule extends ValidationRule
     /**
      * @var AuthorizationCheckerInterface
      */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     /**
      * ScopeValidationRule constructor.
@@ -35,7 +35,7 @@ class ScopeValidationRule extends ValidationRule
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function getVisitor(ValidationContext $context)
+    public function getVisitor(QueryValidationContext $context): array
     {
         return [
             NodeKind::OPERATION_DEFINITION => function (OperationDefinitionNode $def) use ($context) {

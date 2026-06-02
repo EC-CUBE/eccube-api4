@@ -37,37 +37,37 @@ class UpdateShippedMutation implements Mutation
     /**
      * @var EccubeConfig
      */
-    private $eccubeConfig;
+    private EccubeConfig $eccubeConfig;
 
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * @var MailService
      */
-    private $mailService;
+    private MailService $mailService;
 
     /**
      * @var OrderStateMachine
      */
-    private $orderStateMachine;
+    private OrderStateMachine $orderStateMachine;
 
     /**
      * @var OrderStatusRepository
      */
-    private $orderStatusRepository;
+    private OrderStatusRepository $orderStatusRepository;
 
     /**
      * @var Types
      */
-    private $types;
+    private Types $types;
 
     /**
      * @var ShippingRepository
      */
-    private $shippingRepository;
+    private ShippingRepository $shippingRepository;
 
     public function __construct(
         EccubeConfig $eccubeConfig,
@@ -76,7 +76,7 @@ class UpdateShippedMutation implements Mutation
         OrderStateMachine $orderStateMachine,
         OrderStatusRepository $orderStatusRepository,
         Types $types,
-        ShippingRepository $shippingRepository
+        ShippingRepository $shippingRepository,
     ) {
         $this->eccubeConfig = $eccubeConfig;
         $this->entityManager = $entityManager;
@@ -87,14 +87,14 @@ class UpdateShippedMutation implements Mutation
         $this->shippingRepository = $shippingRepository;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'updateShipped';
     }
 
-    public function getMutation()
+    public function getMutation(): array
     {
-        return  [
+        return [
             'type' => $this->types->get(Shipping::class),
             'args' => [
                 'id' => [

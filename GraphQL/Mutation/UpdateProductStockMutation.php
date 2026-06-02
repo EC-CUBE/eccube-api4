@@ -26,36 +26,36 @@ class UpdateProductStockMutation implements Mutation
     /**
      * @var Types
      */
-    private $types;
+    private Types $types;
 
     /**
      * @var ProductClassRepository
      */
-    private $productClassRepository;
+    private ProductClassRepository $productClassRepository;
 
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         Types $types,
         ProductClassRepository $productClassRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ) {
         $this->types = $types;
         $this->productClassRepository = $productClassRepository;
         $this->entityManager = $entityManager;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'updateProductStock';
     }
 
-    public function getMutation()
+    public function getMutation(): array
     {
-        return  [
+        return [
             'type' => $this->types->get(ProductClass::class),
             'args' => [
                 'code' => [

@@ -27,56 +27,49 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class SearchFormQuery implements Query
 {
     /**
      * @var PaginatorInterface
      */
-    private $paginator;
+    private PaginatorInterface $paginator;
 
     /**
      * @var EccubeConfig
      */
-    private $eccubeConfig;
+    private EccubeConfig $eccubeConfig;
 
     /**
      * @var FormFactoryInterface
      */
-    private $formFactory;
+    private FormFactoryInterface $formFactory;
 
     /**
      * @var Types
      */
-    private $types;
+    private Types $types;
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setPaginator(PaginatorInterface $paginator): void
     {
         $this->paginator = $paginator;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setEccubeConfig(EccubeConfig $eccubeConfig): void
     {
         $this->eccubeConfig = $eccubeConfig;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setFormFactory(FormFactoryInterface $formFactory): void
     {
         $this->formFactory = $formFactory;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setTypes(Types $types): void
     {
         $this->types = $types;

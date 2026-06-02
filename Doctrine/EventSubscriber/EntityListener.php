@@ -14,8 +14,8 @@
 namespace Plugin\Api44\Doctrine\EventSubscriber;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Plugin\Api44\Service\WebHookEvents;
 
 class EntityListener implements EventSubscriber
@@ -23,10 +23,11 @@ class EntityListener implements EventSubscriber
     /**
      * @var WebHookEvents
      */
-    private $webHookEvents;
+    private WebHookEvents $webHookEvents;
 
     /**
      * EntityListener constructor.
+     *
      * @param WebHookEvents $webHookEvents
      */
     public function __construct(WebHookEvents $webHookEvents)

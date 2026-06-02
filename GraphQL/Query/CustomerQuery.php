@@ -25,7 +25,7 @@ class CustomerQuery extends SingleResultQuery
         parent::__construct(Customer::class);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'customer';
     }

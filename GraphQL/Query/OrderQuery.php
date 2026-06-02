@@ -25,7 +25,7 @@ class OrderQuery extends SingleResultQuery
         parent::__construct(Order::class);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'order';
     }

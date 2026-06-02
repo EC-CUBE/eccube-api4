@@ -20,7 +20,7 @@ class ApiNav implements EccubeNav
     /**
      * @return array
      */
-    public static function getNav()
+    public static function getNav(): array
     {
         $menu = [
             'setting' => [

@@ -17,7 +17,8 @@ interface WebHookTrigger
 {
     /**
      * @param $entity
+     *
      * @return mixed|null
      */
-    public function emitFor($entity);
+    public function emitFor($entity): mixed;
 }

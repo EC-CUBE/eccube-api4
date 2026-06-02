@@ -22,10 +22,11 @@ class CustomersQuery extends SearchFormQuery
     /**
      * @var CustomerRepository
      */
-    private $customerRepository;
+    private CustomerRepository $customerRepository;
 
     /**
      * CustomersQuery constructor.
+     *
      * @param CustomerRepository $customerRepository
      */
     public function __construct(CustomerRepository $customerRepository)
@@ -33,12 +34,12 @@ class CustomersQuery extends SearchFormQuery
         $this->customerRepository = $customerRepository;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'customers';
     }
 
-    public function getQuery()
+    public function getQuery(): array
     {
         return $this->createQuery(Customer::class, SearchCustomerType::class, function ($searchData) {
             return $this->customerRepository->getQueryBuilderBySearchData($searchData);
