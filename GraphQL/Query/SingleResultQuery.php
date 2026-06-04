@@ -40,9 +40,9 @@ abstract class SingleResultQuery implements Query
     /**
      * SingleResultQuery constructor.
      *
-     * @param mixed $entityClass
+     * @param class-string $entityClass
      */
-    public function __construct(mixed $entityClass)
+    public function __construct(string $entityClass)
     {
         $this->entityClass = $entityClass;
     }
