@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         eccube_version: [ '4.4' ]
-        php: [ '8.2', '8.3', '8.4' ]
+        php: [ '8.2', '8.3', '8.4', '8.5' ]
         db: [ 'mysql', 'pgsql' ]
         plugin_code: [ 'Api44' ]
         include:
@@ -32,7 +32,7 @@ jobs:
             database_charset: utf8mb4
           - db: pgsql
             database_url: postgres://postgres:password@127.0.0.1:5432/eccube_db
-            database_server_version: 14
+            database_server_version: 16
             database_charset: utf8
     services:
       mysql:
@@ -44,7 +44,7 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
-        image: postgres:14
+        image: postgres:16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
