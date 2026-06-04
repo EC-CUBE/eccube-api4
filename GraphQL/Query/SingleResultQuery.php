@@ -11,43 +11,46 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Query;
+namespace Plugin\Api44\GraphQL\Query;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Query;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Query;
+use Plugin\Api44\GraphQL\Types;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class SingleResultQuery implements Query
 {
     /**
      * @var string
      */
-    private $entityClass;
+    private string $entityClass;
 
     /**
      * @var Types
      */
-    private $types;
+    private Types $types;
 
     /**
      * @var EntityManager
      */
-    private $entityManager;
+    private EntityManager $entityManager;
 
     /**
      * SingleResultQuery constructor.
+     *
+     * @param class-string $entityClass
      */
-    public function __construct($entityClass)
+    public function __construct(string $entityClass)
     {
         $this->entityClass = $entityClass;
     }
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @required
      */
+    #[Required]
     public function setEntityManager(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -55,14 +58,14 @@ abstract class SingleResultQuery implements Query
 
     /**
      * @param Types $types
-     * @required
      */
+    #[Required]
     public function setTypes(Types $types): void
     {
         $this->types = $types;
     }
 
-    public function getQuery()
+    public function getQuery(): array
     {
         return [
             'type' => $this->types->get($this->entityClass),
@@ -73,6 +76,5 @@ abstract class SingleResultQuery implements Query
                 return $this->entityManager->getRepository($this->entityClass)->find($args['id']);
             },
         ];
-
     }
 }

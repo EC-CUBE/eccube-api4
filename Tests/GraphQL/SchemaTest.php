@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\GraphQL;
+namespace Plugin\Api44\Tests\GraphQL;
 
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Tests\EccubeTestCase;
@@ -20,7 +20,7 @@ use GraphQL\Executor\ExecutionResult;
 use GraphQL\Server\Helper;
 use GraphQL\Server\OperationParams;
 use GraphQL\Server\ServerConfig;
-use Plugin\Api42\GraphQL\Schema;
+use Plugin\Api44\GraphQL\Schema;
 
 class SchemaTest extends EccubeTestCase
 {
@@ -52,14 +52,14 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         ['id' => '2'],
-                        ['id' => '1']
-                    ]
+                        ['id' => '1'],
+                    ],
                 ],
             ],
         ], $this->executeQuery($query));
     }
 
-    public function testQueryProducts_withVariables()
+    public function testQueryProductsWithVariables()
     {
         $query = '
         query productsQuery(
@@ -77,7 +77,7 @@ class SchemaTest extends EccubeTestCase
         $variables = [
             'page' => 1,
             'limit' => 2,
-            'create_datetime_start' => '2018-09-28T10:14:52+00:00'
+            'create_datetime_start' => '2018-09-28T10:14:52+00:00',
         ];
 
         $result = $this->executeQuery($query, json_encode($variables));
@@ -87,14 +87,14 @@ class SchemaTest extends EccubeTestCase
                 'products' => [
                     'nodes' => [
                         ['id' => '2'],
-                        ['id' => '1']
-                    ]
+                        ['id' => '1'],
+                    ],
                 ],
             ],
         ], $result);
     }
 
-    public function testQueryConnection_withEdges()
+    public function testQueryConnectionWithEdges()
     {
         $query = '{
             products {
@@ -126,7 +126,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryConnection_withNodes()
+    public function testQueryConnectionWithNodes()
     {
         $query = '{
             products {
@@ -188,7 +188,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryPageInfo_firstPage()
+    public function testQueryPageInfoFirstPage()
     {
         $query = '{
             products(page: 1, limit: 1) {
@@ -221,7 +221,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryPageInfo_LastPage()
+    public function testQueryPageInfoLastPage()
     {
         $query = '{
             products(page: 2, limit: 1) {
@@ -254,9 +254,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    /**
-     * @dataProvider queryWithPaginationProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('queryWithPaginationProvider')]
     public function testQueryWithPagination($page, $limit, $expectedErrorMessage = null)
     {
         $query = '{ products(page: '.$page.', limit: '.$limit.') { nodes { id } } }';
@@ -270,18 +268,16 @@ class SchemaTest extends EccubeTestCase
         }
     }
 
-    public function queryWithPaginationProvider()
+    public static function queryWithPaginationProvider()
     {
         return [
             ['1', '1'],
-            ['0', '1', '/page: 0より大きくなければなりません。;/'],
-            ['1', '0', '/limit: 0より大きくなければなりません。;/'],
+            ['0', '1', '/page: この値は0より大きくなければなりません。;/'],
+            ['1', '0', '/limit: この値は0より大きくなければなりません。;/'],
         ];
     }
 
-    /**
-     * @dataProvider queryWithDateTimeProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('queryWithDateTimeProvider')]
     public function testQueryWithDateTime($dateTime, $expectedErrorMessage = null)
     {
         $query = '{ products(create_datetime_start: "'.$dateTime.'") { nodes { id } } }';
@@ -295,7 +291,7 @@ class SchemaTest extends EccubeTestCase
         }
     }
 
-    public function queryWithDateTimeProvider()
+    public static function queryWithDateTimeProvider()
     {
         return [
             ['2020-07-30T12:57:08+09:00'],
@@ -348,7 +344,7 @@ class SchemaTest extends EccubeTestCase
 
         $query = "mutation {
             updateShipped (
-                id: ${shippingId},
+                id: {$shippingId},
                 shipping_date: \"2020-05-18T12:57:08+00:00\"
                 shipping_delivery_name: \"テスト配送業者\"
                 tracking_number: \"tracking_number0123\"
@@ -367,17 +363,17 @@ class SchemaTest extends EccubeTestCase
         self::assertEquals([
             'data' => [
                 'updateShipped' => [
-                    "id" => $shippingId,
-                    "shipping_delivery_name" => "テスト配送業者",
-                    "shipping_date" => "2020-05-18T12:57:08+00:00",
-                    "tracking_number" => "tracking_number0123",
-                    "note" => "Hello Notes!"
+                    'id' => $shippingId,
+                    'shipping_delivery_name' => 'テスト配送業者',
+                    'shipping_date' => '2020-05-18T12:57:08+00:00',
+                    'tracking_number' => 'tracking_number0123',
+                    'note' => 'Hello Notes!',
                 ],
             ],
         ], $result);
     }
 
-    public function testMutationUpdateShipped_withVariables()
+    public function testMutationUpdateShippedWithVariables()
     {
         // 出荷可能な受注を作成
         $Customer = $this->createCustomer();

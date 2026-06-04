@@ -11,68 +11,64 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Type\Definition;
+namespace Plugin\Api44\GraphQL\Type\Definition;
 
-use DateTime;
-use DateTimeInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
 
 class DateTimeType extends ScalarType
 {
     private static $DateTimeType;
 
-    /**
-     * @var string
-     */
-    public $name = 'DateTime';
-
-    /**
-     * @var string
-     */
-    public $description = 'The `DateTime` scalar type represents time data, represented as an ISO-8601 encoded UTC date string.';
+    public function __construct()
+    {
+        parent::__construct([
+            'name' => 'DateTime',
+            'description' => 'The `DateTime` scalar type represents time data, represented as an ISO-8601 encoded UTC date string.',
+        ]);
+    }
 
     /**
      * @param mixed $value
      *
      * @return string
      */
-    public function serialize($value)
+    public function serialize(mixed $value): string
     {
-        if (!$value instanceof DateTimeInterface) {
+        if (!$value instanceof \DateTimeInterface) {
             throw new InvariantViolation('DateTime is not an instance of DateTimeInterface: '.Utils::printSafe($value));
         }
 
-        return $value->format(DateTime::ATOM);
+        return $value->format(\DateTime::ATOM);
     }
 
     /**
      * @param mixed $value
      *
-     * @return DateTime|false|null
+     * @return \DateTime
+     *
      * @throws InvalidArgumentException
      */
-    public function parseValue($value)
+    public function parseValue(mixed $value): \DateTime
     {
-        $dateTime = DateTime::createFromFormat(DateTime::ATOM, $value);
+        $dateTime = \DateTime::createFromFormat(\DateTime::ATOM, $value);
         if ($dateTime) {
             return $dateTime;
-        } else {
-            throw new InvalidArgumentException('DateTime parse error, please specify in "Y-m-d\TH:i:sP".'.Utils::printSafe($value));
         }
+        throw new InvalidArgumentException('DateTime parse error, please specify in "Y-m-d\TH:i:sP".'.Utils::printSafe($value));
     }
 
     /**
      * @param Node $valueNode
      * @param array|null $variables
      *
-     * @return string|null
+     * @return \DateTime|null
      */
-    public function parseLiteral($valueNode, ?array $variables = null)
+    public function parseLiteral(Node $valueNode, ?array $variables = null): ?\DateTime
     {
         if ($valueNode instanceof StringValueNode) {
             return $this->parseValue($valueNode->value);

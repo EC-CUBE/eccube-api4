@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Type;
+namespace Plugin\Api44\GraphQL\Type;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Types;
 
 class ConnectionType extends ObjectType
 {

@@ -11,41 +11,40 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Controller\Admin;
+namespace Plugin\Api44\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
-use Exception;
-use Plugin\Api42\Form\Type\Admin\ClientType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
-use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
+use Plugin\Api44\Form\Type\Admin\ClientType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 class OAuthController extends AbstractController
 {
     /**
      * @var ClientManagerInterface
      */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
     /**
      * @var AccessTokenManagerInterface
      */
-    private $accessTokenManager;
+    private AccessTokenManagerInterface $accessTokenManager;
     /**
      * @var RefreshTokenManagerInterface
      */
-    private $refreshTokenManager;
+    private RefreshTokenManagerInterface $refreshTokenManager;
 
     /**
      * OAuthController constructor.
@@ -57,7 +56,7 @@ class OAuthController extends AbstractController
     public function __construct(
         ClientManagerInterface $clientManager,
         AccessTokenManagerInterface $accessTokenManager,
-        RefreshTokenManagerInterface $refreshTokenManager
+        RefreshTokenManagerInterface $refreshTokenManager,
     ) {
         $this->clientManager = $clientManager;
         $this->accessTokenManager = $accessTokenManager;
@@ -65,34 +64,30 @@ class OAuthController extends AbstractController
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/config", name="admin_api_config", methods={"GET"})
-     * @Route("/%eccube_admin_route%/api/oauth", name="admin_api_oauth", methods={"GET"})
-     * @Template("@Api42/admin/OAuth/index.twig")
-     *
      * @param Request $request
      *
-     * @return array
+     * @return Response
      */
+    #[Route(path: '/%eccube_admin_route%/api/config', name: 'admin_api_config', methods: ['GET'])]
+    #[Route(path: '/%eccube_admin_route%/api/oauth', name: 'admin_api_oauth', methods: ['GET'])]
     public function index(Request $request)
     {
         $criteria = ClientFilter::create();
         $clients = $this->clientManager->list($criteria);
 
-        return [
+        return $this->render('@Api44/admin/OAuth/index.twig', [
             'clients' => $clients,
-        ];
+        ]);
     }
 
     /**
-     * @Route("/%eccube_admin_route%/api/oauth/new", name="admin_api_oauth_new", methods={"GET", "POST"})
-     * @Template("@Api42/admin/OAuth/edit.twig")
-     *
      * @param Request $request
      *
-     * @return array|RedirectResponse
+     * @return Response|RedirectResponse
      *
-     * @throws Exception
+     * @throws \Exception
      */
+    #[Route(path: '/%eccube_admin_route%/api/oauth/new', name: 'admin_api_oauth_new', methods: ['GET', 'POST'])]
     public function create(Request $request)
     {
         $name = '';
@@ -116,30 +111,24 @@ class OAuthController extends AbstractController
                 $this->addSuccess('admin.common.save_complete', 'admin');
 
                 return $this->redirectToRoute('admin_api_oauth');
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->addError(trans('admin.common.save_error'), 'admin');
                 log_error('OAuth2 Client 登録エラー', [$e->getMessage()]);
             }
         }
 
-        return [
+        return $this->render('@Api44/admin/OAuth/edit.twig', [
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
-     * @Route(
-     *     "/%eccube_admin_route%/api/oauth/delete/{identifier}",
-     *     requirements={"identifier" = "\w+"},
-     *     name="admin_api_oauth_delete",
-     *     methods={"DELETE"}
-     * )
-     *
      * @param Request $request
      * @param string $identifier
      *
      * @return RedirectResponse
      */
+    #[Route(path: '/%eccube_admin_route%/api/oauth/delete/{identifier}', requirements: ['identifier' => '\w+'], name: 'admin_api_oauth_delete', methods: ['DELETE'])]
     public function delete(Request $request, string $identifier)
     {
         $this->isTokenValid();
@@ -156,7 +145,7 @@ class OAuthController extends AbstractController
             $this->clientManager->remove($client);
 
             $this->addSuccess('admin.common.delete_complete', 'admin');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->addError('admin.common.delete_error', 'admin');
 
             log_error('OAuth2 Client 削除エラー', [$e->getMessage()]);
@@ -166,16 +155,11 @@ class OAuthController extends AbstractController
     }
 
     /**
-     * @Route(
-     *     "/%eccube_admin_route%/api/oauth/clear_expired_tokens",
-     *     name="admin_api_oauth_clear_expired_tokens",
-     *     methods={"DELETE"}
-     * )
-     *
      * @param Request $request
      *
      * @return RedirectResponse
      */
+    #[Route(path: '/%eccube_admin_route%/api/oauth/clear_expired_tokens', name: 'admin_api_oauth_clear_expired_tokens', methods: ['DELETE'])]
     public function clearExpiredTokens(Request $request)
     {
         try {
@@ -183,7 +167,7 @@ class OAuthController extends AbstractController
             $this->refreshTokenManager->clearExpired();
 
             $this->addSuccess('admin.common.delete_complete', 'admin');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->addError(trans('admin.common.delete_error'), 'admin');
             log_error('OAuth2 Token 削除エラー', [$e->getMessage()]);
         }
@@ -236,9 +220,10 @@ class OAuthController extends AbstractController
      * AuthorizationCode が保存されている場合は削除
      *
      * @param Client $client
+     *
      * @return int
      */
-    private function deleteAuthorizationCode(Client $client)
+    private function deleteAuthorizationCode(Client $client): int
     {
         return $this->entityManager->createQueryBuilder()
             ->delete(AuthorizationCode::class, 'ac')

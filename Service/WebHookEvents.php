@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Service;
+namespace Plugin\Api44\Service;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\Order;
@@ -24,7 +24,7 @@ class WebHookEvents
     /**
      * @var WebHookTrigger[]
      */
-    private $triggers = [];
+    private array $triggers = [];
 
     public function onCreated($entity)
     {

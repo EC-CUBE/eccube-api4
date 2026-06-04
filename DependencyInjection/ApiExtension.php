@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\DependencyInjection;
+namespace Plugin\Api44\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -25,9 +25,9 @@ class ApiExtension extends Extension implements PrependExtensionInterface
         $extensionConfigsRefl->setAccessible(true);
         $extensionConfigs = $extensionConfigsRefl->getValue($container);
 
-        foreach($extensionConfigs["security"] as $key => $security) {
-            if (isset($security["firewalls"])) {
-                $names = array_keys($security["firewalls"]);
+        foreach ($extensionConfigs['security'] as $key => $security) {
+            if (isset($security['firewalls'])) {
+                $names = array_keys($security['firewalls']);
                 $replaced = [];
                 foreach ($names as $name) {
                     // adminの前にapiを追加する
@@ -37,19 +37,19 @@ class ApiExtension extends Extension implements PrependExtensionInterface
                             'security' => true,
                             'stateless' => true,
                             'oauth2' => true,
-                            'provider' => 'member_provider'
+                            'provider' => 'member_provider',
                         ];
-                        unset($security["firewalls"]["admin"]["form_login"]["csrf_token_generator"]);
-                        unset($security["firewalls"]["admin"]["anonymous"]);
+                        unset($security['firewalls']['admin']['form_login']['csrf_token_generator']);
+                        unset($security['firewalls']['admin']['anonymous']);
                     }
 
                     if ($name === 'customer') {
-                        unset($security["firewalls"]["customer"]["form_login"]["csrf_token_generator"]);
-                        unset($security["firewalls"]["customer"]["anonymous"]);
+                        unset($security['firewalls']['customer']['form_login']['csrf_token_generator']);
+                        unset($security['firewalls']['customer']['anonymous']);
                     }
-                    $replaced[$name] = $security["firewalls"][$name];
+                    $replaced[$name] = $security['firewalls'][$name];
                 }
-                $extensionConfigs["security"][$key]["firewalls"] = $replaced;
+                $extensionConfigs['security'][$key]['firewalls'] = $replaced;
             }
         }
 

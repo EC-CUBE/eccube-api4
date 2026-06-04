@@ -1,8 +1,6 @@
-security:
-  enable_authenticator_manager: true
 parameters:
-    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/app/PluginData/Api42/oauth/private.key'
-    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api42/oauth/public.key'
+    env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY): '%kernel.project_dir%/app/PluginData/Api44/oauth/private.key'
+    env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api44/oauth/public.key'
     env(ECCUBE_OAUTH2_ENCRYPTION_KEY): '<change.me>'
 
 league_oauth2_server:
@@ -39,15 +37,15 @@ league_oauth2_server:
         doctrine: null
 
 services:
-    Plugin\Api42\EventListener\UserResolveListener:
+    Plugin\Api44\EventListener\UserResolveListener:
         arguments:
             - '@Eccube\Security\Core\User\MemberProvider'
             - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface'
         tags:
             - { name: kernel.event_listener, event: league.oauth2_server.event.user_resolve, method: onUserResolve }
 
-    Plugin\Api42\GraphQL\Types:
-        class: Plugin\Api42\GraphQL\Types
+    Plugin\Api44\GraphQL\Types:
+        class: Plugin\Api44\GraphQL\Types
         arguments: ["@doctrine.orm.entity_manager"]
         lazy: true
 
@@ -146,8 +144,8 @@ services:
     api.mutations:
         class: ArrayObject
 
-    Plugin\Api42\GraphQL\Schema:
+    Plugin\Api44\GraphQL\Schema:
         arguments:
-            - '@Plugin\Api42\GraphQL\Types'
+            - '@Plugin\Api44\GraphQL\Types'
             - '@api.queries'
             - '@api.mutations'

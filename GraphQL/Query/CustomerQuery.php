@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Query;
+namespace Plugin\Api44\GraphQL\Query;
 
 use Eccube\Entity\Customer;
 
@@ -25,7 +25,7 @@ class CustomerQuery extends SingleResultQuery
         parent::__construct(Customer::class);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'customer';
     }

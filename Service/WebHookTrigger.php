@@ -11,13 +11,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Service;
+namespace Plugin\Api44\Service;
 
 interface WebHookTrigger
 {
     /**
      * @param $entity
+     *
      * @return mixed|null
      */
-    public function emitFor($entity);
+    public function emitFor($entity): mixed;
 }

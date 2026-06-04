@@ -11,24 +11,24 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\Web;
+namespace Plugin\Api44\Tests\Web;
 
 use Eccube\Common\EccubeConfig;
 use Eccube\Tests\Web\AbstractWebTestCase;
+use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Entity\Scope;
+use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
-use League\Bundle\OAuth2ServerBundle\Entity\Scope;
-use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
 
 class ApiControllerTest extends AbstractWebTestCase
 {
     /** @var ClientManager */
-    private ?ClientManager $clientManager;
+    private ?ClientManager $clientManager = null;
 
     /** @var ClientRepositoryInterface */
     private ?ClientRepositoryInterface $clientRepository;
@@ -49,12 +49,10 @@ class ApiControllerTest extends AbstractWebTestCase
         $this->clientRepository = self::getContainer()->get(ClientRepositoryInterface::class);
         $this->accessTokenRepository = self::getContainer()->get(AccessTokenRepositoryInterface::class);
         $this->authorizationServer = self::getContainer()->get(AuthorizationServer::class);
-        $this->scopeRepositoryInterface =  self::getContainer()->get(ScopeRepositoryInterface::class);
+        $this->scopeRepositoryInterface = self::getContainer()->get(ScopeRepositoryInterface::class);
     }
 
-    /**
-     * @dataProvider permissionProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('permissionProvider')]
     public function testPermission($scopes, $query, $expectedErrorMessage = null)
     {
         $token = $this->newAccessToken($scopes);
@@ -73,7 +71,7 @@ class ApiControllerTest extends AbstractWebTestCase
         }
     }
 
-    public function permissionProvider()
+    public static function permissionProvider()
     {
         $query = '{ product(id:1) { id, name } }';
         $mutation = 'mutation { updateProductStock(code: "sand-01", stock: 10, stock_unlimited:false) { id } }';
@@ -105,7 +103,8 @@ class ApiControllerTest extends AbstractWebTestCase
         $accessTokenEntity->setClient($clientEntity);
         $accessTokenEntity->setExpiryDateTime(new \DateTimeImmutable('+1 days', new \DateTimeZone('Asia/Tokyo')));
         $accessTokenEntity->setUserIdentifier('admin');
-        $accessTokenEntity->setPrivateKey(new CryptKey(self::getContainer()->get(EccubeConfig::class)->get('kernel.project_dir').'/app/PluginData/Api42/oauth/private.key'));
+        $accessTokenEntity->setPrivateKey(new CryptKey(self::getContainer()->get(EccubeConfig::class)->get('kernel.project_dir').'/app/PluginData/Api44/oauth/private.key'));
+        $accessTokenEntity->initJwtConfiguration();
 
         array_walk($scopes, function ($s) use ($accessTokenEntity) {
             $scope = new Scope();
@@ -114,6 +113,6 @@ class ApiControllerTest extends AbstractWebTestCase
         });
         $this->accessTokenRepository->persistNewAccessToken($accessTokenEntity);
 
-        return $accessTokenEntity->__toString();
+        return $accessTokenEntity->toString();
     }
 }

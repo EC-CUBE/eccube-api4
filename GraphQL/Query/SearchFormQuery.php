@@ -11,72 +11,65 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Query;
+namespace Plugin\Api44\GraphQL\Query;
 
 use Eccube\Common\EccubeConfig;
 use Eccube\Util\StringUtil;
 use GraphQL\Type\Definition\Type;
 use Knp\Component\Pager\PaginatorInterface;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api42\GraphQL\Query;
-use Plugin\Api42\GraphQL\Type\ConnectionType;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api44\GraphQL\Query;
+use Plugin\Api44\GraphQL\Type\ConnectionType;
+use Plugin\Api44\GraphQL\Types;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class SearchFormQuery implements Query
 {
     /**
      * @var PaginatorInterface
      */
-    private $paginator;
+    private PaginatorInterface $paginator;
 
     /**
      * @var EccubeConfig
      */
-    private $eccubeConfig;
+    private EccubeConfig $eccubeConfig;
 
     /**
      * @var FormFactoryInterface
      */
-    private $formFactory;
+    private FormFactoryInterface $formFactory;
 
     /**
      * @var Types
      */
-    private $types;
+    private Types $types;
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setPaginator(PaginatorInterface $paginator): void
     {
         $this->paginator = $paginator;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setEccubeConfig(EccubeConfig $eccubeConfig): void
     {
         $this->eccubeConfig = $eccubeConfig;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setFormFactory(FormFactoryInterface $formFactory): void
     {
         $this->formFactory = $formFactory;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setTypes(Types $types): void
     {
         $this->types = $types;
@@ -97,7 +90,7 @@ abstract class SearchFormQuery implements Query
                     $type = Type::int();
                     break;
                 case DateTimeType::class:
-                    $type = \Plugin\Api42\GraphQL\Type\Definition\DateTimeType::dateTime();
+                    $type = \Plugin\Api44\GraphQL\Type\Definition\DateTimeType::dateTime();
                     break;
                 default:
                     $type = Type::string();

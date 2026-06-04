@@ -11,17 +11,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL;
+namespace Plugin\Api44\GraphQL;
 
 interface Mutation
 {
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @return array
      */
-    public function getMutation();
+    public function getMutation(): array;
 }

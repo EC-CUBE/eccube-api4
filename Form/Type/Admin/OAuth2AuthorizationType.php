@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Form\Type\Admin;
+namespace Plugin\Api44\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
 use Symfony\Component\Form\AbstractType;
@@ -25,7 +25,7 @@ class OAuth2AuthorizationType extends AbstractType
     /**
      * @var EccubeConfig
      */
-    protected $eccubeConfig;
+    protected EccubeConfig $eccubeConfig;
 
     public function __construct(EccubeConfig $eccubeConfig)
     {
@@ -45,14 +45,14 @@ class OAuth2AuthorizationType extends AbstractType
                 ],
             ])
             ->add('client_secret', HiddenType::class, [
-//                'constraints' => [
-//                     new Assert\NotBlank(),
-//                ],
+                //                'constraints' => [
+                //                     new Assert\NotBlank(),
+                //                ],
             ])
             ->add('redirect_uri', HiddenType::class, [
-//                'constraints' => [
-//                    new Assert\NotBlank(),
-//                ],
+                //                'constraints' => [
+                //                    new Assert\NotBlank(),
+                //                ],
             ])
             ->add('response_type', HiddenType::class, [
                 'constraints' => [

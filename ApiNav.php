@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42;
+namespace Plugin\Api44;
 
 use Eccube\Common\EccubeNav;
 
@@ -20,7 +20,7 @@ class ApiNav implements EccubeNav
     /**
      * @return array
      */
-    public static function getNav()
+    public static function getNav(): array
     {
         $menu = [
             'setting' => [

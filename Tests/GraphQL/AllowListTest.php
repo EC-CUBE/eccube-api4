@@ -11,21 +11,21 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\GraphQL;
+namespace Plugin\Api44\Tests\GraphQL;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\Product;
 use PHPUnit\Framework\TestCase;
-use Plugin\Api42\GraphQL\AllowList;
+use Plugin\Api44\GraphQL\AllowList;
 
 class AllowListTest extends TestCase
 {
     /**
-     * @dataProvider isAllowedWithPropertyNames
      * @param $entityClass
      * @param $propertyName
      * @param $expectAllowed
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('isAllowedWithPropertyNames')]
     public function testIsAllowedWithPropertyNames($entityClass, $propertyName, $expectAllowed)
     {
         $allowList = new AllowList([
@@ -35,7 +35,7 @@ class AllowListTest extends TestCase
         self::assertEquals($expectAllowed, $allowList->isAllowed($entityClass, $propertyName));
     }
 
-    public function isAllowedWithPropertyNames()
+    public static function isAllowedWithPropertyNames()
     {
         return [
             [Customer::class, 'id', true],

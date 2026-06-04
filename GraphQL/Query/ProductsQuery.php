@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Query;
+namespace Plugin\Api44\GraphQL\Query;
 
 use Eccube\Entity\Product;
 use Eccube\Form\Type\Admin\SearchProductType;
@@ -22,7 +22,7 @@ class ProductsQuery extends SearchFormQuery
     /**
      * @var ProductRepository
      */
-    private $productRepository;
+    private ProductRepository $productRepository;
 
     /**
      * ProductQuery constructor.
@@ -34,12 +34,12 @@ class ProductsQuery extends SearchFormQuery
         $this->productRepository = $productRepository;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'products';
     }
 
-    public function getQuery()
+    public function getQuery(): array
     {
         return $this->createQuery(Product::class, SearchProductType::class, function ($searchData) {
             return $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);

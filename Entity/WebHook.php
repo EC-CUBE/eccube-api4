@@ -11,70 +11,62 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Entity;
+namespace Plugin\Api44\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class WebHook
- *
- * @ORM\Table(name="plg_api_webhook")
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\HasLifecycleCallbacks()
- * @ORM\Entity(repositoryClass="Plugin\Api42\Repository\WebHookRepository")
  */
+#[ORM\Table(name: 'plg_api_webhook')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'discriminator_type', type: 'string', length: 255)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Entity(repositoryClass: \Plugin\Api44\Repository\WebHookRepository::class)]
 class WebHook
 {
     /**
-     * @var integer ID
-     *
-     * @ORM\Column(name="id", type="integer", options={"unsigned":true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @var int ID
      */
+    #[ORM\Column(name: 'id', type: 'integer', options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
     /**
      * @var string Payload URL
-     *
-     * @ORM\Column(name="payload_url", type="string", length=1024)
      */
+    #[ORM\Column(name: 'payload_url', type: 'string', length: 1024)]
     private $payloadUrl;
 
     /**
-     * @var string Secret
-     *
-     * @ORM\Column(name="secret", type="string", length=1024, nullable=true)
+     * @var string|null Secret
      */
+    #[ORM\Column(name: 'secret', type: 'string', length: 1024, nullable: true)]
     private $secret;
 
     /**
-     * @var boolean Whether this WebHook is enabled.
-     *
-     * @ORM\Column(name="enabled", type="boolean")
+     * @var bool Whether this WebHook is enabled.
      */
+    #[ORM\Column(name: 'enabled', type: 'boolean')]
     private $enabled = false;
 
     /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="create_date", type="datetimetz")
+     * @var \DateTime
      */
+    #[ORM\Column(name: 'create_date', type: 'datetimetz')]
     private $createDate;
 
     /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="update_date", type="datetimetz")
+     * @var \DateTime
      */
+    #[ORM\Column(name: 'update_date', type: 'datetimetz')]
     private $updateDate;
 
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -82,7 +74,7 @@ class WebHook
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
@@ -90,7 +82,7 @@ class WebHook
     /**
      * @return string
      */
-    public function getPayloadUrl()
+    public function getPayloadUrl(): string
     {
         return $this->payloadUrl;
     }
@@ -98,23 +90,23 @@ class WebHook
     /**
      * @param string $payloadUrl
      */
-    public function setPayloadUrl($payloadUrl)
+    public function setPayloadUrl(string $payloadUrl)
     {
         $this->payloadUrl = $payloadUrl;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSecret()
+    public function getSecret(): ?string
     {
         return $this->secret;
     }
 
     /**
-     * @param string $secret
+     * @param string|null $secret
      */
-    public function setSecret($secret)
+    public function setSecret(?string $secret)
     {
         $this->secret = $secret;
     }
@@ -122,7 +114,7 @@ class WebHook
     /**
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -130,39 +122,39 @@ class WebHook
     /**
      * @param bool $enabled
      */
-    public function setEnabled($enabled)
+    public function setEnabled(bool $enabled)
     {
         $this->enabled = $enabled;
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getCreateDate()
+    public function getCreateDate(): \DateTime
     {
         return $this->createDate;
     }
 
     /**
-     * @param DateTime $createDate
+     * @param \DateTime $createDate
      */
-    public function setCreateDate(DateTime $createDate)
+    public function setCreateDate(\DateTime $createDate)
     {
         $this->createDate = $createDate;
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getUpdateDate()
+    public function getUpdateDate(): \DateTime
     {
         return $this->updateDate;
     }
 
     /**
-     * @param DateTime $updateDate
+     * @param \DateTime $updateDate
      */
-    public function setUpdateDate(DateTime $updateDate)
+    public function setUpdateDate(\DateTime $updateDate)
     {
         $this->updateDate = $updateDate;
     }

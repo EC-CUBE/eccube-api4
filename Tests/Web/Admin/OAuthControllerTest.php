@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\Web\Admin;
+namespace Plugin\Api44\Tests\Web\Admin;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
@@ -23,7 +23,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
     /**
      * @var ClientManager
      */
-    protected $clientManager;
+    protected ?ClientManager $clientManager = null;
 
     /**
      * @{@inheritdoc}

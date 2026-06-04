@@ -11,23 +11,24 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\EventListener;
+namespace Plugin\Api44\EventListener;
 
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 final class UserResolveListener
 {
     /**
      * @var UserProviderInterface
      */
-    private $userProvider;
+    private UserProviderInterface $userProvider;
 
     /**
      * @var UserPasswordHasherInterface
      */
-    private $userPasswordHasher;
+    private UserPasswordHasherInterface $userPasswordHasher;
 
     /**
      * @param UserProviderInterface $userProvider
@@ -44,9 +45,9 @@ final class UserResolveListener
      */
     public function onUserResolve(UserResolveEvent $event): void
     {
-        $user = $this->userProvider->loadUserByUsername($event->getUsername());
-
-        if (null === $user) {
+        try {
+            $user = $this->userProvider->loadUserByIdentifier($event->getUsername());
+        } catch (UserNotFoundException $e) {
             return;
         }
 

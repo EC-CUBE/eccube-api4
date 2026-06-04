@@ -11,13 +11,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL;
+namespace Plugin\Api44\GraphQL;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\AssociationMapping;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Type\Definition\DateTimeType;
+use Plugin\Api44\GraphQL\Type\Definition\DateTimeType;
 
 /**
  * DoctrineのEntityからGraphQLのObjectTypeを変換するクラス.
@@ -25,7 +25,7 @@ use Plugin\Api42\GraphQL\Type\Definition\DateTimeType;
 class Types
 {
     /** @var EntityManager */
-    private $entityManager;
+    private EntityManager $entityManager;
 
     private $types = [];
 
@@ -51,7 +51,7 @@ class Types
      *
      * @return ObjectType
      */
-    public function get($className)
+    public function get($className): ObjectType
     {
         if (!isset($this->types[$className])) {
             $this->types[$className] = $this->createObjectType($className);
@@ -126,8 +126,8 @@ class Types
         return $this->isToManyAssociation($mapping) ? Type::listOf($this->get($mapping['targetEntity'])) : $this->get($mapping['targetEntity']);
     }
 
-    private function isToManyAssociation($mapping)
+    private function isToManyAssociation(AssociationMapping $mapping)
     {
-        return $mapping['type'] & ClassMetadata::TO_MANY;
+        return $mapping->isToMany();
     }
 }

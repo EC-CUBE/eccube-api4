@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Service;
+namespace Plugin\Api44\Service;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\CustomerAddress;
@@ -32,9 +32,10 @@ class CoreEntityTrigger implements WebHookTrigger
 {
     /**
      * @param $entity
+     *
      * @return Customer|Order|Product|null
      */
-    public function emitFor($entity)
+    public function emitFor($entity): Customer|Order|Product|null
     {
         // Product
         if ($entity instanceof ProductClass) {

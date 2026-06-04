@@ -11,12 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Repository;
+namespace Plugin\Api44\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
-use Plugin\Api42\Entity\WebHook;
+use Plugin\Api44\Entity\WebHook;
 
+/**
+ * @extends AbstractRepository<WebHook>
+ */
 class WebHookRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry, $entityClass = WebHook::class)

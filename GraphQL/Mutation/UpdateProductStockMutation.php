@@ -11,51 +11,51 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\GraphQL\Mutation;
+namespace Plugin\Api44\GraphQL\Mutation;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\ProductClass;
 use Eccube\Repository\ProductClassRepository;
 use GraphQL\Type\Definition\Type;
-use Plugin\Api42\GraphQL\Error\InvalidArgumentException;
-use Plugin\Api42\GraphQL\Mutation;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
+use Plugin\Api44\GraphQL\Mutation;
+use Plugin\Api44\GraphQL\Types;
 
 class UpdateProductStockMutation implements Mutation
 {
     /**
      * @var Types
      */
-    private $types;
+    private Types $types;
 
     /**
      * @var ProductClassRepository
      */
-    private $productClassRepository;
+    private ProductClassRepository $productClassRepository;
 
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         Types $types,
         ProductClassRepository $productClassRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ) {
         $this->types = $types;
         $this->productClassRepository = $productClassRepository;
         $this->entityManager = $entityManager;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'updateProductStock';
     }
 
-    public function getMutation()
+    public function getMutation(): array
     {
-        return  [
+        return [
             'type' => $this->types->get(ProductClass::class),
             'args' => [
                 'code' => [

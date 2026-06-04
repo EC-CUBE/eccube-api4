@@ -11,23 +11,22 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Form\Type\Admin;
+namespace Plugin\Api44\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
-use Exception;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 
 class ClientType extends AbstractType
 {
     /**
      * @var EccubeConfig
      */
-    protected $eccubeConfig;
+    protected EccubeConfig $eccubeConfig;
 
     /**
      * ClientType constructor.
@@ -35,7 +34,7 @@ class ClientType extends AbstractType
      * @param EccubeConfig $eccubeConfig
      */
     public function __construct(
-        EccubeConfig $eccubeConfig
+        EccubeConfig $eccubeConfig,
     ) {
         $this->eccubeConfig = $eccubeConfig;
     }
@@ -43,7 +42,7 @@ class ClientType extends AbstractType
     /**
      * {@inheritdoc}
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -67,7 +66,7 @@ class ClientType extends AbstractType
                 ],
             ])
             ->add('scopes', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'read' => 'read',
                     'write' => 'write',
                 ],
@@ -87,7 +86,7 @@ class ClientType extends AbstractType
                 ],
             ])
             ->add('grants', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Authorization code' => OAuth2Grants::AUTHORIZATION_CODE,
                 ],
                 'expanded' => true,

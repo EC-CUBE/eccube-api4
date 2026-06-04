@@ -11,14 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\Service;
+namespace Plugin\Api44\Tests\Service;
 
 use Eccube\Tests\EccubeTestCase;
-use Nyholm\Psr7\Request;
-use Plugin\Api42\Entity\WebHook;
-use Plugin\Api42\Service\WebHookService;
-use ReflectionClass;
-use ReflectionException;
+use GuzzleHttp\Psr7\Request;
+use Plugin\Api44\Entity\WebHook;
+use Plugin\Api44\Service\WebHookService;
 
 class WebHookServiceTest extends EccubeTestCase
 {
@@ -32,7 +30,7 @@ class WebHookServiceTest extends EccubeTestCase
         $this->service = self::getContainer()->get(WebHookService::class);
     }
 
-    public function testCreateRequest_withSecret()
+    public function testCreateRequestWithSecret()
     {
         $WebHook = new WebHook();
         $WebHook->setPayloadUrl('http://localhost/hook');
@@ -49,7 +47,7 @@ class WebHookServiceTest extends EccubeTestCase
         );
     }
 
-    public function testCreateRequest_withoutSecret()
+    public function testCreateRequestWithoutSecret()
     {
         $WebHook = new WebHook();
         $WebHook->setPayloadUrl('http://localhost/hook');
@@ -64,15 +62,15 @@ class WebHookServiceTest extends EccubeTestCase
 
     /**
      * @param $payload
-     *
      * @param WebHook $WebHook
+     *
      * @return Request
      *
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
-    private function invokeCreateRequest($payload, WebHook $WebHook)
+    private function invokeCreateRequest($payload, WebHook $WebHook): Request
     {
-        $rc = new ReflectionClass($this->service);
+        $rc = new \ReflectionClass($this->service);
         $method = $rc->getMethod('createRequest');
         $method->setAccessible(true);
 

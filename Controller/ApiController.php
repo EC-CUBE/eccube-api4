@@ -11,49 +11,48 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Controller;
+namespace Plugin\Api44\Controller;
 
 use Eccube\Controller\AbstractController;
 use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
 use GraphQL\Validator\DocumentValidator;
-use Plugin\Api42\GraphQL\Schema;
-use Plugin\Api42\GraphQL\ScopeValidationRule;
-use Plugin\Api42\GraphQL\Types;
-use RuntimeException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Plugin\Api44\GraphQL\Schema;
+use Plugin\Api44\GraphQL\ScopeValidationRule;
+use Plugin\Api44\GraphQL\Types;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ApiController extends AbstractController
 {
     /**
      * @var Types
      */
-    private $types;
+    private Types $types;
 
     /**
      * @var KernelInterface
      */
-    private $kernel;
+    private KernelInterface $kernel;
 
     /**
      * @var Schema
      */
-    private $schema;
+    private Schema $schema;
 
     /**
      * @var ScopeValidationRule
      */
-    private $scopeValidationRule;
+    private ScopeValidationRule $scopeValidationRule;
 
     public function __construct(
         Types $types,
         KernelInterface $kernel,
         Schema $schema,
-        ScopeValidationRule $scopeValidationRule
+        ScopeValidationRule $scopeValidationRule,
     ) {
         $this->types = $types;
         $this->kernel = $kernel;
@@ -61,11 +60,8 @@ class ApiController extends AbstractController
         $this->scopeValidationRule = $scopeValidationRule;
     }
 
-    /**
-     * @Route("/api", name="api", methods={"GET", "POST"})
-     * @IsGranted("ROLE_OAUTH2_READ", "ROLE_OAUTH2_WRITE")
-     */
-
+    #[Route(path: '/api', name: 'api', methods: ['GET', 'POST'])]
+    #[IsGranted(new Expression("is_granted('ROLE_OAUTH2_READ') or is_granted('ROLE_OAUTH2_WRITE')"))]
     public function index(Request $request)
     {
         switch ($request->getMethod()) {
@@ -79,7 +75,7 @@ class ApiController extends AbstractController
                 $variableValues = isset($body['variables']) ? $body['variables'] : null;
                 break;
             default:
-                throw new RuntimeException();
+                throw new \RuntimeException();
         }
 
         DocumentValidator::addRule($this->scopeValidationRule);

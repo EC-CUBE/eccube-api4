@@ -11,19 +11,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\Api42\Tests\GraphQL;
+namespace Plugin\Api44\Tests\GraphQL;
 
 use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Member;
 use Eccube\Entity\Product;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\Api42\GraphQL\Types;
+use Plugin\Api44\GraphQL\Types;
 
 class TypesTest extends EccubeTestCase
 {
     /** @var Types */
-    private $types;
+    private ?Types $types = null;
 
     public function setUp(): void
     {
@@ -31,9 +31,7 @@ class TypesTest extends EccubeTestCase
         $this->types = self::getContainer()->get(Types::class);
     }
 
-    /**
-     * @dataProvider hideSensitiveFieldsProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('hideSensitiveFieldsProvider')]
     public function testHideSensitiveFields($entityClass, $field, $expectExists)
     {
         $type = $this->types->get($entityClass);
@@ -41,7 +39,7 @@ class TypesTest extends EccubeTestCase
         self::assertEquals($expectExists, $type->hasField($field));
     }
 
-    public function hideSensitiveFieldsProvider()
+    public static function hideSensitiveFieldsProvider()
     {
         return [
             [Product::class, 'name', true],
