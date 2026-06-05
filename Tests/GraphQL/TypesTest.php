@@ -41,7 +41,7 @@ class TypesTest extends EccubeTestCase
     }
 
     /**
-     * @return string[][]|bool[][]
+     * @return list<array{class-string, string, bool}>
      */
     public static function hideSensitiveFieldsProvider(): array
     {

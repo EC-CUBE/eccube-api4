@@ -37,7 +37,7 @@ class AllowListTest extends TestCase
     }
 
     /**
-     * @return string[][]|bool[][]
+     * @return list<array{class-string, string, bool}>
      */
     public static function isAllowedWithPropertyNames(): array
     {
