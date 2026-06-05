@@ -121,7 +121,7 @@ abstract class SearchFormQuery implements Query
         return [
             'type' => new ConnectionType($entityClass, $this->types),
             'args' => $args,
-            'resolve' => function ($root, string|array|null $args) use ($builder, $resolver): PaginationInterface {
+            'resolve' => function ($root, array $args) use ($builder, $resolver): PaginationInterface {
                 $form = $builder->getForm();
 
                 foreach ($form->all() as $field) {

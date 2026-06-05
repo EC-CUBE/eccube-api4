@@ -60,14 +60,10 @@ class UpdateProductStockMutationTest extends EccubeTestCase
     }
 
     /**
-     * @param $args
-     * @param $expectStockUnlimited
-     * @param $expectStock
-     * @param $expectExeption
      * @param array<string, bool|string|int> $args
      */
     #[DataProvider('updateProductStockProvider')]
-    public function testUpdateProductStock(array $args, bool $expectStockUnlimited, ?int $expectStock, ?string $expectExeption): void
+    public function testUpdateProductStock(array $args, bool $expectStockUnlimited, ?string $expectStock, ?string $expectExeption): void
     {
         try {
             $ProductClass = $this->updateProductStockMutation->updateProductStock(null, $args);
@@ -89,19 +85,19 @@ class UpdateProductStockMutationTest extends EccubeTestCase
     }
 
     /**
-     * @return array<int, array{array<string, bool|int|string>, bool, int|null, string|null}>
+     * @return array<int, array{array<string, bool|int|string>, bool, string|null, string|null}>
      */
     public static function updateProductStockProvider(): array
     {
         return [
-            [['code' => 'code-limited', 'stock_unlimited' => false, 'stock' => 50], false, 50, null],
-            [['code' => 'code-limited', 'stock_unlimited' => false, 'stock' => 0], false, 0, null],
-            [['code' => 'code-limited', 'stock_unlimited' => false, 'stock' => -1], false, 100, '/stock must be a positive integer/'],
-            [['code' => 'code-limited', 'stock_unlimited' => false], false, 100, '/stock is required when stock limited/'],
+            [['code' => 'code-limited', 'stock_unlimited' => false, 'stock' => 50], false, '50', null],
+            [['code' => 'code-limited', 'stock_unlimited' => false, 'stock' => 0], false, '0', null],
+            [['code' => 'code-limited', 'stock_unlimited' => false, 'stock' => -1], false, '100', '/stock must be a positive integer/'],
+            [['code' => 'code-limited', 'stock_unlimited' => false], false, '100', '/stock is required when stock limited/'],
             [['code' => 'code-limited', 'stock_unlimited' => true], true, null, null],
-            [['code' => 'code-limited', 'stock_unlimited' => true, 'stock' => 50], false, 100, '/Cannot update stock with stock unlimited/'],
-            [['code' => 'code-unlimited', 'stock_unlimited' => false, 'stock' => 50], false, 50, null],
-            [['code' => 'code-unlimited', 'stock_unlimited' => false, 'stock' => 0], false, 0, null],
+            [['code' => 'code-limited', 'stock_unlimited' => true, 'stock' => 50], false, '100', '/Cannot update stock with stock unlimited/'],
+            [['code' => 'code-unlimited', 'stock_unlimited' => false, 'stock' => 50], false, '50', null],
+            [['code' => 'code-unlimited', 'stock_unlimited' => false, 'stock' => 0], false, '0', null],
             [['code' => 'code-unlimited', 'stock_unlimited' => false, 'stock' => -1], true, null, '/stock must be a positive integer/'],
             [['code' => 'code-unlimited', 'stock_unlimited' => false], true, null, '/stock is required when stock limited/'],
             [['code' => 'code-unlimited', 'stock_unlimited' => true], true, null, null],

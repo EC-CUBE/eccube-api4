@@ -105,7 +105,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
     /**
      * 引数のバリデーションチェック
      *
-     * @param \DateTime[]|lowercase-string[]|int[]|bool[] $args
+     * @param array<string, bool|int|string|\DateTime> $args
      */
     #[DataProvider('validateArgsProvider')]
     public function testValidateArgs(array $args = [], ?string $message = null): void

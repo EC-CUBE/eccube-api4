@@ -28,12 +28,12 @@ use Plugin\Api44\Repository\WebHookRepository;
 class WebHook extends AbstractEntity
 {
     /**
-     * @var int ID
+     * @var int|null ID
      */
     #[ORM\Column(name: 'id', type: 'integer', options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private int $id = 0;
+    private ?int $id = null;
 
     /**
      * @var string Payload URL
@@ -66,9 +66,9 @@ class WebHook extends AbstractEntity
     private \DateTime $updateDate;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

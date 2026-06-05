@@ -22,9 +22,6 @@ use Eccube\Repository\Master\OrderStatusRepository;
 use Eccube\Repository\ShippingRepository;
 use Eccube\Service\MailService;
 use Eccube\Service\OrderStateMachine;
-use GraphQL\Type\Definition\NonNull;
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Type\Definition\Type;
 use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api44\GraphQL\Mutation;
@@ -96,7 +93,7 @@ class UpdateShippedMutation implements Mutation
     }
 
     /**
-     * @return array<string, ObjectType|array<string, array<string, bool|NonNull|ScalarType|string>>|$this[]|string[]>
+     * @return array<string, mixed>
      */
     public function getMutation(): array
     {

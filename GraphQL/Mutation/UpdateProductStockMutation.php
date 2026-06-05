@@ -16,9 +16,6 @@ namespace Plugin\Api44\GraphQL\Mutation;
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\ProductClass;
 use Eccube\Repository\ProductClassRepository;
-use GraphQL\Type\Definition\NonNull;
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Type\Definition\Type;
 use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api44\GraphQL\Mutation;
@@ -57,7 +54,7 @@ class UpdateProductStockMutation implements Mutation
     }
 
     /**
-     * @return array<string, ObjectType|array<string, array<string, NonNull|ScalarType|string>>|$this[]|string[]>
+     * @return array<string, mixed>
      */
     public function getMutation(): array
     {
