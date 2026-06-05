@@ -19,14 +19,17 @@ use Eccube\Entity\Product;
 
 class WebHookEvents
 {
-    private $events = ['created' => [], 'updated' => [], 'deleted' => []];
+    /**
+     * @var array<string, array<int, array<string, mixed>>>
+     */
+    private array $events = ['created' => [], 'updated' => [], 'deleted' => []];
 
     /**
      * @var WebHookTrigger[]
      */
     private array $triggers = [];
 
-    public function onCreated($entity)
+    public function onCreated(object $entity): void
     {
         if ($this->isTargetEntity($entity)) {
             $this->events['created'][] = $this->toEntityDefinition($entity);
@@ -36,7 +39,7 @@ class WebHookEvents
         }
     }
 
-    public function onUpdated($entity)
+    public function onUpdated(object $entity): void
     {
         if ($this->isTargetEntity($entity)) {
             $this->events['updated'][] = $this->toEntityDefinition($entity);
@@ -46,7 +49,7 @@ class WebHookEvents
         }
     }
 
-    public function onDeleted($entity)
+    public function onDeleted(object $entity): void
     {
         if ($this->isTargetEntity($entity)) {
             $this->events['deleted'][] = $this->toEntityDefinition($entity);
@@ -56,14 +59,17 @@ class WebHookEvents
         }
     }
 
-    private function isTargetEntity($entity)
+    private function isTargetEntity(object $entity): bool
     {
         return $entity instanceof Product
             || $entity instanceof Order
             || $entity instanceof Customer;
     }
 
-    private function toEntityDefinition($entity)
+    /**
+     * @return array<string, mixed>
+     */
+    private function toEntityDefinition(object $entity): array
     {
         return [
             'entity' => strtolower((new \ReflectionClass($entity))->getShortName()),
@@ -71,12 +77,12 @@ class WebHookEvents
         ];
     }
 
-    public function addTrigger(WebHookTrigger $trigger)
+    public function addTrigger(WebHookTrigger $trigger): void
     {
         $this->triggers[] = $trigger;
     }
 
-    private function onAssociationMappingUpdated($entity)
+    private function onAssociationMappingUpdated(object $entity): void
     {
         foreach ($this->triggers as $trigger) {
             $target = $trigger->emitFor($entity);
@@ -86,7 +92,10 @@ class WebHookEvents
         }
     }
 
-    public function toArray()
+    /**
+     * @return mixed[]
+     */
+    public function toArray(): array
     {
         $events = [];
 

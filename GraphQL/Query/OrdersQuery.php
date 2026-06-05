@@ -13,6 +13,7 @@
 
 namespace Plugin\Api44\GraphQL\Query;
 
+use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\Order;
 use Eccube\Form\Type\Admin\SearchOrderType;
 use Eccube\Repository\OrderRepository;
@@ -39,9 +40,12 @@ class OrdersQuery extends SearchFormQuery
         return 'orders';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getQuery(): array
     {
-        return $this->createQuery(Order::class, SearchOrderType::class, function ($searchData) {
+        return $this->createQuery(Order::class, SearchOrderType::class, function (array $searchData): QueryBuilder {
             return $this->orderRepository->getQueryBuilderBySearchDataForAdmin($searchData);
         });
     }

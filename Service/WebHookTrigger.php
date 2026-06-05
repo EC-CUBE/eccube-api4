@@ -16,9 +16,7 @@ namespace Plugin\Api44\Service;
 interface WebHookTrigger
 {
     /**
-     * @param $entity
-     *
      * @return mixed|null
      */
-    public function emitFor($entity): mixed;
+    public function emitFor(object $entity): mixed;
 }

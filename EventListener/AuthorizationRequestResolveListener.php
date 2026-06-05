@@ -20,6 +20,7 @@ use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Plugin\Api44\Form\Type\Admin\OAuth2AuthorizationType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,6 +47,9 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
         $this->requestStack = $requestStack;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -91,7 +95,8 @@ final class AuthorizationRequestResolveListener implements EventSubscriberInterf
             if ('POST' === $request->getMethod()) {
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
-                    if ($form->get('approve')->isClicked()) {
+                    $approveButton = $form->get('approve');
+                    if ($approveButton instanceof ClickableInterface && $approveButton->isClicked()) {
                         $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
                     }
                 } else {

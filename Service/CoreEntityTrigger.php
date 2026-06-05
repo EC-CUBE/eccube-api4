@@ -31,11 +31,9 @@ use Eccube\Entity\TaxRule;
 class CoreEntityTrigger implements WebHookTrigger
 {
     /**
-     * @param $entity
-     *
      * @return Customer|Order|Product|null
      */
-    public function emitFor($entity): Customer|Order|Product|null
+    public function emitFor(object $entity): Customer|Order|Product|null
     {
         // Product
         if ($entity instanceof ProductClass) {

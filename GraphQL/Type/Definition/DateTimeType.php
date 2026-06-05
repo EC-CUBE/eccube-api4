@@ -22,7 +22,7 @@ use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
 
 class DateTimeType extends ScalarType
 {
-    private static $DateTimeType;
+    private static ?DateTimeType $DateTimeType = null;
 
     public function __construct()
     {
@@ -64,7 +64,7 @@ class DateTimeType extends ScalarType
 
     /**
      * @param Node $valueNode
-     * @param array|null $variables
+     * @param array<string, mixed>|null $variables
      *
      * @return \DateTime|null
      */
@@ -82,10 +82,10 @@ class DateTimeType extends ScalarType
      */
     public static function dateTime(): ScalarType
     {
-        if (static::$DateTimeType === null) {
-            static::$DateTimeType = new DateTimeType();
+        if (self::$DateTimeType === null) {
+            self::$DateTimeType = new self();
         }
 
-        return static::$DateTimeType;
+        return self::$DateTimeType;
     }
 }

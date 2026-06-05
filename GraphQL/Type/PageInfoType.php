@@ -15,7 +15,7 @@ namespace Plugin\Api44\GraphQL\Type;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPaginationInterface;
 
 class PageInfoType extends ObjectType
 {
@@ -23,17 +23,17 @@ class PageInfoType extends ObjectType
     {
         $config = [
             'name' => (new \ReflectionClass($className))->getShortName().'PageInfo',
-            'fields' => function () {
+            'fields' => function (): array {
                 return [
                     'hasNextPage' => [
                         'type' => Type::nonNull(Type::boolean()),
-                        'resolve' => function (PaginationInterface $pagination) {
+                        'resolve' => function (SlidingPaginationInterface $pagination): bool {
                             return isset($pagination->getPaginationData()['next']);
                         },
                     ],
                     'hasPreviousPage' => [
                         'type' => Type::nonNull(Type::boolean()),
-                        'resolve' => function (PaginationInterface $pagination) {
+                        'resolve' => function (SlidingPaginationInterface $pagination): bool {
                             return isset($pagination->getPaginationData()['previous']);
                         },
                     ],

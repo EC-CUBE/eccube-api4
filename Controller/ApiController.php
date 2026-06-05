@@ -19,8 +19,8 @@ use GraphQL\GraphQL;
 use GraphQL\Validator\DocumentValidator;
 use Plugin\Api44\GraphQL\Schema;
 use Plugin\Api44\GraphQL\ScopeValidationRule;
-use Plugin\Api44\GraphQL\Types;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,11 +28,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ApiController extends AbstractController
 {
-    /**
-     * @var Types
-     */
-    private Types $types;
-
     /**
      * @var KernelInterface
      */
@@ -49,12 +44,10 @@ class ApiController extends AbstractController
     private ScopeValidationRule $scopeValidationRule;
 
     public function __construct(
-        Types $types,
         KernelInterface $kernel,
         Schema $schema,
         ScopeValidationRule $scopeValidationRule,
     ) {
-        $this->types = $types;
         $this->kernel = $kernel;
         $this->schema = $schema;
         $this->scopeValidationRule = $scopeValidationRule;
@@ -62,7 +55,7 @@ class ApiController extends AbstractController
 
     #[Route(path: '/api', name: 'api', methods: ['GET', 'POST'])]
     #[IsGranted(new Expression("is_granted('ROLE_OAUTH2_READ') or is_granted('ROLE_OAUTH2_WRITE')"))]
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         switch ($request->getMethod()) {
             case 'GET':

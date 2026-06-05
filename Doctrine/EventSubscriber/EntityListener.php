@@ -14,8 +14,10 @@
 namespace Plugin\Api44\Doctrine\EventSubscriber;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Plugin\Api44\Service\WebHookEvents;
 
 class EntityListener implements EventSubscriber
@@ -35,7 +37,10 @@ class EntityListener implements EventSubscriber
         $this->webHookEvents = $webHookEvents;
     }
 
-    public function getSubscribedEvents()
+    /**
+     * @return array<int, string>
+     */
+    public function getSubscribedEvents(): array
     {
         return [
             Events::postPersist,
@@ -44,17 +49,17 @@ class EntityListener implements EventSubscriber
         ];
     }
 
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(PostPersistEventArgs $args): void
     {
         $this->webHookEvents->onCreated($args->getObject());
     }
 
-    public function postUpdate(LifecycleEventArgs $args)
+    public function postUpdate(PostUpdateEventArgs $args): void
     {
         $this->webHookEvents->onUpdated($args->getObject());
     }
 
-    public function preRemove(LifecycleEventArgs $args)
+    public function preRemove(PreRemoveEventArgs $args): void
     {
         $this->webHookEvents->onDeleted($args->getObject());
     }

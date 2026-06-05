@@ -21,7 +21,7 @@ interface Mutation
     public function getName(): string;
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getMutation(): array;
 }

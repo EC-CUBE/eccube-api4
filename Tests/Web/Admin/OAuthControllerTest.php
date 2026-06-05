@@ -35,19 +35,19 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->clientManager = self::getContainer()->get(ClientManager::class);
     }
 
-    public function testRoutingAdminSettingSystemOAuth2Client()
+    public function testRoutingAdminSettingSystemOAuth2Client(): void
     {
         $this->client->request('GET', $this->generateUrl('admin_api_oauth'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testRoutingAdminSettingSystemOAuth2ClientCreate()
+    public function testRoutingAdminSettingSystemOAuth2ClientCreate(): void
     {
         $this->client->request('GET', $this->generateUrl('admin_api_oauth_new'));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testRoutingAdminSettingSystemOAuth2ClientDelete()
+    public function testRoutingAdminSettingSystemOAuth2ClientDelete(): void
     {
         // before
         $identifier = hash('md5', random_bytes(16));
@@ -67,7 +67,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->assertMatchesRegularExpression('/削除しました/u', $crawler->filter('div.alert-success')->text());
     }
 
-    public function testOAuth2ClientCreateSubmit()
+    public function testOAuth2ClientCreateSubmit(): void
     {
         // before
         $formData = $this->createFormData();
@@ -102,7 +102,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->assertMatchesRegularExpression('/保存しました/u', $crawler->filter('div.alert-success')->text());
     }
 
-    public function testOAuth2ClientCreateSubmitFail()
+    public function testOAuth2ClientCreateSubmitFail(): void
     {
         // before
         $formData = $this->createFormData();
@@ -121,7 +121,7 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->assertMatchesRegularExpression('/入力されていません。/u', $crawler->filter('span.form-error-message')->text());
     }
 
-    public function testOAuth2ClientDeleteIdentifierNotFound()
+    public function testOAuth2ClientDeleteIdentifierNotFound(): void
     {
         // before
         $identifier = hash('md5', random_bytes(16));
@@ -138,7 +138,10 @@ class OAuthControllerTest extends AbstractAdminWebTestCase
         $this->assertMatchesRegularExpression('/既に削除されています/u', $crawler->filter('div.alert-danger')->text());
     }
 
-    protected function createFormData()
+    /**
+     * @return array<string, lowercase-string|string[]>
+     */
+    protected function createFormData(): array
     {
         return [
             '_token' => 'dummy',

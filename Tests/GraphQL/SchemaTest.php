@@ -20,11 +20,12 @@ use GraphQL\Executor\ExecutionResult;
 use GraphQL\Server\Helper;
 use GraphQL\Server\OperationParams;
 use GraphQL\Server\ServerConfig;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Plugin\Api44\GraphQL\Schema;
 
 class SchemaTest extends EccubeTestCase
 {
-    public function testQueryProduct()
+    public function testQueryProduct(): void
     {
         $query = '{ product(id:2) { id } }';
 
@@ -37,7 +38,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryProducts()
+    public function testQueryProducts(): void
     {
         $query = '{
           products (page: 1, limit: 2, create_datetime_start: "2018-09-28T10:14:52+00:00") {
@@ -59,7 +60,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryProductsWithVariables()
+    public function testQueryProductsWithVariables(): void
     {
         $query = '
         query productsQuery(
@@ -94,7 +95,7 @@ class SchemaTest extends EccubeTestCase
         ], $result);
     }
 
-    public function testQueryConnectionWithEdges()
+    public function testQueryConnectionWithEdges(): void
     {
         $query = '{
             products {
@@ -126,7 +127,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryConnectionWithNodes()
+    public function testQueryConnectionWithNodes(): void
     {
         $query = '{
             products {
@@ -152,7 +153,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryPageInfo()
+    public function testQueryPageInfo(): void
     {
         $query = '{
             products {
@@ -188,7 +189,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryPageInfoFirstPage()
+    public function testQueryPageInfoFirstPage(): void
     {
         $query = '{
             products(page: 1, limit: 1) {
@@ -221,7 +222,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    public function testQueryPageInfoLastPage()
+    public function testQueryPageInfoLastPage(): void
     {
         $query = '{
             products(page: 2, limit: 1) {
@@ -254,8 +255,8 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('queryWithPaginationProvider')]
-    public function testQueryWithPagination($page, $limit, $expectedErrorMessage = null)
+    #[DataProvider('queryWithPaginationProvider')]
+    public function testQueryWithPagination(string $page, string $limit, ?string $expectedErrorMessage = null): void
     {
         $query = '{ products(page: '.$page.', limit: '.$limit.') { nodes { id } } }';
 
@@ -268,7 +269,10 @@ class SchemaTest extends EccubeTestCase
         }
     }
 
-    public static function queryWithPaginationProvider()
+    /**
+     * @return string[][]
+     */
+    public static function queryWithPaginationProvider(): array
     {
         return [
             ['1', '1'],
@@ -277,8 +281,8 @@ class SchemaTest extends EccubeTestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('queryWithDateTimeProvider')]
-    public function testQueryWithDateTime($dateTime, $expectedErrorMessage = null)
+    #[DataProvider('queryWithDateTimeProvider')]
+    public function testQueryWithDateTime(string $dateTime, ?string $expectedErrorMessage = null): void
     {
         $query = '{ products(create_datetime_start: "'.$dateTime.'") { nodes { id } } }';
 
@@ -291,7 +295,10 @@ class SchemaTest extends EccubeTestCase
         }
     }
 
-    public static function queryWithDateTimeProvider()
+    /**
+     * @return string[][]
+     */
+    public static function queryWithDateTimeProvider(): array
     {
         return [
             ['2020-07-30T12:57:08+09:00'],
@@ -301,7 +308,7 @@ class SchemaTest extends EccubeTestCase
         ];
     }
 
-    public function testMutationUpdateStock()
+    public function testMutationUpdateStock(): void
     {
         $query = 'mutation UpdateProductStock(
             $code: String!,
@@ -332,7 +339,7 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query, $variables));
     }
 
-    public function testMutationUpdateShipped()
+    public function testMutationUpdateShipped(): void
     {
         // 出荷可能な受注を作成
         $Customer = $this->createCustomer();
@@ -373,7 +380,7 @@ class SchemaTest extends EccubeTestCase
         ], $result);
     }
 
-    public function testMutationUpdateShippedWithVariables()
+    public function testMutationUpdateShippedWithVariables(): void
     {
         // 出荷可能な受注を作成
         $Customer = $this->createCustomer();
@@ -420,7 +427,12 @@ class SchemaTest extends EccubeTestCase
         ], $this->executeQuery($query, $variables));
     }
 
-    private function executeQuery($query, $variables = null, $readonly = false)
+    /**
+     * @param array<string, mixed>|string|null $variables
+     *
+     * @return array<string, mixed>
+     */
+    private function executeQuery(string $query, array|string|null $variables = null, bool $readonly = false): array
     {
         $op = OperationParams::create(['query' => $query, 'variables' => $variables], $readonly);
         $helper = new Helper();

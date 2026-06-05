@@ -22,7 +22,7 @@ use Psr\Container\ContainerInterface;
 
 class PluginManager extends AbstractPluginManager
 {
-    private $denyUrl = '/api';
+    private string $denyUrl = '/api';
 
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class PluginManager extends AbstractPluginManager
         $this->removeAuthorityRole($container);
     }
 
-    private function createAuthorityRole(ContainerInterface $container)
+    private function createAuthorityRole(ContainerInterface $container): void
     {
         /** @var EntityManager $entityManager */
         $entityManager = $container->get('doctrine')->getManager();
@@ -56,7 +56,7 @@ class PluginManager extends AbstractPluginManager
         $entityManager->flush();
     }
 
-    private function removeAuthorityRole(ContainerInterface $container)
+    private function removeAuthorityRole(ContainerInterface $container): void
     {
         /** @var EntityManager $entityManager */
         $entityManager = $container->get('doctrine')->getManager();

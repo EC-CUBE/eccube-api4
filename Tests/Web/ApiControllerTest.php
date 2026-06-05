@@ -19,11 +19,10 @@ use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Entity\Scope;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
-use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ApiControllerTest extends AbstractWebTestCase
 {
@@ -31,16 +30,10 @@ class ApiControllerTest extends AbstractWebTestCase
     private ?ClientManager $clientManager = null;
 
     /** @var ClientRepositoryInterface */
-    private ?ClientRepositoryInterface $clientRepository;
+    private ?ClientRepositoryInterface $clientRepository = null;
 
     /** @var AccessTokenRepositoryInterface */
-    private ?AccessTokenRepositoryInterface $accessTokenRepository;
-
-    /** @var ScopeRepositoryInterface */
-    private ?ScopeRepositoryInterface $scopeRepositoryInterface;
-
-    /** @var AuthorizationServer */
-    private ?AuthorizationServer $authorizationServer;
+    private ?AccessTokenRepositoryInterface $accessTokenRepository = null;
 
     public function setUp(): void
     {
@@ -48,12 +41,13 @@ class ApiControllerTest extends AbstractWebTestCase
         $this->clientManager = self::getContainer()->get(ClientManager::class);
         $this->clientRepository = self::getContainer()->get(ClientRepositoryInterface::class);
         $this->accessTokenRepository = self::getContainer()->get(AccessTokenRepositoryInterface::class);
-        $this->authorizationServer = self::getContainer()->get(AuthorizationServer::class);
-        $this->scopeRepositoryInterface = self::getContainer()->get(ScopeRepositoryInterface::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('permissionProvider')]
-    public function testPermission($scopes, $query, $expectedErrorMessage = null)
+    /**
+     * @param string[] $scopes
+     */
+    #[DataProvider('permissionProvider')]
+    public function testPermission(array $scopes, string $query, ?string $expectedErrorMessage = null): void
     {
         $token = $this->newAccessToken($scopes);
         $this->client->request('POST', $this->generateUrl('api'), [], [], [
@@ -71,7 +65,10 @@ class ApiControllerTest extends AbstractWebTestCase
         }
     }
 
-    public static function permissionProvider()
+    /**
+     * @return string[][]|string[][][]
+     */
+    public static function permissionProvider(): array
     {
         $query = '{ product(id:1) { id, name } }';
         $mutation = 'mutation { updateProductStock(code: "sand-01", stock: 10, stock_unlimited:false) { id } }';
@@ -86,17 +83,20 @@ class ApiControllerTest extends AbstractWebTestCase
         ];
     }
 
-    private function newAccessToken($scopes)
+    /**
+     * @param string[] $scopes
+     */
+    private function newAccessToken(array $scopes): string
     {
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
 
         $client = new Client('', $identifier, $secret);
-        $client->setScopes(...array_map(function ($s) {
+        $client->setScopes(...array_map(function (string $s): \League\Bundle\OAuth2ServerBundle\ValueObject\Scope {
             return new \League\Bundle\OAuth2ServerBundle\ValueObject\Scope($s);
         }, $scopes));
         $this->clientManager->save($client);
-        $clientEntity = $this->clientRepository->getClientEntity($identifier, 'authorization_code', $secret);
+        $clientEntity = $this->clientRepository->getClientEntity($identifier);
 
         $accessTokenEntity = new AccessToken();
         $accessTokenEntity->setIdentifier($identifier);
@@ -106,7 +106,7 @@ class ApiControllerTest extends AbstractWebTestCase
         $accessTokenEntity->setPrivateKey(new CryptKey(self::getContainer()->get(EccubeConfig::class)->get('kernel.project_dir').'/app/PluginData/Api44/oauth/private.key'));
         $accessTokenEntity->initJwtConfiguration();
 
-        array_walk($scopes, function ($s) use ($accessTokenEntity) {
+        array_walk($scopes, function (string $s) use ($accessTokenEntity): void {
             $scope = new Scope();
             $scope->setIdentifier($s);
             $accessTokenEntity->addScope($scope);

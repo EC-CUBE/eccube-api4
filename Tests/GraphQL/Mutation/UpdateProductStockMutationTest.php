@@ -16,6 +16,7 @@ namespace Plugin\Api44\Tests\GraphQL\Mutation;
 use Eccube\Entity\ProductClass;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Tests\EccubeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api44\GraphQL\Mutation\UpdateProductStockMutation;
 use Plugin\Api44\GraphQL\Types;
@@ -37,14 +38,16 @@ class UpdateProductStockMutationTest extends EccubeTestCase
 
         // テスト用の商品を作成
         $Product = $this->createProduct();
-        /** @var ProductClass[] $ProductClasses */
         $ProductClasses = $Product->getProductClasses();
+        self::assertNotNull($ProductClasses);
+        /** @var ProductClass[] $ProductClasses */
+        $ProductClasses = $ProductClasses->toArray();
 
         // 在庫100個
         $ProductClasses[0]->setCode('code-limited');
-        $ProductClasses[0]->setStock(100);
+        $ProductClasses[0]->setStock('100');
         $ProductClasses[0]->setStockUnlimited(false);
-        $ProductClasses[0]->getProductStock()->setStock(100);
+        $ProductClasses[0]->getProductStock()->setStock('100');
 
         // 在庫無制限
         $ProductClasses[1]->setCode('code-unlimited');
@@ -61,9 +64,10 @@ class UpdateProductStockMutationTest extends EccubeTestCase
      * @param $expectStockUnlimited
      * @param $expectStock
      * @param $expectExeption
+     * @param array<string, bool|string|int> $args
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('updateProductStockProvider')]
-    public function testUpdateProductStock($args, $expectStockUnlimited, $expectStock, $expectExeption)
+    #[DataProvider('updateProductStockProvider')]
+    public function testUpdateProductStock(array $args, bool $expectStockUnlimited, ?int $expectStock, ?string $expectExeption): void
     {
         try {
             $ProductClass = $this->updateProductStockMutation->updateProductStock(null, $args);
@@ -84,7 +88,10 @@ class UpdateProductStockMutationTest extends EccubeTestCase
         self::assertEquals($expectStock, $ProductClasses[0]->getProductStock()->getStock());
     }
 
-    public static function updateProductStockProvider()
+    /**
+     * @return array<int, array{array<string, bool|int|string>, bool, int|null, string|null}>
+     */
+    public static function updateProductStockProvider(): array
     {
         return [
             [['code' => 'code-limited', 'stock_unlimited' => false, 'stock' => 50], false, 50, null],
@@ -105,7 +112,7 @@ class UpdateProductStockMutationTest extends EccubeTestCase
     /**
      * 重複するcodeを指定して更新
      */
-    public function testUpdateProductStockMultiple()
+    public function testUpdateProductStockMultiple(): void
     {
         // プロダクトコードを重複させる
         $ProductClasses = $this->productClassRepository->findBy(['code' => 'code-limited']);
@@ -117,7 +124,7 @@ class UpdateProductStockMutationTest extends EccubeTestCase
         try {
             $this->updateProductStockMutation->updateProductStock(null, ['code' => 'code-multiple']);
             // 通らない
-            self::assertTrue(false);
+            self::fail();
         } catch (InvalidArgumentException $e) {
             self::assertMatchesRegularExpression('/Multiple ProductClass found/', $e->getMessage());
         }
@@ -126,12 +133,12 @@ class UpdateProductStockMutationTest extends EccubeTestCase
     /**
      * 存在しないcodeを指定して更新
      */
-    public function testUpdateProductStockNoData()
+    public function testUpdateProductStockNoData(): void
     {
         try {
             $this->updateProductStockMutation->updateProductStock(null, ['code' => 'code-multiple']);
             // 通らない
-            self::assertTrue(false);
+            self::fail();
         } catch (InvalidArgumentException $e) {
             self::assertMatchesRegularExpression('/No ProductClass found/', $e->getMessage());
         }
