@@ -1,0 +1,10 @@
+parameters:
+    level: 6
+    paths:
+        - .
+    excludePaths:
+        - Resource/*
+        - Tests/bootstrap.php
+    doctrine:
+        objectManagerLoader: ../../../tests/object-manager.php
+        ormRepositoryClass: Eccube\Repository\AbstractRepository

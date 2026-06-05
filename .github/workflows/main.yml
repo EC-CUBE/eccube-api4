@@ -9,8 +9,6 @@ on:
       - '**'
       - '!*.md'
   pull_request:
-    branches:
-      - '*'
     paths:
       - '**'
       - '!*.md'
@@ -137,6 +135,21 @@ jobs:
         bin/console league:oauth2-server:create-client --redirect-uri=http://127.0.0.1:8000/ --grant-type=authorization_code --grant-type=client_credentials --grant-type=implicit --grant-type=password --grant-type=refresh_token --scope=read --scope=write test
         rm codeception/_support/*Tester.php
         chmod 600 app/PluginData/Api44/oauth/private.key
+
+    - name: Run PHPStan
+      env:
+        APP_ENV: 'test'
+        APP_DEBUG: 0
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
+        DATABASE_CHARSET: ${{ matrix.database_charset }}
+        PLUGIN_CODE: ${{ matrix.plugin_code }}
+        ECCUBE_PACKAGE_API_URL: 'http://127.0.0.1:8080'
+        USE_SELFSIGNED_SSL_CERTIFICATE: '1'
+      working-directory: 'ec-cube'
+      run: |
+        bin/console cache:clear --no-warmup
+        ./vendor/bin/phpstan analyse -c app/Plugin/${PLUGIN_CODE}/phpstan.neon.dist --no-progress
 
     - name: Run PHPUnit
       env:
