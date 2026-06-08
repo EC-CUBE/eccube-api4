@@ -30,10 +30,20 @@ class ApiExtension extends Extension implements PrependExtensionInterface
                 $names = array_keys($security['firewalls']);
                 $replaced = [];
                 foreach ($names as $name) {
-                    // adminの前にapiを追加する
+                    // adminの前にapi / mcpを追加する
                     if ($name === 'admin') {
                         $replaced['api'] = [
                             'pattern' => '^/api',
+                            'security' => true,
+                            'stateless' => true,
+                            'oauth2' => true,
+                            'provider' => 'member_provider',
+                        ];
+                        // MCP サーバ (本体同梱) 用の OAuth2 firewall。
+                        // ^/<admin_route>/mcp を admin より前に置き、 ステートレスな Bearer 認証で処理する。
+                        // 認可は領域別 read scope (mcp:product:read 等) で行い、 本体側 Tool の IsGranted と AND 評価。
+                        $replaced['mcp'] = [
+                            'pattern' => '^/%eccube_admin_route%/mcp',
                             'security' => true,
                             'stateless' => true,
                             'oauth2' => true,

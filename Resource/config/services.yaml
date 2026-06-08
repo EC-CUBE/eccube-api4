@@ -30,7 +30,10 @@ league_oauth2_server:
         public_key: '%env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY)%'
 
     scopes:
-        available: ['read', 'write']
+        # 既存の `read` / `write` は GraphQL 用。 `mcp:*:read` は MCP サーバ機能 (本体同梱) 用の領域別 read scope。
+        # role 変換時はそれぞれ `ROLE_OAUTH2_MCP:PRODUCT:READ` 等 (`role_prefix: ROLE_OAUTH2_` で大文字化)。
+        # GraphQL の認可と MCP の認可を独立させるため名前空間 `mcp:` で分離する。
+        available: ['read', 'write', 'mcp:product:read', 'mcp:order:read', 'mcp:customer:read', 'mcp:plugin:read']
         default: ['read']
 
     persistence:
