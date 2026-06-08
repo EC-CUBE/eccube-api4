@@ -14,6 +14,8 @@
 namespace Plugin\Api44\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
+use Plugin\Api44\Repository\WebHookRepository;
 
 /**
  * Class WebHook
@@ -22,28 +24,28 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'discriminator_type', type: 'string', length: 255)]
 #[ORM\HasLifecycleCallbacks]
-#[ORM\Entity(repositoryClass: \Plugin\Api44\Repository\WebHookRepository::class)]
-class WebHook
+#[ORM\Entity(repositoryClass: WebHookRepository::class)]
+class WebHook extends AbstractEntity
 {
     /**
-     * @var int ID
+     * @var int|null ID
      */
     #[ORM\Column(name: 'id', type: 'integer', options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private $id;
+    private ?int $id = null;
 
     /**
      * @var string Payload URL
      */
     #[ORM\Column(name: 'payload_url', type: 'string', length: 1024)]
-    private $payloadUrl;
+    private string $payloadUrl;
 
     /**
      * @var string|null Secret
      */
     #[ORM\Column(name: 'secret', type: 'string', length: 1024, nullable: true)]
-    private $secret;
+    private ?string $secret = null;
 
     /**
      * @var bool Whether this WebHook is enabled.
@@ -55,18 +57,18 @@ class WebHook
      * @var \DateTime
      */
     #[ORM\Column(name: 'create_date', type: 'datetimetz')]
-    private $createDate;
+    private \DateTime $createDate;
 
     /**
      * @var \DateTime
      */
     #[ORM\Column(name: 'update_date', type: 'datetimetz')]
-    private $updateDate;
+    private \DateTime $updateDate;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -74,7 +76,7 @@ class WebHook
     /**
      * @param int $id
      */
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -90,7 +92,7 @@ class WebHook
     /**
      * @param string $payloadUrl
      */
-    public function setPayloadUrl(string $payloadUrl)
+    public function setPayloadUrl(string $payloadUrl): void
     {
         $this->payloadUrl = $payloadUrl;
     }
@@ -106,7 +108,7 @@ class WebHook
     /**
      * @param string|null $secret
      */
-    public function setSecret(?string $secret)
+    public function setSecret(?string $secret): void
     {
         $this->secret = $secret;
     }
@@ -122,7 +124,7 @@ class WebHook
     /**
      * @param bool $enabled
      */
-    public function setEnabled(bool $enabled)
+    public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }
@@ -138,7 +140,7 @@ class WebHook
     /**
      * @param \DateTime $createDate
      */
-    public function setCreateDate(\DateTime $createDate)
+    public function setCreateDate(\DateTime $createDate): void
     {
         $this->createDate = $createDate;
     }
@@ -154,7 +156,7 @@ class WebHook
     /**
      * @param \DateTime $updateDate
      */
-    public function setUpdateDate(\DateTime $updateDate)
+    public function setUpdateDate(\DateTime $updateDate): void
     {
         $this->updateDate = $updateDate;
     }

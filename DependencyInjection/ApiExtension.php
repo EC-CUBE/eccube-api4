@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
 class ApiExtension extends Extension implements PrependExtensionInterface
 {
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $extensionConfigsRefl = new \ReflectionProperty(ContainerBuilder::class, 'extensionConfigs');
         $extensionConfigsRefl->setAccessible(true);

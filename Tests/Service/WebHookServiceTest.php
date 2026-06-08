@@ -21,7 +21,7 @@ use Plugin\Api44\Service\WebHookService;
 class WebHookServiceTest extends EccubeTestCase
 {
     /** @var WebHookService */
-    private ?WebHookService $service;
+    private ?WebHookService $service = null;
 
     public function setUp(): void
     {
@@ -30,7 +30,7 @@ class WebHookServiceTest extends EccubeTestCase
         $this->service = self::getContainer()->get(WebHookService::class);
     }
 
-    public function testCreateRequestWithSecret()
+    public function testCreateRequestWithSecret(): void
     {
         $WebHook = new WebHook();
         $WebHook->setPayloadUrl('http://localhost/hook');
@@ -47,7 +47,7 @@ class WebHookServiceTest extends EccubeTestCase
         );
     }
 
-    public function testCreateRequestWithoutSecret()
+    public function testCreateRequestWithoutSecret(): void
     {
         $WebHook = new WebHook();
         $WebHook->setPayloadUrl('http://localhost/hook');
@@ -68,7 +68,7 @@ class WebHookServiceTest extends EccubeTestCase
      *
      * @throws \ReflectionException
      */
-    private function invokeCreateRequest($payload, WebHook $WebHook): Request
+    private function invokeCreateRequest(string $payload, WebHook $WebHook): Request
     {
         $rc = new \ReflectionClass($this->service);
         $method = $rc->getMethod('createRequest');

@@ -18,7 +18,7 @@ use Eccube\Common\EccubeNav;
 class ApiNav implements EccubeNav
 {
     /**
-     * @return array
+     * @return array<string, array<string, array<string, array<string, array<string, array<string, string>>|string>>>>
      */
     public static function getNav(): array
     {

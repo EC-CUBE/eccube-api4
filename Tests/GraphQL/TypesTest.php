@@ -18,6 +18,7 @@ use Eccube\Entity\Customer;
 use Eccube\Entity\Member;
 use Eccube\Entity\Product;
 use Eccube\Tests\EccubeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Plugin\Api44\GraphQL\Types;
 
 class TypesTest extends EccubeTestCase
@@ -31,15 +32,18 @@ class TypesTest extends EccubeTestCase
         $this->types = self::getContainer()->get(Types::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('hideSensitiveFieldsProvider')]
-    public function testHideSensitiveFields($entityClass, $field, $expectExists)
+    #[DataProvider('hideSensitiveFieldsProvider')]
+    public function testHideSensitiveFields(string $entityClass, string $field, bool $expectExists): void
     {
         $type = $this->types->get($entityClass);
 
         self::assertEquals($expectExists, $type->hasField($field));
     }
 
-    public static function hideSensitiveFieldsProvider()
+    /**
+     * @return list<array{class-string, string, bool}>
+     */
+    public static function hideSensitiveFieldsProvider(): array
     {
         return [
             [Product::class, 'name', true],

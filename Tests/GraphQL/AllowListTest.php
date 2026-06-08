@@ -15,6 +15,7 @@ namespace Plugin\Api44\Tests\GraphQL;
 
 use Eccube\Entity\Customer;
 use Eccube\Entity\Product;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Plugin\Api44\GraphQL\AllowList;
 
@@ -25,8 +26,8 @@ class AllowListTest extends TestCase
      * @param $propertyName
      * @param $expectAllowed
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('isAllowedWithPropertyNames')]
-    public function testIsAllowedWithPropertyNames($entityClass, $propertyName, $expectAllowed)
+    #[DataProvider('isAllowedWithPropertyNames')]
+    public function testIsAllowedWithPropertyNames(string $entityClass, string $propertyName, bool $expectAllowed): void
     {
         $allowList = new AllowList([
             Customer::class => ['id', 'name'],
@@ -35,7 +36,10 @@ class AllowListTest extends TestCase
         self::assertEquals($expectAllowed, $allowList->isAllowed($entityClass, $propertyName));
     }
 
-    public static function isAllowedWithPropertyNames()
+    /**
+     * @return list<array{class-string, string, bool}>
+     */
+    public static function isAllowedWithPropertyNames(): array
     {
         return [
             [Customer::class, 'id', true],

@@ -13,6 +13,7 @@
 
 namespace Plugin\Api44\GraphQL\Query;
 
+use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\Product;
 use Eccube\Form\Type\Admin\SearchProductType;
 use Eccube\Repository\ProductRepository;
@@ -39,9 +40,12 @@ class ProductsQuery extends SearchFormQuery
         return 'products';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getQuery(): array
     {
-        return $this->createQuery(Product::class, SearchProductType::class, function ($searchData) {
+        return $this->createQuery(Product::class, SearchProductType::class, function (array $searchData): QueryBuilder {
             return $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);
         });
     }

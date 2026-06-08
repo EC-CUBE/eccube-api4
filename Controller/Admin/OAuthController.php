@@ -20,6 +20,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
@@ -70,7 +71,7 @@ class OAuthController extends AbstractController
      */
     #[Route(path: '/%eccube_admin_route%/api/config', name: 'admin_api_config', methods: ['GET'])]
     #[Route(path: '/%eccube_admin_route%/api/oauth', name: 'admin_api_oauth', methods: ['GET'])]
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $criteria = ClientFilter::create();
         $clients = $this->clientManager->list($criteria);
@@ -88,7 +89,7 @@ class OAuthController extends AbstractController
      * @throws \Exception
      */
     #[Route(path: '/%eccube_admin_route%/api/oauth/new', name: 'admin_api_oauth_new', methods: ['GET', 'POST'])]
-    public function create(Request $request)
+    public function create(Request $request): RedirectResponse|Response
     {
         $name = '';
 
@@ -129,7 +130,7 @@ class OAuthController extends AbstractController
      * @return RedirectResponse
      */
     #[Route(path: '/%eccube_admin_route%/api/oauth/delete/{identifier}', requirements: ['identifier' => '\w+'], name: 'admin_api_oauth_delete', methods: ['DELETE'])]
-    public function delete(Request $request, string $identifier)
+    public function delete(Request $request, string $identifier): RedirectResponse
     {
         $this->isTokenValid();
 
@@ -160,7 +161,7 @@ class OAuthController extends AbstractController
      * @return RedirectResponse
      */
     #[Route(path: '/%eccube_admin_route%/api/oauth/clear_expired_tokens', name: 'admin_api_oauth_clear_expired_tokens', methods: ['DELETE'])]
-    public function clearExpiredTokens(Request $request)
+    public function clearExpiredTokens(Request $request): RedirectResponse
     {
         try {
             $this->accessTokenManager->clearExpired();
@@ -219,11 +220,11 @@ class OAuthController extends AbstractController
     /**
      * AuthorizationCode が保存されている場合は削除
      *
-     * @param Client $client
+     * @param ClientInterface $client
      *
      * @return int
      */
-    private function deleteAuthorizationCode(Client $client): int
+    private function deleteAuthorizationCode(ClientInterface $client): int
     {
         return $this->entityManager->createQueryBuilder()
             ->delete(AuthorizationCode::class, 'ac')

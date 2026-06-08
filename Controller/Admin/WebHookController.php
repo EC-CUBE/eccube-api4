@@ -40,7 +40,7 @@ class WebHookController extends AbstractController
     }
 
     #[Route(path: '/%eccube_admin_route%/api/webhook', name: 'admin_api_webhook', methods: ['GET'])]
-    public function index()
+    public function index(): Response
     {
         $WebHooks = $this->webHookRepository->findAll();
 
@@ -57,7 +57,7 @@ class WebHookController extends AbstractController
      */
     #[Route(path: '/%eccube_admin_route%/api/webhook/new', name: 'admin_api_webhook_new', methods: ['GET', 'POST'])]
     #[Route(path: '/%eccube_admin_route%/api/webhook/edit/{id}', requirements: ['id' => '\d+'], name: 'admin_api_webhook_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, ?WebHook $WebHook = null)
+    public function edit(Request $request, ?WebHook $WebHook = null): RedirectResponse|Response
     {
         $WebHook = $WebHook ?: new WebHook();
         $builder = $this->formFactory->createBuilder(WebHookType::class, $WebHook);
@@ -85,7 +85,7 @@ class WebHookController extends AbstractController
      * @return RedirectResponse
      */
     #[Route(path: '/%eccube_admin_route%/api/webhook/delete/{id}', requirements: ['id' => '\d+'], name: 'admin_api_webhook_delete', methods: ['DELETE'])]
-    public function delete(WebHook $WebHook)
+    public function delete(WebHook $WebHook): RedirectResponse
     {
         $this->isTokenValid();
 

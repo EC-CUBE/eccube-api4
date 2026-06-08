@@ -13,6 +13,7 @@
 
 namespace Plugin\Api44\GraphQL\Query;
 
+use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\Customer;
 use Eccube\Form\Type\Admin\SearchCustomerType;
 use Eccube\Repository\CustomerRepository;
@@ -39,9 +40,12 @@ class CustomersQuery extends SearchFormQuery
         return 'customers';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getQuery(): array
     {
-        return $this->createQuery(Customer::class, SearchCustomerType::class, function ($searchData) {
+        return $this->createQuery(Customer::class, SearchCustomerType::class, function (array $searchData): QueryBuilder {
             return $this->customerRepository->getQueryBuilderBySearchData($searchData);
         });
     }

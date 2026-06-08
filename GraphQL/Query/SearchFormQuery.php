@@ -16,6 +16,7 @@ namespace Plugin\Api44\GraphQL\Query;
 use Eccube\Common\EccubeConfig;
 use Eccube\Util\StringUtil;
 use GraphQL\Type\Definition\Type;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api44\GraphQL\Query;
@@ -75,13 +76,18 @@ abstract class SearchFormQuery implements Query
         $this->types = $types;
     }
 
-    protected function createQuery($entityClass, $searchFormType, $resolver)
+    /**
+     * @param class-string $entityClass
+     *
+     * @return array<string, mixed>
+     */
+    protected function createQuery(string $entityClass, string $searchFormType, callable $resolver): array
     {
         $builder = $this->formFactory->createBuilder($searchFormType, null, ['csrf_protection' => false]);
         $this->overrideDateTimeFormat($builder);
         $this->addPagingForms($builder);
 
-        $args = array_reduce($builder->getForm()->all(), function ($acc, $form) {
+        $args = array_reduce($builder->getForm()->all(), function (array $acc, FormInterface $form): array {
             /* @var FormInterface $form */
             $formConfig = $form->getConfig();
             $typeClass = get_class($formConfig->getType()->getInnerType());
@@ -115,7 +121,7 @@ abstract class SearchFormQuery implements Query
         return [
             'type' => new ConnectionType($entityClass, $this->types),
             'args' => $args,
-            'resolve' => function ($root, $args) use ($builder, $resolver) {
+            'resolve' => function ($root, array $args) use ($builder, $resolver): PaginationInterface {
                 $form = $builder->getForm();
 
                 foreach ($form->all() as $field) {
@@ -151,7 +157,7 @@ abstract class SearchFormQuery implements Query
      *
      * @param FormBuilderInterface $builder
      */
-    private function overrideDateTimeFormat(FormBuilderInterface $builder)
+    private function overrideDateTimeFormat(FormBuilderInterface $builder): void
     {
         /** @var FormBuilderInterface $field */
         foreach ($builder->all() as $field) {
@@ -170,7 +176,7 @@ abstract class SearchFormQuery implements Query
      *
      * @param FormBuilderInterface $builder
      */
-    private function addPagingForms(FormBuilderInterface $builder)
+    private function addPagingForms(FormBuilderInterface $builder): void
     {
         $builder->add('page', IntegerType::class, [
             'label' => 'api.search_form_query.args.description.page',

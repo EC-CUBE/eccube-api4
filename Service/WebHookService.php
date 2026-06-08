@@ -53,14 +53,17 @@ class WebHookService implements EventSubscriberInterface
         $this->webHookEvents = $webHookEvents;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @return array<string, string>
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::RESPONSE => 'fire',
         ];
     }
 
-    public function fire(ResponseEvent $event)
+    public function fire(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -86,10 +89,10 @@ class WebHookService implements EventSubscriberInterface
                     'timeout' => 5,
                     'allow_redirects' => false,
                 ],
-                'fulfilled' => function (Response $reason, $index) use ($availableWebHooks) {
+                'fulfilled' => function (Response $reason, $index) use ($availableWebHooks): void {
                     log_info('WebHook request successful.', ['Payload URL' => $availableWebHooks[$index]->getPayloadUrl()]);
                 },
-                'rejected' => function (TransferException $e, $index) use ($availableWebHooks) {
+                'rejected' => function (TransferException $e, $index) use ($availableWebHooks): void {
                     log_error($e->getMessage(), ['Payload URL' => $availableWebHooks[$index]->getPayloadUrl()]);
                 },
             ]);
@@ -98,7 +101,7 @@ class WebHookService implements EventSubscriberInterface
         }
     }
 
-    private function createRequest($payload, $WebHook)
+    private function createRequest(string $payload, WebHook $WebHook): Request
     {
         $headers = [
             'Content-Type' => 'application/json',

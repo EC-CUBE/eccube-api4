@@ -21,7 +21,7 @@ interface Query
     public function getName(): string;
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getQuery(): array;
 }

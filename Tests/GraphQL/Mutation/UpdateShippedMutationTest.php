@@ -21,6 +21,7 @@ use Eccube\Repository\ShippingRepository;
 use Eccube\Service\MailService;
 use Eccube\Service\OrderStateMachine;
 use Eccube\Tests\EccubeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Plugin\Api44\GraphQL\Error\InvalidArgumentException;
 use Plugin\Api44\GraphQL\Mutation\UpdateShippedMutation;
 use Plugin\Api44\GraphQL\Types;
@@ -68,7 +69,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
     /**
      * 正常系
      */
-    public function testResponseAndDB()
+    public function testResponseAndDB(): void
     {
         $dateTime = \DateTime::createFromFormat(\DateTime::ATOM, '2020-05-18T12:57:08+09:00');
         $args = [
@@ -90,7 +91,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertEquals('notes_0123456789', $Shipping->getNote());
         } catch (InvalidArgumentException $e) {
             // 通らない
-            self::assertTrue(false, $e->getMessage());
+            self::fail($e->getMessage());
         }
 
         // DB の確認
@@ -103,9 +104,11 @@ class UpdateShippedMutationTest extends EccubeTestCase
 
     /**
      * 引数のバリデーションチェック
+     *
+     * @param array<string, bool|int|string|\DateTime> $args
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('validateArgsProvider')]
-    public function testValidateArgs($args = [], ?string $message = null)
+    #[DataProvider('validateArgsProvider')]
+    public function testValidateArgs(array $args = [], ?string $message = null): void
     {
         $args = array_merge($args, ['id' => $this->Order->getShippings()->current()->getId()]);
 
@@ -125,7 +128,10 @@ class UpdateShippedMutationTest extends EccubeTestCase
         }
     }
 
-    public static function validateArgsProvider()
+    /**
+     * @return array<int, array{0: array<string, bool|int|string|\DateTime>, 1?: string}>
+     */
+    public static function validateArgsProvider(): array
     {
         // dataProvider 実行時点で eccubeConfig がまだ使えないのでベタがきする。
         $eccube_mtext_len = 200;
@@ -153,14 +159,14 @@ class UpdateShippedMutationTest extends EccubeTestCase
     /**
      * 対象の出荷情報がない場合
      */
-    public function testNoShippingFound()
+    public function testNoShippingFound(): void
     {
         $args = ['id' => 9999];
 
         try {
             $this->updateShippedMutation->updateShipped(null, $args);
             // 通らない
-            self::assertTrue(false);
+            self::fail();
         } catch (InvalidArgumentException $e) {
             // エラーの確認
             self::assertTrue($e->isClientSafe());
@@ -171,7 +177,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
     /**
      * 対象の出荷情報がすでに出荷済みの場合
      */
-    public function testAlreadyShipped()
+    public function testAlreadyShipped(): void
     {
         // Shipping を出荷済みに変更
         /** @var Shipping $Shipping */
@@ -184,7 +190,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
         try {
             $this->updateShippedMutation->updateShipped(null, $args);
             // 通らない
-            self::assertTrue(false);
+            self::fail();
         } catch (InvalidArgumentException $e) {
             // エラーの確認
             self::assertTrue($e->isClientSafe());
@@ -195,7 +201,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
     /**
      * 対象の受注情報が出荷済みにできない受注ステータスだった場合
      */
-    public function testOrderCannotBeShipped()
+    public function testOrderCannotBeShipped(): void
     {
         // 受注をキャンセルに変更
         $OrderStatus = $this->entityManager->getRepository(OrderStatus::class)->find(OrderStatus::CANCEL);
@@ -207,7 +213,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
         try {
             $this->updateShippedMutation->updateShipped(null, $args);
             // 通らない
-            self::assertTrue(false);
+            self::fail();
         } catch (InvalidArgumentException $e) {
             // エラーの確認
             self::assertTrue($e->isClientSafe());
@@ -218,7 +224,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
     /**
      * 対象の受注の出荷情報が全て出荷済みになれば受注を出荷済みにする
      */
-    public function testOrderShipped()
+    public function testOrderShipped(): void
     {
         // Orderを新しく作り、Shippingをもう一方に付け替える
         $Order = $this->createOrder($this->Order->getCustomer());
@@ -242,7 +248,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertEquals($OrderStatus, $this->Order->getOrderStatus());
         } catch (InvalidArgumentException $e) {
             // 通らない
-            self::assertTrue(false);
+            self::fail();
         }
 
         // ２個目の出荷情報を出荷済みに変更
@@ -258,7 +264,7 @@ class UpdateShippedMutationTest extends EccubeTestCase
             self::assertEquals($OrderStatus, $this->Order->getOrderStatus());
         } catch (InvalidArgumentException $e) {
             // 通らない
-            self::assertTrue(false);
+            self::fail();
         }
     }
 }

@@ -92,6 +92,9 @@ class UpdateShippedMutation implements Mutation
         return 'updateShipped';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getMutation(): array
     {
         return [
@@ -127,7 +130,11 @@ class UpdateShippedMutation implements Mutation
         ];
     }
 
-    public function updateShipped($root, $args)
+    /**
+     * @param mixed $root
+     * @param array<string, mixed> $args
+     */
+    public function updateShipped(mixed $root, array $args): Shipping
     {
         // XXX Validate with string
         if (array_key_exists('shipping_date', $args) && $args['shipping_date'] instanceof \DateTime) {
@@ -162,6 +169,8 @@ class UpdateShippedMutation implements Mutation
     /**
      * 引数の検証
      *
+     * @param array<string, mixed> $args
+     *
      * @throws InvalidArgumentException
      */
     private function validateArgs(array $args): void
@@ -182,8 +191,8 @@ class UpdateShippedMutation implements Mutation
 
     private function getConstraint(): Constraint
     {
-        return new Assert\Collection([
-            'fields' => [
+        return new Assert\Collection(
+            fields: [
                 'id' => new Assert\GreaterThan(0),
                 'shipping_date' => new Assert\DateTime('Y-m-d\TH:i:sP'),
                 'shipping_delivery_name' => new Assert\Length([
@@ -197,8 +206,8 @@ class UpdateShippedMutation implements Mutation
                 ]),
                 'is_send_mail' => new Assert\Choice([true, false]),
             ],
-            'allowMissingFields' => true,
-        ]);
+            allowMissingFields: true,
+        );
     }
 
     /**
@@ -229,6 +238,8 @@ class UpdateShippedMutation implements Mutation
 
     /**
      * args で Shipping の出荷済み処理
+     *
+     * @param array<string, mixed> $args
      */
     private function updateShippingShippedWithArgs(Shipping $Shipping, array $args): void
     {
@@ -261,7 +272,7 @@ class UpdateShippedMutation implements Mutation
     private function updateOrderShipped(Order $Order): void
     {
         // Order に紐づく全ての Shipping が出荷済みか
-        $allShipped = array_reduce($Order->getShippings()->toArray(), function ($carry, $Shipping) {
+        $allShipped = array_reduce($Order->getShippings()->toArray(), function (bool $carry, Shipping $Shipping): bool {
             return $carry && $Shipping->isShipped();
         }, true);
 

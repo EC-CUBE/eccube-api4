@@ -45,7 +45,7 @@ class ConnectionType extends ObjectType
                 ],
                 'totalCount' => [
                     'type' => Type::nonNull(Type::int()),
-                    'resolve' => function (PaginationInterface $pagination) {
+                    'resolve' => function (PaginationInterface $pagination): int {
                         return $pagination->getTotalItemCount();
                     },
                 ],

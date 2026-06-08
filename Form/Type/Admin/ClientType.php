@@ -44,7 +44,7 @@ class ClientType extends AbstractType
      *
      * @throws \Exception
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('identifier', TextType::class, [

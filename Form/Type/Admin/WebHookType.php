@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class WebHookType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('payload_url', UrlType::class, [

@@ -16,12 +16,13 @@ namespace Plugin\Api44\EventListener;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 final class UserResolveListener
 {
     /**
-     * @var UserProviderInterface
+     * @var UserProviderInterface<\Symfony\Component\Security\Core\User\UserInterface>
      */
     private UserProviderInterface $userProvider;
 
@@ -31,7 +32,7 @@ final class UserResolveListener
     private UserPasswordHasherInterface $userPasswordHasher;
 
     /**
-     * @param UserProviderInterface $userProvider
+     * @param UserProviderInterface<\Symfony\Component\Security\Core\User\UserInterface> $userProvider
      * @param UserPasswordHasherInterface $userPasswordHasher
      */
     public function __construct(UserProviderInterface $userProvider, UserPasswordHasherInterface $userPasswordHasher)
@@ -48,6 +49,10 @@ final class UserResolveListener
         try {
             $user = $this->userProvider->loadUserByIdentifier($event->getUsername());
         } catch (UserNotFoundException $e) {
+            return;
+        }
+
+        if (!$user instanceof PasswordAuthenticatedUserInterface) {
             return;
         }
 

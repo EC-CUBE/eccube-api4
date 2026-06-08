@@ -14,6 +14,7 @@
 namespace Plugin\Api44\GraphQL;
 
 use GraphQL\Error\Error;
+use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\AST\OperationDefinitionNode;
 use GraphQL\Validator\QueryValidationContext;
@@ -35,10 +36,16 @@ class ScopeValidationRule extends ValidationRule
         $this->authorizationChecker = $authorizationChecker;
     }
 
+    /**
+     * @return array<string, callable(Node): void>
+     */
     public function getVisitor(QueryValidationContext $context): array
     {
         return [
-            NodeKind::OPERATION_DEFINITION => function (OperationDefinitionNode $def) use ($context) {
+            NodeKind::OPERATION_DEFINITION => function (Node $def) use ($context): void {
+                if (!$def instanceof OperationDefinitionNode) {
+                    return;
+                }
                 if ($def->operation === 'query' && !$this->authorizationChecker->isGranted('ROLE_OAUTH2_READ')) {
                     $context->reportError(new Error('Insufficient permission. (read)'));
                 } elseif ($def->operation === 'mutation'

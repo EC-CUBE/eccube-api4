@@ -31,7 +31,7 @@ class ApiCompilerPass implements CompilerPassInterface
     private const RSA_KEY_PATTERN =
         '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->configureTrigger($container);
         $this->configureAllowList($container);
@@ -47,7 +47,7 @@ class ApiCompilerPass implements CompilerPassInterface
         }
     }
 
-    private function configureSchema(ContainerBuilder $container)
+    private function configureSchema(ContainerBuilder $container): void
     {
         $queriesServiceDef = $container->getDefinition('api.queries');
         $mutationsServiceDef = $container->getDefinition('api.mutations');
@@ -64,7 +64,7 @@ class ApiCompilerPass implements CompilerPassInterface
         }
     }
 
-    private function configureTrigger(ContainerBuilder $container)
+    private function configureTrigger(ContainerBuilder $container): void
     {
         $serviceDef = $container->getDefinition(WebHookEvents::class);
         foreach ($container->getDefinitions() as $definition) {
@@ -93,7 +93,7 @@ class ApiCompilerPass implements CompilerPassInterface
         return $reflection !== null && $reflection->isInstantiable();
     }
 
-    private function configureAllowList(ContainerBuilder $container)
+    private function configureAllowList(ContainerBuilder $container): void
     {
         $ids = $container->findTaggedServiceIds('eccube.api.allow_list');
         $typesDef = $container->getDefinition(Types::class);
@@ -104,7 +104,7 @@ class ApiCompilerPass implements CompilerPassInterface
         }
     }
 
-    private function configureKeyPair(ContainerBuilder $container)
+    private function configureKeyPair(ContainerBuilder $container): void
     {
         $projectDir = $container->getParameter('kernel.project_dir');
         $oauthConfig = $container->getExtensionConfig('league_oauth2_server');
@@ -118,12 +118,12 @@ class ApiCompilerPass implements CompilerPassInterface
         }
     }
 
-    private function isRSAKeyContent($string)
+    private function isRSAKeyContent(string $string): int|false
     {
         return preg_match(self::RSA_KEY_PATTERN, $string);
     }
 
-    private function generateKeys($privateKeyPath, $publicKeyPath)
+    private function generateKeys(string $privateKeyPath, string $publicKeyPath): void
     {
         if (false === function_exists('openssl_pkey_new')) {
             throw new \RuntimeException('OpenSSL extension not available');
@@ -147,12 +147,12 @@ class ApiCompilerPass implements CompilerPassInterface
         }
 
         if (false === file_put_contents($privateKeyPath, $privateKey)) {
-            throw new \RuntimeException('File "%s" was not created', $privateKeyPath);
+            throw new \RuntimeException(sprintf('File "%s" was not created', $privateKeyPath));
         }
         chmod($privateKeyPath, 0600);
 
         if (false === file_put_contents($publicKeyPath, $publicKey)) {
-            throw new \RuntimeException('File "%s" was not created', $publicKeyPath);
+            throw new \RuntimeException(sprintf('File "%s" was not created', $publicKeyPath));
         }
         chmod($publicKeyPath, 0644);
     }

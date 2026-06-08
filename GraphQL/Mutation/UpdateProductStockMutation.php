@@ -53,6 +53,9 @@ class UpdateProductStockMutation implements Mutation
         return 'updateProductStock';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getMutation(): array
     {
         return [
@@ -75,7 +78,11 @@ class UpdateProductStockMutation implements Mutation
         ];
     }
 
-    public function updateProductStock($root, $args)
+    /**
+     * @param mixed $root
+     * @param array<string, mixed> $args
+     */
+    public function updateProductStock(mixed $root, array $args): ProductClass
     {
         $ProductClasses = $this->productClassRepository->findBy(['code' => $args['code']]);
 

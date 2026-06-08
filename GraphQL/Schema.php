@@ -17,6 +17,10 @@ use GraphQL\Type\Definition\ObjectType;
 
 class Schema extends \GraphQL\Type\Schema
 {
+    /**
+     * @param \ArrayObject<int, Query> $queries
+     * @param \ArrayObject<int, Mutation> $mutations
+     */
     public function __construct(
         Types $types,
         \ArrayObject $queries,
@@ -25,23 +29,23 @@ class Schema extends \GraphQL\Type\Schema
         parent::__construct([
             'query' => new ObjectType([
                 'name' => 'Query',
-                'fields' => array_reduce($queries->getArrayCopy(), function ($acc, Query $query) {
+                'fields' => array_reduce($queries->getArrayCopy(), function (array $acc, Query $query): array {
                     $acc[$query->getName()] = $query->getQuery();
 
                     return $acc;
                 }, []),
-                'typeLoader' => function ($name) use ($types) {
+                'typeLoader' => function ($name) use ($types): ObjectType {
                     return $types->get($name);
                 },
             ]),
             'mutation' => new ObjectType([
                 'name' => 'Mutation',
-                'fields' => array_reduce($mutations->getArrayCopy(), function ($acc, Mutation $mutation) {
+                'fields' => array_reduce($mutations->getArrayCopy(), function (array $acc, Mutation $mutation): array {
                     $acc[$mutation->getName()] = $mutation->getMutation();
 
                     return $acc;
                 }, []),
-                'typeLoader' => function ($name) use ($types) {
+                'typeLoader' => function ($name) use ($types): ObjectType {
                     return $types->get($name);
                 },
             ]),

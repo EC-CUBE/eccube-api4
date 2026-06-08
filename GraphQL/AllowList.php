@@ -15,19 +15,22 @@ namespace Plugin\Api44\GraphQL;
 
 class AllowList
 {
-    private $allows;
+    /**
+     * @var array<string, list<string>>
+     */
+    private array $allows;
 
     /**
      * AllowList constructor.
      *
-     * @param $allows
+     * @param array<string, list<string>> $allows
      */
-    public function __construct($allows)
+    public function __construct(array $allows)
     {
         $this->allows = $allows;
     }
 
-    public function isAllowed($entityName, $propertyName)
+    public function isAllowed(string $entityName, string $propertyName): bool
     {
         $allowProperties = $this->allows[$entityName] ?? [];
 

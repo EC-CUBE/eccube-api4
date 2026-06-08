@@ -13,7 +13,6 @@
 
 namespace Plugin\Api44\GraphQL\Query;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use GraphQL\Type\Definition\Type;
 use Plugin\Api44\GraphQL\Query;
@@ -33,9 +32,9 @@ abstract class SingleResultQuery implements Query
     private Types $types;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
-    private EntityManager $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * SingleResultQuery constructor.
@@ -51,7 +50,7 @@ abstract class SingleResultQuery implements Query
      * @param EntityManagerInterface $entityManager
      */
     #[Required]
-    public function setEntityManager(EntityManagerInterface $entityManager)
+    public function setEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->entityManager = $entityManager;
     }
@@ -65,6 +64,9 @@ abstract class SingleResultQuery implements Query
         $this->types = $types;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getQuery(): array
     {
         return [
@@ -72,7 +74,7 @@ abstract class SingleResultQuery implements Query
             'args' => [
                 'id' => Type::nonNull(Type::id()),
             ],
-            'resolve' => function ($root, $args) {
+            'resolve' => function ($root, array $args): ?object {
                 return $this->entityManager->getRepository($this->entityClass)->find($args['id']);
             },
         ];

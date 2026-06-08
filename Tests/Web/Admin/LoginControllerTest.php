@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class LoginControllerTest extends AbstractWebTestCase
 {
-    public function testRoutingAdminLogin()
+    public function testRoutingAdminLogin(): void
     {
         $this->client->request('GET', $this->generateUrl('admin_login'));
 
@@ -29,7 +29,7 @@ class LoginControllerTest extends AbstractWebTestCase
         );
     }
 
-    public function testRoutingAdminLoginCheck()
+    public function testRoutingAdminLoginCheck(): void
     {
         // see https://stackoverflow.com/a/38661340/4956633
         $this->client->request(
@@ -44,7 +44,7 @@ class LoginControllerTest extends AbstractWebTestCase
         $this->assertNotNull(self::getContainer()->get('security.token_storage')->getToken(), 'ログインしているかどうか');
     }
 
-    public function testRoutingAdminLoginログインしていない場合はログイン画面を表示()
+    public function testRoutingAdminLoginログインしていない場合はログイン画面を表示(): void
     {
         $this->client->request('GET', $this->generateUrl('admin_homepage'));
 
@@ -53,7 +53,7 @@ class LoginControllerTest extends AbstractWebTestCase
             $this->generateUrl('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL)));
     }
 
-    public function testRoutingAdminOauth2Authorizeログインしていない場合はログイン画面を表示()
+    public function testRoutingAdminOauth2Authorizeログインしていない場合はログイン画面を表示(): void
     {
         $this->client->request('GET', $this->generateUrl('oauth2_authorize'));
 
@@ -62,7 +62,7 @@ class LoginControllerTest extends AbstractWebTestCase
             $this->generateUrl('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL)));
     }
 
-    public function testRoutingOauth2Authorizeログインしていない場合はログイン画面を表示()
+    public function testRoutingOauth2Authorizeログインしていない場合はログイン画面を表示(): void
     {
         $this->client->request('GET', $this->generateUrl('oauth2_authorize'));
 

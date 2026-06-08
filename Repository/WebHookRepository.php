@@ -22,7 +22,7 @@ use Plugin\Api44\Entity\WebHook;
  */
 class WebHookRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, $entityClass = WebHook::class)
+    public function __construct(ManagerRegistry $registry, string $entityClass = WebHook::class)
     {
         parent::__construct($registry, $entityClass);
     }
