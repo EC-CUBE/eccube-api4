@@ -129,7 +129,7 @@ class OAuthController extends AbstractController
      *
      * @return RedirectResponse
      */
-    #[Route(path: '/%eccube_admin_route%/api/oauth/delete/{identifier}', requirements: ['identifier' => '\w+'], name: 'admin_api_oauth_delete', methods: ['DELETE'])]
+    #[Route(path: '/%eccube_admin_route%/api/oauth/delete/{identifier}', requirements: ['identifier' => '[\w\-]+'], name: 'admin_api_oauth_delete', methods: ['DELETE'])]
     public function delete(Request $request, string $identifier): RedirectResponse
     {
         $this->isTokenValid();
