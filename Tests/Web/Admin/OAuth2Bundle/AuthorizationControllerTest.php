@@ -15,21 +15,38 @@ namespace Plugin\Api44\Tests\Web\Admin\OAuth2Bundle;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
+use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
+use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizationControllerTest extends AbstractAdminWebTestCase
 {
+    private ?Client $testClient = null;
+
     public function setUp(): void
     {
         parent::setUp();
+
+        // authorize の検証には redirectUris を持つ confidential client が必要。
+        // confidential (secret あり) のため PKCE 必須対象外で、 既存テストの code_challenge 無しフローが通る。
+        /** @var ClientManagerInterface $clientManager */
+        $clientManager = static::getContainer()->get(ClientManagerInterface::class);
+        $client = new Client('Authz Test', 'authztest', 'authztest-secret');
+        $client->setActive(true);
+        $client->setRedirectUris(new RedirectUri('http://127.0.0.1/callback'));
+        $client->setGrants(new Grant('authorization_code'), new Grant('refresh_token'));
+        $client->setScopes(new Scope('read'), new Scope('write'));
+        $clientManager->save($client);
+        $this->testClient = $client;
     }
 
     public function testRoutingAdminOauth2Authorizeログインしている場合は権限移譲確認画面を表示(): void
     {
-        /** @var Client $Client */
-        $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
+        $Client = $this->testClient;
 
         $this->client->request('GET',
             $this->generateUrl(
@@ -53,8 +70,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
 
     public function testRoutingAdminOauth2Authorize権限移譲を許可(): void
     {
-        /** @var Client $Client */
-        $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
+        $Client = $this->testClient;
         $authorize_url = $this->generateUrl(
             'oauth2_authorize',
             [
@@ -98,8 +114,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
 
     public function testRoutingAdminOauth2Authorize権限移譲を許可しない(): void
     {
-        /** @var Client $Client */
-        $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
+        $Client = $this->testClient;
         $authorize_url = $this->generateUrl(
             'oauth2_authorize',
             [
@@ -194,8 +209,7 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
         $this->assertTrue($response->isRedirection());
 
         // OAuth画面へ移動
-        /** @var Client $Client */
-        $Client = $this->entityManager->getRepository(Client::class)->findOneBy([]);
+        $Client = $this->testClient;
         $authorize_url = $this->generateUrl(
             'oauth2_authorize',
             [
