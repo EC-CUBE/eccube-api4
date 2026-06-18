@@ -34,6 +34,24 @@ api:
       allow__confirm_description: 'このアプリに以下を許可します:'
       allow: 許可する
       deny: 許可しない
+      api_registration__new: API 新規追加
+      mcp_token.registration__new: MCP 新規追加
+      mcp_token.registration: MCP トークン発行
+      mcp_token.management: MCP トークン
+      mcp_token.label: ラベル
+      mcp_token.label_tooltip: 'トークンの用途がわかる名前（例: Claude Desktop 自宅PC）'
+      mcp_token.scope: スコープ
+      mcp_token.scope_tooltip: このトークンで参照できる領域（商品・注文・顧客・プラグイン）の read 権限
+      mcp_token.expire: 有効期限
+      mcp_token.expire_tooltip: 期限を過ぎたトークンは利用できなくなります（最長365日）
+      mcp_token.issue: 発行する
+      mcp_token.issued_by: 発行者
+      mcp_token.issued_title: MCP トークンを発行しました
+      mcp_token.issued_warning: このトークンは今この画面でのみ表示されます。 コピーして安全に保管してください（再表示はできません）。
+      mcp_token.revoke: 失効する
+      mcp_token.revoke__confirm_title: MCP トークンを失効します
+      mcp_token.revoke__confirm_message: このトークンを失効してよろしいですか？ 失効すると即座に利用できなくなります。
+      mcp_token.revoke__not_found: 失効対象のトークンが見つかりませんでした（既に失効・期限切れの可能性）。 一覧からは削除しました。
     webhook:
       management:  WebHook管理
       registration: WebHook登録

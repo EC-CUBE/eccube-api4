@@ -40,6 +40,12 @@ league_oauth2_server:
         doctrine: null
 
 services:
+    # MCP トークン発行サービス。 league の manager / EntityManager は autowire、 署名鍵パスのみ bind する
+    Plugin\Api44\Service\McpTokenService:
+        autowire: true
+        arguments:
+            $privateKeyPath: '%env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY)%'
+
     Plugin\Api44\EventListener\UserResolveListener:
         arguments:
             - '@Eccube\Security\Core\User\MemberProvider'
