@@ -21,6 +21,9 @@ use League\Bundle\OAuth2ServerBundle\Entity\Scope as ScopeEntity;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken as AccessTokenModel;
+use League\Bundle\OAuth2ServerBundle\Model\Client as ClientModel;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use League\OAuth2\Server\CryptKey;
 use Plugin\Api44\Entity\McpToken;
 
@@ -88,10 +91,7 @@ class McpTokenService
             throw new \InvalidArgumentException('Member id is required.');
         }
 
-        $client = $this->clientManager->find(self::CLIENT_IDENTIFIER);
-        if (null === $client) {
-            throw new \RuntimeException(sprintf('OAuth2 client "%s" が存在しません。 Api44 を有効化してください。', self::CLIENT_IDENTIFIER));
-        }
+        $client = $this->findOrCreatePatClient();
 
         $identifier = 'mcp-'.bin2hex(random_bytes(16));
         $expiry = new \DateTimeImmutable(sprintf('+%d days', $expireDays));
@@ -132,6 +132,32 @@ class McpTokenService
         $tokenEntity->setPrivateKey(new CryptKey($this->privateKeyPath, null, false));
 
         return $tokenEntity->toString();
+    }
+
+    /**
+     * PAT 発行用の内部クライアントを取得する。 無ければ冪等生成する。
+     *
+     * league の doctrine persistence は eccube:plugin:enable の時点では未配線のため、
+     * enable 時には生成できない。 実行時 (初回発行時) に生成する。 grant は
+     * authorization_code、 scope は MCP の領域別 read に固定する。
+     */
+    private function findOrCreatePatClient(): ClientModel
+    {
+        $client = $this->clientManager->find(self::CLIENT_IDENTIFIER);
+        if ($client instanceof ClientModel) {
+            return $client;
+        }
+
+        $client = new ClientModel('MCP PAT', self::CLIENT_IDENTIFIER, null);
+        $client->setActive(true);
+        $client->setGrants(new Grant('authorization_code'));
+        $client->setScopes(...array_map(
+            static fn (string $scope): Scope => new Scope($scope),
+            self::AVAILABLE_SCOPES,
+        ));
+        $this->clientManager->save($client);
+
+        return $client;
     }
 
     /**
