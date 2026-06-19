@@ -19,6 +19,7 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use Plugin\Api44\Entity\DcrClient;
 use Plugin\Api44\Service\McpTokenService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -124,6 +125,19 @@ class ClientRegistrationController extends AbstractController
             $this->logger->error('MCP DCR client persistence failed', ['ip' => $ip, 'exception' => $e]);
 
             return $this->error('server_error', 'Failed to register client', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        // 死蔵クライアント掃除の grace 判定用に登録時刻を記録する (best-effort)。
+        // 記録に失敗しても client 発行は成立させる (記録漏れの client は自動掃除の対象から外れるだけ)。
+        try {
+            $dcrRecord = new DcrClient();
+            $dcrRecord->setClientIdentifier($identifier);
+            $dcrRecord->setCreateDate(new \DateTime());
+            $this->entityManager->persist($dcrRecord);
+            $this->entityManager->flush();
+        } catch (\Throwable $e) {
+            // 記録漏れの client は作成時刻を持たず、 自動掃除 (CleanupDcrClientsCommand) の対象から外れる (リークになる)
+            $this->logger->warning('MCP DCR registration record persistence failed; this client will be excluded from automatic cleanup (leak risk)', ['client_id' => $identifier, 'exception' => $e]);
         }
 
         $this->logger->info('MCP DCR client registered', [

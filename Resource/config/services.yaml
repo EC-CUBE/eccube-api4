@@ -71,6 +71,10 @@ services:
     Plugin\Api44\Security\McpAuthenticationEntryPoint:
         autowire: true
 
+    # DCR 死蔵クライアント掃除 (CleanupDcrClientsCommand から利用)
+    Plugin\Api44\Service\DcrClientCleaner:
+        autowire: true
+
     Plugin\Api44\EventListener\UserResolveListener:
         arguments:
             - '@Eccube\Security\Core\User\MemberProvider'
