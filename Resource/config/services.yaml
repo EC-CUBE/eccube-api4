@@ -75,6 +75,12 @@ services:
     Plugin\Api44\Service\DcrClientCleaner:
         autowire: true
 
+    # RFC 9207: 認可応答の Location に iss を付与する
+    Plugin\Api44\EventListener\AuthorizationResponseIssListener:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
     Plugin\Api44\EventListener\UserResolveListener:
         arguments:
             - '@Eccube\Security\Core\User\MemberProvider'

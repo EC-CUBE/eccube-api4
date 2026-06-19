@@ -108,8 +108,8 @@ class OAuthMetadataBuilder
             'token_endpoint_auth_methods_supported' => ['none'],
             'code_challenge_methods_supported' => ['S256'],
             'scopes_supported' => self::SCOPES,
-            // iss は Phase 2 (RFC 9207) で導入予定。 現状は未対応を明示し、 クライアントの検証と齟齬を出さない
-            'authorization_response_iss_parameter_supported' => false,
+            // RFC 9207 対応済み。 認可応答に issuer (=この issuer) を付与する (AuthorizationResponseIssListener)
+            'authorization_response_iss_parameter_supported' => true,
         ];
     }
 }

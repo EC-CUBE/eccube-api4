@@ -110,6 +110,10 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
 
         self::assertFalse(isset($callbackParams['error']));
         self::assertTrue(isset($callbackParams['code']));
+
+        // RFC 9207: 認可応答に issuer が付与される (AuthorizationResponseIssListener)
+        self::assertTrue(isset($callbackParams['iss']), '認可応答に iss が付与される');
+        self::assertStringContainsString($this->client->getRequest()->getHttpHost(), $callbackParams['iss']);
     }
 
     public function testRoutingAdminOauth2Authorize権限移譲を許可しない(): void
