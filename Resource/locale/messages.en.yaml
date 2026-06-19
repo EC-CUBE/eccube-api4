@@ -20,6 +20,10 @@ api:
       scope_tooltip: GraphQL Query requires read, Mutation requires write/write Scope
       scope.read.description: 'Read %shop_name% data'
       scope.write.description: 'Write %shop_name% data'
+      'scope.mcp:product:read.description': 'Read %shop_name% product and stock data'
+      'scope.mcp:order:read.description': 'Read %shop_name% order data'
+      'scope.mcp:customer:read.description': 'Read %shop_name% customer data'
+      'scope.mcp:plugin:read.description': 'Read %shop_name% plugin information'
       redirect_uri: Redirect URI
       redirect_uri_tooltip: You can enter multiple URIs separated by commas
       grant_type: Grant Type

@@ -20,6 +20,10 @@ api:
       scope_tooltip: GraphQLのQueryにはread, Mutationにはwrite/writeのScopeが必要
       scope.read.description: '%shop_name%のデータに対する読み取り'
       scope.write.description: '%shop_name%のデータに対する書き込み'
+      'scope.mcp:product:read.description': '%shop_name%の商品・在庫データの読み取り'
+      'scope.mcp:order:read.description': '%shop_name%の注文データの読み取り'
+      'scope.mcp:customer:read.description': '%shop_name%の顧客会員データの読み取り'
+      'scope.mcp:plugin:read.description': '%shop_name%のプラグイン情報の読み取り'
       redirect_uri: リダイレクトURI
       redirect_uri_tooltip: カンマ区切りで複数のURIを入力可能
       grant_type: グラントタイプ
