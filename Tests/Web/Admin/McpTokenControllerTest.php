@@ -20,17 +20,15 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope as ScopeValue;
-use Plugin\Api44\Entity\McpToken;
 use Plugin\Api44\Repository\McpTokenRepository;
 use Plugin\Api44\Service\McpTokenService;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
- * MCP トークン発行機能の契約テスト。
+ * MCP トークン発行サービスの契約テスト。
  *
- * 発行したトークンが `/admin/mcp` の firewall を通り、 失効すると即 401 になること、
- * 発行できる scope が MCP の read に限られることを担保する。
+ * 発行できる scope が MCP の read に限られ、 有効日数がプリセットに縛られることを担保する。
+ * 発行したトークンが `/admin/mcp` firewall を通る/失効で 401 になる統合は、 MCP サーバ
+ * (本体同梱) と Api44 が揃う本体の mcp ジョブ (McpTokenRevocationContractTest) で実走する。
  */
 class McpTokenControllerTest extends EccubeTestCase
 {
@@ -45,33 +43,6 @@ class McpTokenControllerTest extends EccubeTestCase
         $this->mcpTokenService = static::getContainer()->get(McpTokenService::class);
         $this->mcpTokenRepository = static::getContainer()->get(McpTokenRepository::class);
         $this->member = static::getContainer()->get(MemberRepository::class)->findOneBy([]);
-    }
-
-    public function testIssuedTokenIsAcceptedByMcpEndpoint(): void
-    {
-        $jwt = $this->mcpTokenService->issue($this->member, 'test token', ['mcp:product:read'], 30);
-
-        $this->mcpRequest($jwt);
-
-        $response = $this->client->getResponse();
-        $this->assertSame(Response::HTTP_OK, $response->getStatusCode(), (string) $response->getContent());
-    }
-
-    public function testRevokedTokenReturns401(): void
-    {
-        $jwt = $this->mcpTokenService->issue($this->member, 'revoke me', ['mcp:product:read'], 30);
-
-        // 発行直後は通る
-        $this->mcpRequest($jwt);
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-
-        // 失効すると同じトークンで 401
-        $mcpToken = $this->mcpTokenRepository->findOneBy([], ['id' => 'DESC']);
-        $this->assertInstanceOf(McpToken::class, $mcpToken);
-        $this->mcpTokenService->revoke($mcpToken);
-
-        $this->mcpRequest($jwt);
-        $this->assertSame(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
     public function testIssueRejectsNonMcpScopesOnly(): void
@@ -95,24 +66,6 @@ class McpTokenControllerTest extends EccubeTestCase
         // プリセット外の有効日数 (フォームバイパス) は発行できない
         $this->expectException(\InvalidArgumentException::class);
         $this->mcpTokenService->issue($this->member, 'bad-expire', ['mcp:product:read'], 9999);
-    }
-
-    /**
-     * `/admin/mcp` に initialize を投げ、 firewall の通過可否を見る (handshake の成否)。
-     */
-    private function mcpRequest(string $bearerJwt): void
-    {
-        $adminRoute = static::getContainer()->getParameter('eccube_admin_route');
-        $this->client->request(
-            Request::METHOD_POST,
-            '/'.$adminRoute.'/mcp',
-            server: [
-                'CONTENT_TYPE' => 'application/json',
-                'HTTP_ACCEPT' => 'application/json, text/event-stream',
-                'HTTP_AUTHORIZATION' => 'Bearer '.$bearerJwt,
-            ],
-            content: '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","clientInfo":{"name":"t","version":"1"},"capabilities":{}}}',
-        );
     }
 
     private function ensureMcpPatClient(): void

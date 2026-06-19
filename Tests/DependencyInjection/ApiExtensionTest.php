@@ -37,9 +37,15 @@ final class ApiExtensionTest extends TestCase
         $firewalls = $this->extractFirewalls($container);
         $names = array_keys($firewalls);
 
-        // 順序保証: dev → api → mcp → admin → customer
-        // (mcp は admin の前にないと `^/<admin>/mcp` のリクエストが admin firewall に拾われてしまう)
-        $this->assertSame(['dev', 'api', 'mcp', 'admin', 'customer'], $names);
+        // 順序保証: dev → mcp_oauth_public → api → mcp → admin → customer
+        // (いずれも admin の前にないと `^/<admin>/mcp` や公開 well-known が admin firewall に拾われてしまう)
+        $this->assertSame(['dev', 'mcp_oauth_public', 'api', 'mcp', 'admin', 'customer'], $names);
+
+        // OAuth ディスカバリの公開エンドポイントは認証なし、 かつ実在 2 well-known と /register に
+        // **完全一致**で限定する (前方一致だと無関係パスを公開化してしまう)。
+        $public = $firewalls['mcp_oauth_public'];
+        $this->assertFalse($public['security']);
+        $this->assertSame('^/(\.well-known/oauth-(protected-resource|authorization-server)|register)$', $public['pattern']);
     }
 
     public function testMcpFirewallShapeMatchesDesign(): void
@@ -54,6 +60,8 @@ final class ApiExtensionTest extends TestCase
         $this->assertTrue($mcp['stateless']);
         $this->assertTrue($mcp['oauth2']);
         $this->assertSame('member_provider', $mcp['provider']);
+        // 401 は専用 entry_point で RFC 9728 の resource_metadata 付き WWW-Authenticate を返す
+        $this->assertSame('Plugin\Api44\Security\McpAuthenticationEntryPoint', $mcp['entry_point']);
     }
 
     public function testAdminFirewallLosesCsrfTokenAndAnonymous(): void

@@ -51,22 +51,6 @@ class OAuthDiscoveryTest extends EccubeTestCase
         $this->assertStringEndsWith('/register', $data['registration_endpoint']);
     }
 
-    public function testMcpUnauthorizedAdvertisesResourceMetadata(): void
-    {
-        $this->client->request(
-            Request::METHOD_POST,
-            '/'.$this->adminRoute().'/mcp',
-            server: ['CONTENT_TYPE' => 'application/json'],
-            content: '{}',
-        );
-        $response = $this->client->getResponse();
-        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-
-        $header = (string) $response->headers->get('WWW-Authenticate');
-        $this->assertStringContainsString('resource_metadata=', $header);
-        $this->assertStringContainsString('/.well-known/oauth-protected-resource', $header);
-    }
-
     public function testDcrRegistersLoopbackClientAndForcesScopeGrant(): void
     {
         // write / client_credentials を要求しても MCP read + authorization_code に固定されること
@@ -113,10 +97,5 @@ class OAuthDiscoveryTest extends EccubeTestCase
             content: (string) json_encode(['redirect_uris' => ['http://evil.com\\@localhost/cb']]),
         );
         $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    private function adminRoute(): string
-    {
-        return (string) static::getContainer()->getParameter('eccube_admin_route');
     }
 }
