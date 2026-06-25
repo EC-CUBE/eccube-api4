@@ -12,7 +12,8 @@ league_oauth2_server:
         encryption_key: '%env(ECCUBE_OAUTH2_ENCRYPTION_KEY)%'
 
       # Whether to enable the client credentials grant
-        enable_client_credentials_grant: false
+      # エージェントコマース (ACP/UCP) の machine-to-machine インバウンド認証で使用する (#188)。
+        enable_client_credentials_grant: true
 
       # Whether to enable the password grant
         enable_password_grant: false
@@ -30,13 +31,22 @@ league_oauth2_server:
         public_key: '%env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY)%'
 
     scopes:
-        available: ['read', 'write']
+      # read/write は GraphQL API 用。acp:*/ucp:* はエージェントコマース (#188・<protocol>:<capability> 規約)。
+        available: ['read', 'write', 'acp:checkout', 'acp:catalog', 'ucp:checkout', 'ucp:cart', 'ucp:catalog', 'ucp:identity']
         default: ['read']
 
     persistence:
         doctrine: null
 
 services:
+    # エージェントコマース (#188): EC-CUBE 本体の AgentCommerceOAuth2Authenticator が依存する
+    # Symfony 標準 AccessTokenHandlerInterface を提供する。league の ResourceServer で
+    # Bearer トークン (JWT) を検証 (公開鍵での署名/期限/失効) し、付与 scope を UserBadge の
+    # attributes['scopes'] に載せて返す。本体は handler が無ければ 503 を返す疎結合設計。
+    Plugin\Api44\Security\AgentCommerceAccessTokenHandler:
+        autowire: true
+    Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface: '@Plugin\Api44\Security\AgentCommerceAccessTokenHandler'
+
     Plugin\Api44\EventListener\UserResolveListener:
         arguments:
             - '@Eccube\Security\Core\User\MemberProvider'

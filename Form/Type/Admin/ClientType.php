@@ -69,6 +69,13 @@ class ClientType extends AbstractType
                 'choices' => [
                     'read' => 'read',
                     'write' => 'write',
+                    // エージェントコマース (ACP/UCP) 用 scope (#188・<protocol>:<capability> 規約)
+                    'acp:checkout' => 'acp:checkout',
+                    'acp:catalog' => 'acp:catalog',
+                    'ucp:checkout' => 'ucp:checkout',
+                    'ucp:cart' => 'ucp:cart',
+                    'ucp:catalog' => 'ucp:catalog',
+                    'ucp:identity' => 'ucp:identity',
                 ],
                 'expanded' => true,
                 'multiple' => true,
@@ -88,6 +95,8 @@ class ClientType extends AbstractType
             ->add('grants', ChoiceType::class, [
                 'choices' => [
                     'Authorization code' => OAuth2Grants::AUTHORIZATION_CODE,
+                    // エージェントコマースの machine-to-machine 認証用 (#188)
+                    'Client credentials' => OAuth2Grants::CLIENT_CREDENTIALS,
                 ],
                 'expanded' => true,
                 'multiple' => true,
