@@ -47,21 +47,34 @@ class AuthorizationResponseIssListener
             return;
         }
 
-        // 認可応答 (client への code / error redirect) だけに付与する。 ログイン redirect 等は対象外
-        parse_str((string) parse_url($location, PHP_URL_QUERY), $params);
-        if (!isset($params['code']) && !isset($params['error'])) {
+        // response_type=code の成功応答は code を query に持つ。 league はエラー応答を、 登録 redirect_uri に
+        // '#' が含まれる場合は fragment に出す。 RFC 9207 は code/error が乗る側に iss を付けるため両方を見る。
+        $parts = parse_url($location);
+        if (false === $parts) {
             return;
         }
-        if (isset($params['iss'])) {
+        parse_str($parts['query'] ?? '', $queryParams);
+        parse_str($parts['fragment'] ?? '', $fragmentParams);
+
+        // 認可応答 (client への code / error redirect) だけに付与する。 ログイン redirect 等は対象外
+        $hasAuthResponse = isset($queryParams['code']) || isset($queryParams['error'])
+            || isset($fragmentParams['code']) || isset($fragmentParams['error']);
+        if (!$hasAuthResponse) {
+            return;
+        }
+        if (isset($queryParams['iss']) || isset($fragmentParams['iss'])) {
             return;
         }
 
+        // issuer は AS メタデータと同一値 (OAuthMetadataBuilder::baseUrl)。 正しさは TRUSTED_HOSTS 設定に依存する (本番必須)
         $issuer = $this->metadata->baseUrl();
         if ('' === $issuer) {
+            // oauth2_authorize 到達後は現在リクエストが必ず存在するため、 ここは防御的 (実質到達しない)
             return;
         }
 
-        $separator = str_contains($location, '?') ? '&' : '?';
-        $response->headers->set('Location', $location.$separator.'iss='.rawurlencode($issuer));
+        // code/error が乗るコンポーネント (成功=query / fragment エラー=fragment) は末尾かつ非空なので、
+        // 末尾に '&iss=' を足せば同一コンポーネントに収まる。
+        $response->headers->set('Location', $location.'&iss='.rawurlencode($issuer));
     }
 }

@@ -159,6 +159,9 @@ class AuthorizationControllerTest extends AbstractAdminWebTestCase
 
         $callbackParams = $this->parseCallbackParams($response);
         self::assertEquals('access_denied', $callbackParams['error']);
+
+        // RFC 9207: エラー応答にも iss が付与される (AuthorizationResponseIssListener)
+        self::assertTrue(isset($callbackParams['iss']), 'エラー応答にも iss が付与される');
     }
 
     public function testRoutingAdminOauth2Authorize権限移譲を許可パラメータが足りない場合(): void
