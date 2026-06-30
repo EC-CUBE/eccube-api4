@@ -90,7 +90,7 @@ class DcrClientCleaner
 
         $client = $this->clientManager->find($identifier);
         if (null !== $client) {
-            // access token は client FK の ON DELETE CASCADE で消える
+            // client 削除で access は DB の ON DELETE CASCADE で消える (上の refresh 削除は access がまだ在る間に実行済み)
             $this->entityManager->remove($client);
         } else {
             // 追跡レコードはあるが league client が無い = 別経路削除 or 過去の部分失敗の残骸。 兆候として記録する

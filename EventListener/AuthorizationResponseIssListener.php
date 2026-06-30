@@ -69,7 +69,7 @@ class AuthorizationResponseIssListener
         // issuer は AS メタデータと同一値 (OAuthMetadataBuilder::baseUrl)。 正しさは TRUSTED_HOSTS 設定に依存する (本番必須)
         $issuer = $this->metadata->baseUrl();
         if ('' === $issuer) {
-            // oauth2_authorize 到達後は現在リクエストが必ず存在するため、 ここは防御的 (実質到達しない)
+            // baseUrl() は RequestStack が空のとき '' を返す。 空 iss を付けた不正な認可応答を返さないため付与しない
             return;
         }
 

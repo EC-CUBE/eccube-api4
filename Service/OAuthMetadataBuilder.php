@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * MCP の OAuth ディスカバリ用メタデータ (RFC 9728 / RFC 8414) と
  * 401 の WWW-Authenticate 値を一元生成する。 URL 組み立てを 1 箇所に集約し、
- * canonical resource URI を 3 者 (PRM の resource / WWW-Authenticate / Phase2 の aud) で一致させる。
+ * canonical resource URI を 3 者 (PRM の resource / WWW-Authenticate / token の aud クレーム) で一致させる。
  */
 class OAuthMetadataBuilder
 {
