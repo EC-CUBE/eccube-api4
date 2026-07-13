@@ -14,7 +14,7 @@
 
 ### EC-CUBE 4.0のインストール方法
 
-[EC-CUBE4 Web API プラグイン 開発ドキュメント](https://doc.ec-cube.net/eccube-api4/) の手順に従ってインストールしてください。
+[EC-CUBE4 Web API プラグイン 開発ドキュメント](https://doc4.ec-cube.net/eccube-api4/) の手順に従ってインストールしてください。
 
 ### 動作確認環境
 
@@ -22,4 +22,4 @@
 * PostgreSQL or MySQL
 * SSLサーバー証明書(TLS) は必須
 
-詳しくは [EC-CUBE4 Web API プラグイン 開発ドキュメント](https://doc.ec-cube.net/eccube-api4/) をご確認ください。
+詳しくは [EC-CUBE4 Web API プラグイン 開発ドキュメント](https://doc4.ec-cube.net/eccube-api4/) をご確認ください。
