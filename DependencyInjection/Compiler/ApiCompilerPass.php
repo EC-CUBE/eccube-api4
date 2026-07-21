@@ -13,6 +13,7 @@
 
 namespace Plugin\Api44\DependencyInjection\Compiler;
 
+use Eccube\Service\Mcp\McpToolScopeMap;
 use Plugin\Api44\GraphQL\AllowList;
 use Plugin\Api44\GraphQL\Mutation;
 use Plugin\Api44\GraphQL\Query;
@@ -21,7 +22,9 @@ use Plugin\Api44\Service\WebHookEvents;
 use Plugin\Api44\Service\WebHookTrigger;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
 
 class ApiCompilerPass implements CompilerPassInterface
 {
@@ -37,6 +40,7 @@ class ApiCompilerPass implements CompilerPassInterface
         $this->configureAllowList($container);
         $this->configureKeyPair($container);
         $this->configureSchema($container);
+        $this->configureMcpAccessControl($container);
 
         $plugins = $container->getParameter('eccube.plugins.enabled');
         if (!in_array('Api44', $plugins)) {
@@ -62,6 +66,31 @@ class ApiCompilerPass implements CompilerPassInterface
                 $mutationsServiceDef->addMethodCall('append', [$definition]);
             }
         }
+    }
+
+    /**
+     * `/admin/mcp` に「最低 1 つの mcp read scope」 を要求する access_control を、 core の
+     * `^/<admin> → ROLE_ADMIN` より前 (AccessMap は先頭一致) に構造的に挿入する。
+     *
+     * config prepend で足すと、 core が prependExtensionConfig(先頭 unshift) で入れる `^/<admin>`
+     * ルールに shadow され no-op になる。 そこで SecurityExtension が組んだ security.access_map の
+     * add() 呼び出し列の先頭へ直接差し込む。 role は本体 McpToolScopeMap を唯一のソースにする。
+     */
+    private function configureMcpAccessControl(ContainerBuilder $container): void
+    {
+        if (!$container->hasDefinition('security.access_map')) {
+            return;
+        }
+
+        $adminRoute = (string) $container->getParameter('eccube_admin_route');
+        $matcher = (new Definition(PathRequestMatcher::class, ['^/'.$adminRoute.'/mcp']))->setPublic(false);
+        $roles = array_values(array_unique(McpToolScopeMap::MAP));
+
+        $accessMap = $container->getDefinition('security.access_map');
+        $calls = $accessMap->getMethodCalls();
+        // AccessMap は先頭一致。 core の ^/<admin> → ROLE_ADMIN より前に置くため先頭へ unshift する。
+        array_unshift($calls, ['add', [$matcher, $roles, null]]);
+        $accessMap->setMethodCalls($calls);
     }
 
     private function configureTrigger(ContainerBuilder $container): void
