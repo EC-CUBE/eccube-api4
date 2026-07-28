@@ -86,7 +86,14 @@ class ApiCompilerPass implements CompilerPassInterface
 
         $adminRoute = (string) $container->getParameter('eccube_admin_route');
         $matcher = (new Definition(PathRequestMatcher::class, ['^/'.$adminRoute.'/mcp']))->setPublic(false);
-        $roles = array_values(array_unique(McpToolScopeMap::MAP));
+        // 本体 McpToolScopeMap と同じ read scope role。 本体を持たない環境 (Api44 単体の phpstan/CI) では
+        // MAP の型が解決できず解析が落ちるため直書きする。 領域を増やしたら本体 McpToolScopeMap と同期する。
+        $roles = [
+            'ROLE_OAUTH2_MCP:PRODUCT:READ',
+            'ROLE_OAUTH2_MCP:ORDER:READ',
+            'ROLE_OAUTH2_MCP:CUSTOMER:READ',
+            'ROLE_OAUTH2_MCP:PLUGIN:READ',
+        ];
 
         $accessMap = $container->getDefinition('security.access_map');
         $calls = $accessMap->getMethodCalls();
