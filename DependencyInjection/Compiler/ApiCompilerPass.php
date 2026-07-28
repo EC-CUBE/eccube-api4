@@ -78,7 +78,9 @@ class ApiCompilerPass implements CompilerPassInterface
      */
     private function configureMcpAccessControl(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition('security.access_map')) {
+        // MCP 本体 (McpToolScopeMap) を持たない ec-cube では保護すべき /admin/mcp ツールが無いので何もしない。
+        // Api44 単体を素の本体に載せる構成 (MCP 未搭載) での class-not-found fatal を避ける。
+        if (!class_exists(McpToolScopeMap::class) || !$container->hasDefinition('security.access_map')) {
             return;
         }
 
