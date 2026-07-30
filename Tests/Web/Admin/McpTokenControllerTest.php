@@ -16,6 +16,7 @@ namespace Plugin\Api44\Tests\Web\Admin;
 use Eccube\Entity\Member;
 use Eccube\Repository\MemberRepository;
 use Eccube\Tests\EccubeTestCase;
+use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
@@ -66,6 +67,21 @@ class McpTokenControllerTest extends EccubeTestCase
         // プリセット外の有効日数 (フォームバイパス) は発行できない
         $this->expectException(\InvalidArgumentException::class);
         $this->mcpTokenService->issue($this->member, 'bad-expire', ['mcp:product:read'], 9999);
+    }
+
+    public function testIssuePersistsScopesOnAccessTokenModel(): void
+    {
+        // 失効判定の正本 (AccessToken model) にも scope が積まれる。 JWT と DB が食い違うと
+        // introspection・監査・scope ベースの掃除が壊れるため、 model 側の scope を直接縛る。
+        $this->mcpTokenService->issue($this->member, 'model-scope', ['mcp:product:read', 'mcp:order:read'], 30);
+
+        $mcpToken = $this->mcpTokenRepository->findOneBy([], ['id' => 'DESC']);
+        $accessToken = static::getContainer()->get(AccessTokenManagerInterface::class)->find($mcpToken->getTokenIdentifier());
+        $this->assertNotNull($accessToken);
+
+        $scopes = array_map(static fn ($scope): string => (string) $scope, $accessToken->getScopes());
+        sort($scopes);
+        $this->assertSame(['mcp:order:read', 'mcp:product:read'], $scopes);
     }
 
     private function ensureMcpPatClient(): void

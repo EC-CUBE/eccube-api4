@@ -18,7 +18,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * MCP の OAuth ディスカバリ用メタデータ (RFC 9728 / RFC 8414) と
  * 401 の WWW-Authenticate 値を一元生成する。 URL 組み立てを 1 箇所に集約し、
- * canonical resource URI を 3 者 (PRM の resource / WWW-Authenticate / token の aud クレーム) で一致させる。
+ * canonical resource URI を PRM の resource と WWW-Authenticate の 2 者で一致させる。
+ * JWT の aud はここでは扱わない。 league の AccessTokenTrait が client 識別子を入れるため、
+ * resource URI にはならない (resource へ寄せるには RFC 8707 相当の実装が別途必要)。
  */
 class OAuthMetadataBuilder
 {
@@ -34,7 +36,9 @@ class OAuthMetadataBuilder
     }
 
     /**
-     * 現在のリクエストから `<scheme>://<host>` を得る (リバースプロキシ対応は trusted proxies 設定に従う)。
+     * 現在のリクエストから `<scheme>://<host><base-path>` を得る (リバースプロキシ対応は trusted proxies 設定に従う)。
+     * base path を含めるのは、 サブディレクトリ配下 (例 /shop) に公開したとき resource / 各 endpoint の
+     * URL が base path 落ちで壊れるのを防ぐため。
      */
     public function baseUrl(): string
     {
@@ -43,7 +47,7 @@ class OAuthMetadataBuilder
             return '';
         }
 
-        return $request->getSchemeAndHttpHost();
+        return $request->getSchemeAndHttpHost().$request->getBaseUrl();
     }
 
     /**

@@ -120,10 +120,15 @@ class McpTokenService
         $mcpToken->setExpireDate(\DateTime::createFromInterface($expiry));
         $mcpToken->setCreateDate(new \DateTime());
 
+        // 失効判定の正本 (AccessToken model) にも JWT (108-112) と同じ scope を積む。 空にすると
+        // oauth2_access_token.scopes が JWT と恒久的に食い違い、 introspection・監査・scope ベースの
+        // 掃除など DB レコードを信頼する経路が誤動作する。
+        $modelScopes = array_map(static fn (string $scope): Scope => new Scope($scope), $scopes);
+
         // 失効判定の正本 (AccessToken model) と表示用メタを 1 トランザクションで永続化する。
         // どちらか一方だけ残ると「失効できない生トークン」や「実体のないメタ」が生じるため不可分にする。
-        $this->entityManager->wrapInTransaction(function () use ($identifier, $expiry, $client, $userIdentifier, $mcpToken): void {
-            $this->accessTokenManager->save(new AccessTokenModel($identifier, $expiry, $client, $userIdentifier, []));
+        $this->entityManager->wrapInTransaction(function () use ($identifier, $expiry, $client, $userIdentifier, $modelScopes, $mcpToken): void {
+            $this->accessTokenManager->save(new AccessTokenModel($identifier, $expiry, $client, $userIdentifier, $modelScopes));
             $this->entityManager->persist($mcpToken);
             $this->entityManager->flush();
         });

@@ -29,6 +29,9 @@ class McpTokenType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $scopeChoices = array_combine(McpTokenService::AVAILABLE_SCOPES, McpTokenService::AVAILABLE_SCOPES);
+        // 有効日数は McpTokenService を単一のソースにする (choices と Assert\Choice の二重管理を避ける)。
+        $expireDays = McpTokenService::AVAILABLE_EXPIRE_DAYS;
+        $expireChoices = array_combine(array_map(static fn (int $d): string => $d.'日', $expireDays), $expireDays);
 
         $builder
             ->add('label', TextType::class, [
@@ -49,18 +52,13 @@ class McpTokenType extends AbstractType
             ])
             ->add('expire', ChoiceType::class, [
                 'mapped' => false,
-                'choices' => [
-                    '30日' => 30,
-                    '90日' => 90,
-                    '180日' => 180,
-                    '365日' => 365,
-                ],
-                'data' => 30,
+                'choices' => $expireChoices,
+                'data' => $expireDays[0],
                 'expanded' => false,
                 'multiple' => false,
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Choice(['choices' => [30, 90, 180, 365]]),
+                    new Assert\Choice(['choices' => $expireDays]),
                 ],
             ]);
     }
