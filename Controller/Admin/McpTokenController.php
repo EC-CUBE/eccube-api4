@@ -57,10 +57,14 @@ class McpTokenController extends AbstractController
                 );
 
                 // 発行直後のみ JWT を表示する (再表示不可)。 redirect すると失われるため render する
-                return $this->render('@Api44/admin/OAuth/mcp_token_issued.twig', [
+                $response = $this->render('@Api44/admin/OAuth/mcp_token_issued.twig', [
                     'token' => $token,
                     'label' => (string) $form->get('label')->getData(),
                 ]);
+                // bearer token を HTML に埋め込む画面なので、 ブラウザや共有端末のキャッシュに残さない
+                $response->headers->set('Cache-Control', 'no-store, private');
+
+                return $response;
             } catch (\Exception $e) {
                 $this->addError(trans('admin.common.save_error'), 'admin');
                 // 例外クラスと発行者を残し、 万一の発行失敗を追跡可能にする

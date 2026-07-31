@@ -62,9 +62,6 @@ class AuthorizationResponseIssListener
         if (!$hasAuthResponse) {
             return;
         }
-        if (isset($queryParams['iss']) || isset($fragmentParams['iss'])) {
-            return;
-        }
 
         // issuer は AS メタデータと同一値 (OAuthMetadataBuilder::baseUrl)。 正しさは TRUSTED_HOSTS 設定に依存する (本番必須)
         $issuer = $this->metadata->baseUrl();
@@ -73,8 +70,56 @@ class AuthorizationResponseIssListener
             return;
         }
 
-        // code/error が乗るコンポーネント (成功=query / fragment エラー=fragment) は末尾かつ非空なので、
-        // 末尾に '&iss=' を足せば同一コンポーネントに収まる。
-        $response->headers->set('Location', $location.'&iss='.rawurlencode($issuer));
+        // league は iss を出さないため、 応答に既にある iss は redirect_uri 由来 (= client 制御) で信用できない。
+        // mix-up 対策の iss は AS が強制するものなので (RFC 9207)、 既存を除去してから AS の issuer で上書きする。
+        unset($queryParams['iss'], $fragmentParams['iss']);
+
+        // code/error が乗るコンポーネント (成功=query / fragment エラー=fragment) に iss を載せる。
+        if (isset($queryParams['code']) || isset($queryParams['error'])) {
+            $queryParams['iss'] = $issuer;
+        } else {
+            $fragmentParams['iss'] = $issuer;
+        }
+
+        $response->headers->set('Location', $this->rebuildUrl($parts, $queryParams, $fragmentParams));
+    }
+
+    /**
+     * parse_url の各パーツと query / fragment のパラメータから Location URL を組み立て直す。
+     *
+     * @param array<string, mixed> $parts          parse_url の結果
+     * @param array<string, mixed> $queryParams
+     * @param array<string, mixed> $fragmentParams
+     */
+    private function rebuildUrl(array $parts, array $queryParams, array $fragmentParams): string
+    {
+        $url = '';
+        if (isset($parts['scheme'])) {
+            $url .= (string) $parts['scheme'].'://';
+        }
+        if (isset($parts['user'])) {
+            $url .= (string) $parts['user'];
+            if (isset($parts['pass'])) {
+                $url .= ':'.(string) $parts['pass'];
+            }
+            $url .= '@';
+        }
+        if (isset($parts['host'])) {
+            $url .= (string) $parts['host'];
+        }
+        if (isset($parts['port'])) {
+            $url .= ':'.(string) $parts['port'];
+        }
+        if (isset($parts['path'])) {
+            $url .= (string) $parts['path'];
+        }
+        if ([] !== $queryParams) {
+            $url .= '?'.http_build_query($queryParams);
+        }
+        if ([] !== $fragmentParams) {
+            $url .= '#'.http_build_query($fragmentParams);
+        }
+
+        return $url;
     }
 }
