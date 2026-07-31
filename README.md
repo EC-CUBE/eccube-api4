@@ -18,7 +18,7 @@
 
 ### 動作確認環境
 
-* PHP 7.2 or higher
+* PHP 8.2 or higher
 * PostgreSQL or MySQL
 * SSLサーバー証明書(TLS) は必須
 
