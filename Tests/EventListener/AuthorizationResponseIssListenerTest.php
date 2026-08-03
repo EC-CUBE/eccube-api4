@@ -77,4 +77,18 @@ final class AuthorizationResponseIssListenerTest extends TestCase
 
         $this->assertStringNotContainsString('iss=', $location);
     }
+
+    public function testPreservesQueryBearingRedirectUri(): void
+    {
+        // parse_str/http_build_query で丸ごと再構築すると、 名前の '.'→'_'・空白畳み・重複キー畳み・
+        // arr[]→arr[0] でクエリが壊れる。 client が登録した redirect_uri のクエリは原文のまま保ち、
+        // iss だけを末尾に足すことを検証する。
+        $rawQuery = 'a.b=1&x%20y=2&dup=1&dup=2&arr[]=9&code=CODE';
+        $location = $this->dispatch('https://client.example/cb?'.$rawQuery);
+
+        $this->assertSame(
+            $rawQuery.'&iss=https%3A%2F%2Fas.example',
+            (string) parse_url($location, PHP_URL_QUERY),
+        );
+    }
 }
