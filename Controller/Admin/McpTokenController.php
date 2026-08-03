@@ -14,6 +14,7 @@
 namespace Plugin\Api44\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
+use Eccube\Entity\Master\Authority;
 use Eccube\Entity\Member;
 use Plugin\Api44\Form\Type\Admin\McpTokenType;
 use Plugin\Api44\Repository\McpTokenRepository;
@@ -43,7 +44,10 @@ class McpTokenController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $member = $this->getUser();
-            if (!$member instanceof Member) {
+            // 制限管理者 (authority != ADMIN) は URL 認可で受注/顧客画面等を塞がれるが、 stateless な mcp firewall では
+            // その制限が再評価されない。 全 scope トークンを発行させると管理画面の権限制限を第二の扉で回避できるため、
+            // 発行時に ADMIN を要求する (対話型同意フロー AuthorizationRequestResolveListener と対称)。
+            if (!$member instanceof Member || Authority::ADMIN !== $member->getAuthority()?->getId()) {
                 throw new AccessDeniedHttpException();
             }
 
