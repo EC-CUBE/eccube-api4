@@ -64,14 +64,17 @@ class ClientRegistrationController extends AbstractController
     {
         $ip = $request->getClientIp() ?? 'unknown';
 
-        // グローバル上限: IP 偽装 (X-Forwarded-For 回転等) でも無制限に client を作らせない最終バックストップ
-        if (!$this->mcpDcrRegisterGlobalLimiter->create('dcr:global')->consume()->isAccepted()) {
-            $this->logger->warning('MCP DCR rejected: global rate limit', ['ip' => $ip]);
+        // IP 単位を先に消費させる。 拒否時はトークンを消費しない (FixedWindowLimiter は reserve 拒否時に
+        // window へ加算しない) ため、 グローバルを先に消費させると単一 IP が IP 拒否後もグローバル枠を消費し続け、
+        // 1 IP でグローバル枠を食い潰して全クライアントを締め出せてしまう。 IP を先に判定すればその影響は IP 上限に収まる。
+        if (!$this->mcpDcrRegisterLimiter->create('dcr:'.$ip)->consume()->isAccepted()) {
+            $this->logger->warning('MCP DCR rejected: per-IP rate limit', ['ip' => $ip]);
 
             return $this->error('rate_limited', 'Too many registration requests', Response::HTTP_TOO_MANY_REQUESTS);
         }
-        if (!$this->mcpDcrRegisterLimiter->create('dcr:'.$ip)->consume()->isAccepted()) {
-            $this->logger->warning('MCP DCR rejected: per-IP rate limit', ['ip' => $ip]);
+        // グローバル上限: IP 偽装 (X-Forwarded-For 回転等) でも無制限に client を作らせない最終バックストップ
+        if (!$this->mcpDcrRegisterGlobalLimiter->create('dcr:global')->consume()->isAccepted()) {
+            $this->logger->warning('MCP DCR rejected: global rate limit', ['ip' => $ip]);
 
             return $this->error('rate_limited', 'Too many registration requests', Response::HTTP_TOO_MANY_REQUESTS);
         }
