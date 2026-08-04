@@ -66,6 +66,7 @@ services:
         autowire: true
         arguments:
             $adminRoute: '%eccube_admin_route%'
+            $kernelEnvironment: '%kernel.environment%'
 
     # mcp firewall の entry_point (401 に RFC 9728 resource_metadata を付与)
     Plugin\Api44\Security\McpAuthenticationEntryPoint:

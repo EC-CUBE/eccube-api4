@@ -13,6 +13,8 @@
 
 namespace Plugin\Api44\Service;
 
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -29,9 +31,16 @@ class OAuthMetadataBuilder
      */
     public const SCOPES = McpTokenService::AVAILABLE_SCOPES;
 
+    /**
+     * 本番で trusted hosts 未設定を検知したら 1 度だけ警告する (リクエスト内で baseUrl は多数回呼ばれるため)。
+     */
+    private bool $trustedHostWarned = false;
+
     public function __construct(
         private readonly RequestStack $requestStack,
         private readonly string $adminRoute,
+        private readonly LoggerInterface $logger,
+        private readonly string $kernelEnvironment,
     ) {
     }
 
@@ -46,8 +55,27 @@ class OAuthMetadataBuilder
         if (null === $request) {
             return '';
         }
+        $this->warnIfHostUntrusted();
 
         return $request->getSchemeAndHttpHost().$request->getBaseUrl();
+    }
+
+    /**
+     * trusted hosts 未設定のまま Host 由来の metadata を出すと、 Host ヘッダ偽装で resource_metadata に
+     * 偽ドメインを載せられ、 クライアントを攻撃者の認可サーバへ誘導され得る。 README で TRUSTED_HOSTS を
+     * 必須化しているが、 散文の約束は静かにドリフトするため、 本番での未設定を警告ログで顕在化させる
+     * (dev/test は空が正常なので prod に限定する)。
+     */
+    private function warnIfHostUntrusted(): void
+    {
+        if ($this->trustedHostWarned || 'prod' !== $this->kernelEnvironment) {
+            return;
+        }
+        $this->trustedHostWarned = true;
+
+        if ([] === Request::getTrustedHosts()) {
+            $this->logger->warning('MCP: TRUSTED_HOSTS が未設定です。 Host ヘッダ偽装で OAuth ディスカバリの resource_metadata に偽ドメインが載る恐れがあります。 本番では TRUSTED_HOSTS / TRUSTED_PROXIES を設定してください。');
+        }
     }
 
     /**
