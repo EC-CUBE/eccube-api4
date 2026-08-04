@@ -47,7 +47,7 @@ api:
       mcp_token.scope: スコープ
       mcp_token.scope_tooltip: このトークンで参照できる領域（商品・注文・顧客・プラグイン）の read 権限
       mcp_token.expire: 有効期限
-      mcp_token.expire_tooltip: 期限を過ぎたトークンは利用できなくなります（最長365日）
+      mcp_token.expire_tooltip: 期限を過ぎたトークンは利用できなくなります（最長180日）
       mcp_token.issue: 発行する
       mcp_token.issued_by: 発行者
       mcp_token.issued_title: MCP トークンを発行しました

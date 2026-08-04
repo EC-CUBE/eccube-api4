@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
  * 認可応答の Location ヘッダに後付けする。 issuer は AS メタデータの issuer と同一値
  * (OAuthMetadataBuilder::baseUrl) を使い、 クライアントの検証と齟齬を出さない。
  *
- * 付与対象は「クライアントへ返す認可応答」(query に code または error を持つ redirect) のみ。
+ * 付与対象は「クライアントへ返す認可応答」(query または fragment に code または error を持つ redirect) のみ。
  * 未ログイン時のログイン画面 redirect 等には付与しない。
  */
 class AuthorizationResponseIssListener

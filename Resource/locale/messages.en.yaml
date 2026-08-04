@@ -47,7 +47,7 @@ api:
       mcp_token.scope: Scope
       mcp_token.scope_tooltip: Read access to the areas (products, orders, customers, plugins) this token can reference
       mcp_token.expire: Expiration
-      mcp_token.expire_tooltip: The token becomes unusable after this period (max 365 days)
+      mcp_token.expire_tooltip: The token becomes unusable after this period (max 180 days)
       mcp_token.issue: Issue
       mcp_token.issued_by: Issued by
       mcp_token.issued_title: MCP token issued
