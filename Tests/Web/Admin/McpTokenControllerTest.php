@@ -69,6 +69,15 @@ class McpTokenControllerTest extends EccubeTestCase
         $this->mcpTokenService->issue($this->member, 'bad-expire', ['mcp:product:read'], 9999);
     }
 
+    public function testIssueRejectsShortenedMaxExpireDays(): void
+    {
+        // 露出期間を抑えるため上限を 180 日に短縮した。 以前有効だった 365 日は発行不可 (境界の回帰ガード)
+        $this->assertSame(180, max(McpTokenService::AVAILABLE_EXPIRE_DAYS));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->mcpTokenService->issue($this->member, 'year', ['mcp:product:read'], 365);
+    }
+
     public function testIssuePersistsScopesOnAccessTokenModel(): void
     {
         // 失効判定の正本 (AccessToken model) にも scope が積まれる。 JWT と DB が食い違うと
