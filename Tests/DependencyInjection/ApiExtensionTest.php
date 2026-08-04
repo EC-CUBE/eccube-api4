@@ -89,6 +89,22 @@ final class ApiExtensionTest extends TestCase
         $this->assertSame('mypage_login', $customer['form_login']['check_path']);
     }
 
+    public function testPrependPinsRequireCodeChallengeForPublicClients(): void
+    {
+        $container = $this->makeContainerWithSecurityConfig();
+
+        (new ApiExtension())->prepend($container);
+
+        $refl = new \ReflectionProperty(ContainerBuilder::class, 'extensionConfigs');
+        $configs = $refl->getValue($container);
+
+        // PKCE(S256) 必須をライブラリ既定に依存せず明示的に pin する (将来の既定変更で静かに無効化させない)
+        $this->assertArrayHasKey('league_oauth2_server', $configs);
+        $this->assertTrue(
+            $configs['league_oauth2_server'][0]['authorization_server']['require_code_challenge_for_public_clients'],
+        );
+    }
+
     private function makeContainerWithSecurityConfig(): ContainerBuilder
     {
         $container = new ContainerBuilder();

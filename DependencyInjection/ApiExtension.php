@@ -73,6 +73,14 @@ class ApiExtension extends Extension implements PrependExtensionInterface
         }
 
         $extensionConfigsRefl->setValue($container, $extensionConfigs);
+
+        // PKCE(S256) を public クライアントに必須化する。 league の既定は true だが、 将来の既定変更で
+        // 静かに無効化されないよう明示的に固定する (secret を持たない public クライアントの認可コード横取り対策)。
+        $container->prependExtensionConfig('league_oauth2_server', [
+            'authorization_server' => [
+                'require_code_challenge_for_public_clients' => true,
+            ],
+        ]);
     }
 
     public function load(array $configs, ContainerBuilder $container)

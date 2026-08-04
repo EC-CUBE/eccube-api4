@@ -147,8 +147,20 @@ class ApiCompilerPass implements CompilerPassInterface
         $projectDir = $container->getParameter('kernel.project_dir');
         $oauthConfig = $container->getExtensionConfig('league_oauth2_server');
         $oauthConfig = $container->resolveEnvPlaceholders($oauthConfig, true);
-        $privateKey = str_replace('%%kernel.project_dir%%', $projectDir, $oauthConfig[0]['authorization_server']['private_key']);
-        $publicKey = str_replace('%%kernel.project_dir%%', $projectDir, $oauthConfig[0]['resource_server']['public_key']);
+
+        // getExtensionConfig は prepend 順 (先頭=最後に prepend された断片) の配列を返す。 鍵パスを持つ断片が
+        // 先頭とは限らない (別の prepend が鍵を含まない断片を先頭に積むことがある) ため、 位置を仮定せず探す。
+        $privateKey = null;
+        $publicKey = null;
+        foreach ($oauthConfig as $fragment) {
+            $privateKey ??= $fragment['authorization_server']['private_key'] ?? null;
+            $publicKey ??= $fragment['resource_server']['public_key'] ?? null;
+        }
+        if (null === $privateKey || null === $publicKey) {
+            return;
+        }
+        $privateKey = str_replace('%%kernel.project_dir%%', (string) $projectDir, (string) $privateKey);
+        $publicKey = str_replace('%%kernel.project_dir%%', (string) $projectDir, (string) $publicKey);
 
         if (!$this->isRSAKeyContent($privateKey) && !file_exists($privateKey)
             && !$this->isRSAKeyContent($publicKey) && !file_exists($publicKey)) {
