@@ -55,10 +55,12 @@ class McpTokenService
 
     /**
      * 発行を許可する有効日数。 フォームのプリセットと一致させ、 フォーム外からの発行も縛る。
+     * JWT の aud は resource URI に縛られない (OAuthMetadataBuilder 参照) ため、 トークンが有効な間は
+     * その scope で PII を読める。 露出期間を抑えるため上限を 180 日に留める。
      *
      * @var list<int>
      */
-    public const AVAILABLE_EXPIRE_DAYS = [30, 90, 180, 365];
+    public const AVAILABLE_EXPIRE_DAYS = [30, 90, 180];
 
     public function __construct(
         private readonly ClientManagerInterface $clientManager,
