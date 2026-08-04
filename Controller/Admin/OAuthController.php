@@ -26,6 +26,8 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Plugin\Api44\Form\Type\Admin\ClientType;
+use Plugin\Api44\Repository\McpTokenRepository;
+use Plugin\Api44\Service\McpTokenService;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,6 +60,7 @@ class OAuthController extends AbstractController
         ClientManagerInterface $clientManager,
         AccessTokenManagerInterface $accessTokenManager,
         RefreshTokenManagerInterface $refreshTokenManager,
+        private readonly McpTokenRepository $mcpTokenRepository,
     ) {
         $this->clientManager = $clientManager;
         $this->accessTokenManager = $accessTokenManager;
@@ -74,10 +77,15 @@ class OAuthController extends AbstractController
     public function index(Request $request): Response
     {
         $criteria = ClientFilter::create();
-        $clients = $this->clientManager->list($criteria);
+        // MCP トークン用の内部クライアント (mcp_pat) は API クライアント一覧に出さない
+        $clients = array_values(array_filter(
+            $this->clientManager->list($criteria),
+            static fn (ClientInterface $client): bool => $client->getIdentifier() !== McpTokenService::CLIENT_IDENTIFIER,
+        ));
 
         return $this->render('@Api44/admin/OAuth/index.twig', [
             'clients' => $clients,
+            'mcpTokens' => $this->mcpTokenRepository->findAllOrderByCreateDate(),
         ]);
     }
 
@@ -129,7 +137,7 @@ class OAuthController extends AbstractController
      *
      * @return RedirectResponse
      */
-    #[Route(path: '/%eccube_admin_route%/api/oauth/delete/{identifier}', requirements: ['identifier' => '\w+'], name: 'admin_api_oauth_delete', methods: ['DELETE'])]
+    #[Route(path: '/%eccube_admin_route%/api/oauth/delete/{identifier}', requirements: ['identifier' => '[\w\-]+'], name: 'admin_api_oauth_delete', methods: ['DELETE'])]
     public function delete(Request $request, string $identifier): RedirectResponse
     {
         $this->isTokenValid();

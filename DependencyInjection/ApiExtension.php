@@ -30,14 +30,33 @@ class ApiExtension extends Extension implements PrependExtensionInterface
                 $names = array_keys($security['firewalls']);
                 $replaced = [];
                 foreach ($names as $name) {
-                    // adminの前にapiを追加する
+                    // adminの前にapi / mcpを追加する
                     if ($name === 'admin') {
+                        // OAuth ディスカバリの公開エンドポイント。 認証不要 (メタデータは「場所の宣言」のみで秘密を含まない)。
+                        // 実在する 2 つの well-known と /register に**完全一致**で限定し、 他パスを公開化しない
+                        // (前方一致だと /.well-known/oauth-anything 等が無意図に公開される)。
+                        $replaced['mcp_oauth_public'] = [
+                            'pattern' => '^/(\.well-known/oauth-(protected-resource|authorization-server)|register)$',
+                            'security' => false,
+                        ];
                         $replaced['api'] = [
                             'pattern' => '^/api',
                             'security' => true,
                             'stateless' => true,
                             'oauth2' => true,
                             'provider' => 'member_provider',
+                        ];
+                        // MCP サーバ (本体同梱) 用の OAuth2 firewall。
+                        // ^/<admin_route>/mcp を admin より前に置き、 ステートレスな Bearer 認証で処理する。
+                        // 認可は領域別 read scope (mcp:product:read 等) で行い、 本体側 Tool の IsGranted と AND 評価。
+                        // 401 は entry_point で RFC 9728 の resource_metadata 付き WWW-Authenticate を返す (自動ディスカバリ)。
+                        $replaced['mcp'] = [
+                            'pattern' => '^/%eccube_admin_route%/mcp',
+                            'security' => true,
+                            'stateless' => true,
+                            'oauth2' => true,
+                            'provider' => 'member_provider',
+                            'entry_point' => 'Plugin\Api44\Security\McpAuthenticationEntryPoint',
                         ];
                         unset($security['firewalls']['admin']['form_login']['csrf_token_generator']);
                         unset($security['firewalls']['admin']['anonymous']);
@@ -54,6 +73,14 @@ class ApiExtension extends Extension implements PrependExtensionInterface
         }
 
         $extensionConfigsRefl->setValue($container, $extensionConfigs);
+
+        // PKCE(S256) を public クライアントに必須化する。 league の既定は true だが、 将来の既定変更で
+        // 静かに無効化されないよう明示的に固定する (secret を持たない public クライアントの認可コード横取り対策)。
+        $container->prependExtensionConfig('league_oauth2_server', [
+            'authorization_server' => [
+                'require_code_challenge_for_public_clients' => true,
+            ],
+        ]);
     }
 
     public function load(array $configs, ContainerBuilder $container)

@@ -78,7 +78,8 @@ file that was distributed with this source code.
                     </div>
                 </div>
                 <div id="create-client" class="d-block mb-3">
-                    <a class="btn btn-ec-regular" href="{{ url('admin_api_oauth_new') }}">{{ 'admin.common.registration__new'|trans }}</a>
+                    <a class="btn btn-ec-regular" href="{{ url('admin_api_oauth_new') }}">{{ 'api.admin.oauth.api_registration__new'|trans }}</a>
+                    <a class="btn btn-ec-regular" href="{{ url('admin_api_mcp_token_new') }}">{{ 'api.admin.oauth.mcp_token.registration__new'|trans }}</a>
                 </div>
                 <div class="card rounded border-0 mb-4">
                     <div class="card-body p-0">
@@ -171,6 +172,72 @@ file that was distributed with this source code.
                         </table>
                     </div>
                 </div>
+
+                {# MCP トークン一覧 #}
+                <div class="d-block mb-2 mt-4">
+                    <span class="fw-bold">{{ 'api.admin.oauth.mcp_token.management'|trans }}</span>
+                </div>
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-body p-0">
+                        <table class="table table-sm" style="table-layout:fixed;">
+                            <thead>
+                            <tr>
+                                <th class="border-top-0 pt-2 pb-2 text-center">{{ 'api.admin.oauth.mcp_token.label'|trans }}</th>
+                                <th class="border-top-0 pt-2 pb-2 text-center">{{ 'api.admin.oauth.mcp_token.scope'|trans }}</th>
+                                <th class="border-top-0 pt-2 pb-2 text-center">{{ 'api.admin.oauth.mcp_token.expire'|trans }}</th>
+                                <th class="border-top-0 pt-2 pb-2 text-center">{{ 'api.admin.oauth.mcp_token.issued_by'|trans }}</th>
+                                <th class="border-top-0 pt-2 pb-2 text-center"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for mcpToken in mcpTokens %}
+                                <tr id="mcp-token-{{ mcpToken.id }}">
+                                    <td class="align-middle text-center ps-3">{{ mcpToken.label }}</td>
+                                    <td class="align-middle text-center">
+                                        {% for scope in mcpToken.scopes %}
+                                            {{ scope }}<br>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="align-middle text-center">{{ mcpToken.expireDate|date('Y-m-d H:i') }}</td>
+                                    <td class="align-middle text-center">#{{ mcpToken.memberId }}</td>
+                                    <td class="align-middle pe-3">
+                                        <div class="text-end">
+                                            <div class="px-1 d-inline-block">
+                                                <div class="d-inline-block mr-2" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.mcp_token.revoke'|trans }}">
+                                                    <a class="btn btn-ec-actionIcon action-delete" data-bs-toggle="modal" data-bs-target="#mcp_token_revoke_{{ mcpToken.id }}">
+                                                        <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="modal fade" id="mcp_token_revoke_{{ mcpToken.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title fw-bold">{{ 'api.admin.oauth.mcp_token.revoke__confirm_title'|trans }}</h5>
+                                                                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <p class="text-start">{{ 'api.admin.oauth.mcp_token.revoke__confirm_message'|trans }}</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-ec-sub" type="button" data-bs-dismiss="modal">{{ 'admin.common.cancel'|trans }}</button>
+                                                                <a class="btn btn-ec-delete" href="{{ url('admin_api_mcp_token_revoke', {id: mcpToken.id}) }}"
+                                                                    {{ csrf_token_for_anchor() }} data-method="delete" data-confirm="false">
+                                                                    {{ 'api.admin.oauth.mcp_token.revoke'|trans }}
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="card rounded border-0 mb-4">
                     <a class="btn btn-ec-conversion ladda-button" href="{{ url('admin_api_oauth_clear_expired_tokens') }}"
                         {{ csrf_token_for_anchor() }} data-method="delete" data-confirm="false">
