@@ -3,6 +3,21 @@ parameters:
     env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY): '%kernel.project_dir%/app/PluginData/Api44/oauth/public.key'
     env(ECCUBE_OAUTH2_ENCRYPTION_KEY): '<change.me>'
 
+framework:
+    rate_limiter:
+        # 公開 DCR (/register) の濫用・死蔵クライアント量産を抑止する IP 単位の制限
+        mcp_dcr_register:
+            policy: 'fixed_window'
+            limit: 20
+            interval: '1 hour'
+            cache_pool: cache.app
+        # IP 偽装 (X-Forwarded-For 回転等) でも無制限に作らせないためのグローバル上限 (バックストップ)
+        mcp_dcr_register_global:
+            policy: 'fixed_window'
+            limit: 200
+            interval: '1 hour'
+            cache_pool: cache.app
+
 league_oauth2_server:
     role_prefix: ROLE_OAUTH2_
 
@@ -31,14 +46,44 @@ league_oauth2_server:
         public_key: '%env(ECCUBE_OAUTH2_RESOURCE_SERVER_PUBLIC_KEY)%'
 
     scopes:
-      # read/write は GraphQL API 用。acp:*/ucp:* はエージェントコマース (#188・<protocol>:<capability> 規約)。
-        available: ['read', 'write', 'acp:checkout', 'acp:catalog', 'ucp:checkout', 'ucp:cart', 'ucp:catalog', 'ucp:identity']
+        # 既存の `read` / `write` は GraphQL 用。 `mcp:*:read` は MCP サーバ機能 (本体同梱) 用の領域別 read scope。
+        # role 変換時はそれぞれ `ROLE_OAUTH2_MCP:PRODUCT:READ` 等 (`role_prefix: ROLE_OAUTH2_` で大文字化)。
+        # GraphQL の認可と MCP の認可を独立させるため名前空間 `mcp:` で分離する。
+        # `acp:*` / `ucp:*` はエージェントコマース (#188) 用で、 `<protocol>:<capability>` 規約に従う。
+        available: ['read', 'write', 'mcp:product:read', 'mcp:order:read', 'mcp:customer:read', 'mcp:plugin:read', 'acp:checkout', 'acp:catalog', 'ucp:checkout', 'ucp:cart', 'ucp:catalog', 'ucp:identity']
         default: ['read']
 
     persistence:
         doctrine: null
 
 services:
+    # MCP トークン発行サービス。 league の manager / EntityManager は autowire、 署名鍵パスのみ bind する
+    Plugin\Api44\Service\McpTokenService:
+        autowire: true
+        arguments:
+            $privateKeyPath: '%env(ECCUBE_OAUTH2_AUTHORIZATION_SERVER_PRIVATE_KEY)%'
+
+    # OAuth ディスカバリのメタデータ生成 (URL 組み立てを 1 箇所に)
+    Plugin\Api44\Service\OAuthMetadataBuilder:
+        autowire: true
+        arguments:
+            $adminRoute: '%eccube_admin_route%'
+            $kernelEnvironment: '%kernel.environment%'
+
+    # mcp firewall の entry_point (401 に RFC 9728 resource_metadata を付与)
+    Plugin\Api44\Security\McpAuthenticationEntryPoint:
+        autowire: true
+
+    # DCR 死蔵クライアント掃除 (CleanupDcrClientsCommand から利用)
+    Plugin\Api44\Service\DcrClientCleaner:
+        autowire: true
+
+    # RFC 9207: 認可応答の Location に iss を付与する
+    Plugin\Api44\EventListener\AuthorizationResponseIssListener:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
     # エージェントコマース (#188): EC-CUBE 本体の AgentCommerceOAuth2Authenticator が依存する
     # Symfony 標準 AccessTokenHandlerInterface を提供する。league の ResourceServer で
     # Bearer トークン (JWT) を検証 (公開鍵での署名/期限/失効) し、付与 scope を UserBadge の

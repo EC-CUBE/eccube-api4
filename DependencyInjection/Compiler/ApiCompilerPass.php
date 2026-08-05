@@ -13,6 +13,7 @@
 
 namespace Plugin\Api44\DependencyInjection\Compiler;
 
+use Eccube\Service\Mcp\McpToolScopeMap;
 use Plugin\Api44\GraphQL\AllowList;
 use Plugin\Api44\GraphQL\Mutation;
 use Plugin\Api44\GraphQL\Query;
@@ -21,7 +22,9 @@ use Plugin\Api44\Service\WebHookEvents;
 use Plugin\Api44\Service\WebHookTrigger;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
 
 class ApiCompilerPass implements CompilerPassInterface
 {
@@ -37,6 +40,7 @@ class ApiCompilerPass implements CompilerPassInterface
         $this->configureAllowList($container);
         $this->configureKeyPair($container);
         $this->configureSchema($container);
+        $this->configureMcpAccessControl($container);
 
         $plugins = $container->getParameter('eccube.plugins.enabled');
         if (!in_array('Api44', $plugins)) {
@@ -62,6 +66,40 @@ class ApiCompilerPass implements CompilerPassInterface
                 $mutationsServiceDef->addMethodCall('append', [$definition]);
             }
         }
+    }
+
+    /**
+     * `/admin/mcp` に「最低 1 つの mcp read scope」 を要求する access_control を、 core の
+     * `^/<admin> → ROLE_ADMIN` より前 (AccessMap は先頭一致) に構造的に挿入する。
+     *
+     * config prepend で足すと、 core が prependExtensionConfig(先頭 unshift) で入れる `^/<admin>`
+     * ルールに shadow され no-op になる。 そこで SecurityExtension が組んだ security.access_map の
+     * add() 呼び出し列の先頭へ直接差し込む。 role は本体 McpToolScopeMap を唯一のソースにする。
+     */
+    private function configureMcpAccessControl(ContainerBuilder $container): void
+    {
+        // MCP 本体 (McpToolScopeMap) を持たない ec-cube では保護すべき /admin/mcp ツールが無いので何もしない。
+        // Api44 単体を素の本体に載せる構成 (MCP 未搭載) での class-not-found fatal を避ける。
+        if (!class_exists(McpToolScopeMap::class) || !$container->hasDefinition('security.access_map')) {
+            return;
+        }
+
+        $adminRoute = (string) $container->getParameter('eccube_admin_route');
+        $matcher = (new Definition(PathRequestMatcher::class, ['^/'.$adminRoute.'/mcp']))->setPublic(false);
+        // 本体 McpToolScopeMap と同じ read scope role。 本体を持たない環境 (Api44 単体の phpstan/CI) では
+        // MAP の型が解決できず解析が落ちるため直書きする。 領域を増やしたら本体 McpToolScopeMap と同期する。
+        $roles = [
+            'ROLE_OAUTH2_MCP:PRODUCT:READ',
+            'ROLE_OAUTH2_MCP:ORDER:READ',
+            'ROLE_OAUTH2_MCP:CUSTOMER:READ',
+            'ROLE_OAUTH2_MCP:PLUGIN:READ',
+        ];
+
+        $accessMap = $container->getDefinition('security.access_map');
+        $calls = $accessMap->getMethodCalls();
+        // AccessMap は先頭一致。 core の ^/<admin> → ROLE_ADMIN より前に置くため先頭へ unshift する。
+        array_unshift($calls, ['add', [$matcher, $roles, null]]);
+        $accessMap->setMethodCalls($calls);
     }
 
     private function configureTrigger(ContainerBuilder $container): void
@@ -109,8 +147,20 @@ class ApiCompilerPass implements CompilerPassInterface
         $projectDir = $container->getParameter('kernel.project_dir');
         $oauthConfig = $container->getExtensionConfig('league_oauth2_server');
         $oauthConfig = $container->resolveEnvPlaceholders($oauthConfig, true);
-        $privateKey = str_replace('%%kernel.project_dir%%', $projectDir, $oauthConfig[0]['authorization_server']['private_key']);
-        $publicKey = str_replace('%%kernel.project_dir%%', $projectDir, $oauthConfig[0]['resource_server']['public_key']);
+
+        // getExtensionConfig は prepend 順 (先頭=最後に prepend された断片) の配列を返す。 鍵パスを持つ断片が
+        // 先頭とは限らない (別の prepend が鍵を含まない断片を先頭に積むことがある) ため、 位置を仮定せず探す。
+        $privateKey = null;
+        $publicKey = null;
+        foreach ($oauthConfig as $fragment) {
+            $privateKey ??= $fragment['authorization_server']['private_key'] ?? null;
+            $publicKey ??= $fragment['resource_server']['public_key'] ?? null;
+        }
+        if (null === $privateKey || null === $publicKey) {
+            return;
+        }
+        $privateKey = str_replace('%%kernel.project_dir%%', (string) $projectDir, (string) $privateKey);
+        $publicKey = str_replace('%%kernel.project_dir%%', (string) $projectDir, (string) $publicKey);
 
         if (!$this->isRSAKeyContent($privateKey) && !file_exists($privateKey)
             && !$this->isRSAKeyContent($publicKey) && !file_exists($publicKey)) {

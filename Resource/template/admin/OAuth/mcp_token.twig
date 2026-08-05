@@ -1,0 +1,123 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['setting', 'api', 'oauth'] %}
+
+{% block title %}{{ 'api.admin.oauth.mcp_token.registration'|trans }}{% endblock %}
+{% block sub_title %}{{ 'api.admin.management'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block main %}
+    <form name="mcp_token_form" role="form" id="mcp_token_form" method="post" action="" novalidate>
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <span class="card-title">{{ 'api.admin.oauth.mcp_token.registration'|trans }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="mcpTokenInfo">
+                            <div class="card-body">
+
+                                {# label #}
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.mcp_token.label_tooltip'|trans }}">
+                                            <span>{{ 'api.admin.oauth.mcp_token.label'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ms-1"></i>
+                                            <span class="badge bg-primary ms-1">{{ 'admin.common.required'|trans }}</span>
+                                        </label>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ form_widget(form.label) }}
+                                            </div>
+                                            {{ form_errors(form.label) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {# scope #}
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.mcp_token.scope_tooltip'|trans }}">
+                                            <span>{{ 'api.admin.oauth.mcp_token.scope'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ms-1"></i>
+                                            <span class="badge bg-primary ms-1">{{ 'admin.common.required'|trans }}</span>
+                                        </label>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ form_widget(form.scopes, {'label_attr': {'class': 'checkbox-inline'}}) }}
+                                            </div>
+                                            {{ form_errors(form.scopes) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {# expire #}
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.mcp_token.expire_tooltip'|trans }}">
+                                            <span>{{ 'api.admin.oauth.mcp_token.expire'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ms-1"></i>
+                                            <span class="badge bg-primary ms-1">{{ 'admin.common.required'|trans }}</span>
+                                        </label>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ form_widget(form.expire) }}
+                                            </div>
+                                            {{ form_errors(form.expire) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink" href="{{ url('admin_api_oauth') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i>
+                                <span>{{ 'api.admin.oauth.management'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5" type="submit">
+                                    {{ 'api.admin.oauth.mcp_token.issue'|trans }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

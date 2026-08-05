@@ -1,0 +1,69 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['setting', 'api', 'oauth'] %}
+
+{% block title %}{{ 'api.admin.oauth.mcp_token.issued_title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'api.admin.management'|trans }}{% endblock %}
+
+{% block main %}
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-header">
+                        <span class="card-title">{{ 'api.admin.oauth.mcp_token.issued_title'|trans }}{% if label %} ({{ label }}){% endif %}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                            {{ 'api.admin.oauth.mcp_token.issued_warning'|trans }}
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <textarea id="mcp_token_value" class="form-control" rows="5" readonly>{{ token }}</textarea>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-ec-regular" id="mcp_token_copy">
+                                    {{ 'api.admin.oauth.copy'|trans }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="c-conversionArea">
+        <div class="c-conversionArea__container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-6">
+                    <div class="c-conversionArea__leftBlockItem">
+                        <a class="c-baseLink" href="{{ url('admin_api_oauth') }}">
+                            <i class="fa fa-backward" aria-hidden="true"></i>
+                            <span>{{ 'api.admin.oauth.management'|trans }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        document.getElementById('mcp_token_copy').addEventListener('click', function () {
+            const textarea = document.getElementById('mcp_token_value');
+            textarea.select();
+            navigator.clipboard.writeText(textarea.value);
+        });
+    </script>
+{% endblock %}

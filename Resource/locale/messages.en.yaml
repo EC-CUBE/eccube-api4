@@ -20,6 +20,10 @@ api:
       scope_tooltip: GraphQL Query requires read, Mutation requires write/write Scope
       scope.read.description: 'Read %shop_name% data'
       scope.write.description: 'Write %shop_name% data'
+      'scope.mcp:product:read.description': 'Read %shop_name% product and stock data'
+      'scope.mcp:order:read.description': 'Read %shop_name% order data'
+      'scope.mcp:customer:read.description': 'Read %shop_name% customer data'
+      'scope.mcp:plugin:read.description': 'Read %shop_name% plugin information'
       redirect_uri: Redirect URI
       redirect_uri_tooltip: You can enter multiple URIs separated by commas
       grant_type: Grant Type
@@ -34,6 +38,24 @@ api:
       allow__confirm_description: 'Allow this app to:'
       allow: Allow
       deny: Deny
+      api_registration__new: New API client
+      mcp_token.registration__new: New MCP token
+      mcp_token.registration: Issue MCP token
+      mcp_token.management: MCP tokens
+      mcp_token.label: Label
+      mcp_token.label_tooltip: A name describing the token usage (e.g. Claude Desktop home PC)
+      mcp_token.scope: Scope
+      mcp_token.scope_tooltip: Read access to the areas (products, orders, customers, plugins) this token can reference
+      mcp_token.expire: Expiration
+      mcp_token.expire_tooltip: The token becomes unusable after this period (max 180 days)
+      mcp_token.issue: Issue
+      mcp_token.issued_by: Issued by
+      mcp_token.issued_title: MCP token issued
+      mcp_token.issued_warning: This token is shown only once on this screen. Copy and store it securely (it cannot be shown again).
+      mcp_token.revoke: Revoke
+      mcp_token.revoke__confirm_title: Revoke MCP token
+      mcp_token.revoke__confirm_message: Are you sure you want to revoke this token? It will stop working immediately.
+      mcp_token.revoke__not_found: The token to revoke was not found (it may already be revoked or expired). It has been removed from the list.
     webhook:
       management:  WebHook
       registration: WebHook Registration
