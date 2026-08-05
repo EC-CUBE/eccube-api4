@@ -12,13 +12,13 @@ file that was distributed with this source code.
 
 {% set menus = ['setting', 'api', 'oauth'] %}
 
-{% block title %}{{ 'api.admin.oauth.client_registration'|trans }}{% endblock %}
+{% block title %}{{ ('api.admin.oauth.agent_commerce.' ~ protocol ~ '_registration')|trans }}{% endblock %}
 {% block sub_title %}{{ 'api.admin.management'|trans }}{% endblock %}
 
 {% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 
 {% block main %}
-    <form name="client_form" role="form" id="client_form" method="post" action="" novalidate>
+    <form name="agent_commerce_client_form" role="form" id="agent_commerce_client_form" method="post" action="" novalidate>
         {{ form_widget(form._token) }}
         <div class="c-contentsArea__cols">
             <div class="c-contentsArea__primaryCol">
@@ -27,17 +27,19 @@ file that was distributed with this source code.
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-8">
-                                    <span class="card-title">{{ 'api.admin.oauth.client_registration'|trans }}</span>
+                                    <span class="card-title">{{ ('api.admin.oauth.agent_commerce.' ~ protocol ~ '_registration')|trans }}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="collapse show ec-cardCollapse" id="clientInfo">
+                        <div class="collapse show ec-cardCollapse" id="agentCommerceClientInfo">
                             <div class="card-body">
+
+                                <p class="text-muted">{{ ('api.admin.oauth.agent_commerce.' ~ protocol ~ '_description')|trans }}</p>
 
                                 {# name #}
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.name_tooltip'|trans }}">
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ ('api.admin.oauth.agent_commerce.' ~ protocol ~ '_name_tooltip')|trans }}">
                                             <span>{{ 'api.admin.oauth.name'|trans }}</span>
                                             <i class="fa fa-question-circle fa-lg ms-1"></i>
                                             <span class="badge bg-primary ms-1">
@@ -91,6 +93,7 @@ file that was distributed with this source code.
                                         <div class="row">
                                             <div class="col">
                                                 {{ form_widget(form.secret) }}
+                                                <p class="text-muted mb-0">{{ 'api.admin.oauth.agent_commerce.secret_note'|trans }}</p>
                                             </div>
                                             {{ form_errors(form.secret) }}
                                         </div>
@@ -100,7 +103,7 @@ file that was distributed with this source code.
                                 {# scope #}
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.scope_tooltip'|trans }}">
+                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ ('api.admin.oauth.agent_commerce.' ~ protocol ~ '_scope_tooltip')|trans }}">
                                             <span>{{ 'api.admin.oauth.scope'|trans }}</span>
                                             <i class="fa fa-question-circle fa-lg ms-1"></i>
                                             <span class="badge bg-primary ms-1">
@@ -118,44 +121,19 @@ file that was distributed with this source code.
                                     </div>
                                 </div>
 
-                                {# redirect_uri #}
+                                {# grant type (固定のため表示のみ) #}
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.redirect_uri_tooltip'|trans }}">
-                                            <span>{{ 'api.admin.oauth.redirect_uri'|trans }}</span>
-                                            <i class="fa fa-question-circle fa-lg ms-1"></i>
-                                            <span class="badge bg-primary ms-1">
-                                                {{ 'admin.common.required'|trans }}
-                                            </span>
-                                        </label>
-                                    </div>
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col">
-                                                {{ form_widget(form.redirect_uris) }}
-                                            </div>
-                                            {{ form_errors(form.redirect_uris) }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {# grant_type #}
-                                <div class="row mb-2">
-                                    <div class="col-3">
-                                        <label class="col-form-label" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.grant_type_tooltip'|trans }}">
+                                        <label class="col-form-label">
                                             <span>{{ 'api.admin.oauth.grant_type'|trans }}</span>
-                                            <i class="fa fa-question-circle fa-lg ms-1"></i>
-                                            <span class="badge bg-primary ms-1">
-                                                {{ 'admin.common.required'|trans }}
-                                            </span>
                                         </label>
                                     </div>
                                     <div class="col">
                                         <div class="row">
-                                            <div class="col">
-                                                {{ form_widget(form.grants, {'label_attr': {'class': 'checkbox-inline'}}) }}
+                                            <div class="col col-form-label">
+                                                <span>Client credentials</span>
+                                                <p class="text-muted mb-0">{{ 'api.admin.oauth.agent_commerce.grant_note'|trans }}</p>
                                             </div>
-                                            {{ form_errors(form.grants, {'label_attr': {'class': 'checkbox-inline'}}) }}
                                         </div>
                                     </div>
                                 </div>

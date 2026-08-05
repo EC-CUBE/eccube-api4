@@ -25,6 +25,7 @@ use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use Plugin\Api44\Form\Type\Admin\AgentCommerceClientType;
 use Plugin\Api44\Form\Type\Admin\ClientType;
 use Plugin\Api44\Repository\McpTokenRepository;
 use Plugin\Api44\Service\McpTokenService;
@@ -86,6 +87,13 @@ class OAuthController extends AbstractController
         return $this->render('@Api44/admin/OAuth/index.twig', [
             'clients' => $clients,
             'mcpTokens' => $this->mcpTokenRepository->findAllOrderByCreateDate(),
+            // エージェントコマース用クライアントのシークレットは一覧で再表示しない (#188)。
+            // league は初回のトークン取得成功時に保存値を bcrypt へ差し替えるため、 一覧の値は
+            // そのまま事業者へ渡せない。 平文は発行直後の画面でだけ提示する。
+            'agentCommerceClientIds' => array_values(array_map(
+                static fn (ClientInterface $client): string => $client->getIdentifier(),
+                array_filter($clients, self::isAgentCommerceClient(...))
+            )),
         ]);
     }
 
@@ -99,8 +107,6 @@ class OAuthController extends AbstractController
     #[Route(path: '/%eccube_admin_route%/api/oauth/new', name: 'admin_api_oauth_new', methods: ['GET', 'POST'])]
     public function create(Request $request): RedirectResponse|Response
     {
-        $name = '';
-
         $builder = $this->formFactory
             ->createBuilder(ClientType::class);
 
@@ -108,6 +114,7 @@ class OAuthController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $name = (string) $form->get('name')->getData();
             $identifier = $form->get('identifier')->getData();
             $secret = $form->get('secret')->getData();
 
@@ -182,6 +189,29 @@ class OAuthController extends AbstractController
         }
 
         return $this->redirectToRoute('admin_api_oauth');
+    }
+
+    /**
+     * エージェントコマース (ACP/UCP) 用に発行されたクライアントか判定する.
+     *
+     * scope の protocol 接頭辞で判定する ({@link AgentCommerceClientType} が付与する scope)。
+     */
+    private static function isAgentCommerceClient(ClientInterface $client): bool
+    {
+        $prefixes = array_map(
+            static fn (string $protocol): string => $protocol.':',
+            array_keys(AgentCommerceClientType::PROTOCOL_SCOPES)
+        );
+
+        foreach ($client->getScopes() as $scope) {
+            foreach ($prefixes as $prefix) {
+                if (str_starts_with((string) $scope, $prefix)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

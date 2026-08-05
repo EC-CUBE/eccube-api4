@@ -12,10 +12,13 @@ api:
       token_endpoint: Token endpoint
       api_endpoint: API endpoint
       management: OAuth
+      name: Name
+      name_tooltip: 'A name describing what this client is used for (e.g. stock sync batch)'
       identifier: Client ID
       identifier_tooltip: Up to 32 alphanumeric characters
       secret: Client Secret
       secret_tooltip: Up to 128 alphanumeric characters
+      secret_none_tooltip: 'This client has no secret (public client).'
       scope: Scope
       scope_tooltip: GraphQL Query requires read, Mutation requires write/write Scope
       scope.read.description: 'Read %shop_name% data'
@@ -56,6 +59,21 @@ api:
       mcp_token.revoke__confirm_title: Revoke MCP token
       mcp_token.revoke__confirm_message: Are you sure you want to revoke this token? It will stop working immediately.
       mcp_token.revoke__not_found: The token to revoke was not found (it may already be revoked or expired). It has been removed from the list.
+      agent_commerce.acp_registration__new: New ACP client
+      agent_commerce.ucp_registration__new: New UCP client
+      agent_commerce.acp_registration: ACP client registration
+      agent_commerce.ucp_registration: UCP client registration
+      agent_commerce.acp_description: 'Register a client for an agent provider that checks out with ACP (Agentic Commerce Protocol). Register one client per provider (the agent_id recorded on orders is this client ID).'
+      agent_commerce.ucp_description: 'Register a client for an agent provider that checks out with UCP (Universal Commerce Protocol). Register one client per provider (the agent_id recorded on orders is this client ID).'
+      agent_commerce.acp_name_tooltip: 'A name identifying the agent provider this client is for (e.g. ChatGPT)'
+      agent_commerce.ucp_name_tooltip: 'A name identifying the agent provider this client is for (e.g. Gemini)'
+      agent_commerce.acp_scope_tooltip: 'acp:checkout is required for checkout (create, update and complete orders); acp:catalog for reading catalog data.'
+      agent_commerce.ucp_scope_tooltip: 'ucp:checkout is required for checkout (create, update and complete orders); ucp:cart for cart operations; ucp:catalog for reading catalog data. ucp:identity (member ID linking) requires the member''s own consent and cannot be granted on this screen.'
+      agent_commerce.grant_note: 'Agents do not go through a consent screen, so the grant is fixed to client_credentials (machine-to-machine). Redirect URIs are not used.'
+      agent_commerce.secret_note: 'The client secret is shown only once on the confirmation screen after registration. It cannot be shown again from the list, so copy and store it securely.'
+      agent_commerce.secret_hidden_tooltip: 'The client secret is shown only on the screen right after registration (it cannot be shown again).'
+      agent_commerce.issued_title: Agentic commerce client registered
+      agent_commerce.issued_warning: 'The client secret is shown only once on this screen. Copy and store it securely (it cannot be shown again).'
     webhook:
       management:  WebHook
       registration: WebHook Registration

@@ -47,6 +47,14 @@ class ClientType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            // 一覧でクライアントの用途を識別できるようにする (Client::name)
+            ->add('name', TextType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),
+                ],
+            ])
             ->add('identifier', TextType::class, [
                 'mapped' => false,
                 'data' => hash('md5', random_bytes(16)),
@@ -65,17 +73,13 @@ class ClientType extends AbstractType
                     new Assert\Regex(['pattern' => '/^[0-9a-zA-Z]+$/']),
                 ],
             ])
+            // エージェントコマース (ACP/UCP) の scope はここに並べない。 grant と scope の
+            // 組み合わせが protocol ごとに決まるため、 専用の登録導線
+            // ({@link AgentCommerceClientType}) から付与する (#188)。
             ->add('scopes', ChoiceType::class, [
                 'choices' => [
                     'read' => 'read',
                     'write' => 'write',
-                    // エージェントコマース (ACP/UCP) 用 scope (#188・<protocol>:<capability> 規約)
-                    'acp:checkout' => 'acp:checkout',
-                    'acp:catalog' => 'acp:catalog',
-                    'ucp:checkout' => 'ucp:checkout',
-                    'ucp:cart' => 'ucp:cart',
-                    'ucp:catalog' => 'ucp:catalog',
-                    'ucp:identity' => 'ucp:identity',
                 ],
                 'expanded' => true,
                 'multiple' => true,
@@ -92,11 +96,11 @@ class ClientType extends AbstractType
                     new Assert\Url(),
                 ],
             ])
+            // client_credentials はエージェントコマース専用の登録導線で固定付与するため、
+            // 汎用フォームでは選ばせない (#188)。
             ->add('grants', ChoiceType::class, [
                 'choices' => [
                     'Authorization code' => OAuth2Grants::AUTHORIZATION_CODE,
-                    // エージェントコマースの machine-to-machine 認証用 (#188)
-                    'Client credentials' => OAuth2Grants::CLIENT_CREDENTIALS,
                 ],
                 'expanded' => true,
                 'multiple' => true,

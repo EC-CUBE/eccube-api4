@@ -80,12 +80,27 @@ file that was distributed with this source code.
                 <div id="create-client" class="d-block mb-3">
                     <a class="btn btn-ec-regular" href="{{ url('admin_api_oauth_new') }}">{{ 'api.admin.oauth.api_registration__new'|trans }}</a>
                     <a class="btn btn-ec-regular" href="{{ url('admin_api_mcp_token_new') }}">{{ 'api.admin.oauth.mcp_token.registration__new'|trans }}</a>
+                    <a class="btn btn-ec-regular" href="{{ url('admin_api_oauth_acp_new') }}">{{ 'api.admin.oauth.agent_commerce.acp_registration__new'|trans }}</a>
+                    <a class="btn btn-ec-regular" href="{{ url('admin_api_oauth_ucp_new') }}">{{ 'api.admin.oauth.agent_commerce.ucp_registration__new'|trans }}</a>
                 </div>
                 <div class="card rounded border-0 mb-4">
                     <div class="card-body p-0">
                         <table class="table table-sm" style="table-layout:fixed;">
+                            {# 列を追加したことで既定の等分割では見出しが折り返すため、 幅を明示する #}
+                            <colgroup>
+                                <col style="width:13%">
+                                <col style="width:17%">
+                                <col style="width:16%">
+                                <col style="width:16%">
+                                <col style="width:16%">
+                                <col style="width:15%">
+                                <col style="width:7%">
+                            </colgroup>
                             <thead>
                             <tr>
+                                <th class="border-top-0 pt-2 pb-2 text-center">
+                                    {{ 'api.admin.oauth.name'|trans }}
+                                </th>
                                 <th class="border-top-0 pt-2 pb-2 text-center">
                                     {{ 'api.admin.oauth.identifier'|trans }}
                                 </th>
@@ -107,11 +122,20 @@ file that was distributed with this source code.
                             <tbody>
                             {% for client in clients %}
                                 <tr id="client-{{ client.identifier }}">
+                                    <td class="align-middle text-center ps-3">{{ client.name }}</td>
                                     <td class="align-middle text-center ps-3">
                                         <input type="text" class="form-control copy-secret" value="{{ client.identifier }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
                                     </td>
                                     <td class="align-middle text-center">
-                                        <input type="text" class="form-control copy-secret" value="{{ client.Secret }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
+                                        {%- if client.identifier in agentCommerceClientIds -%}
+                                            {# 発行直後の画面でのみ平文を提示する (一覧の保存値は初回利用後にハッシュへ変わる) #}
+                                            <span class="text-muted" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.agent_commerce.secret_hidden_tooltip'|trans }}">-</span>
+                                        {%- elseif client.Secret is empty -%}
+                                            {# public client (DCR 登録等) はシークレットを持たない #}
+                                            <span class="text-muted" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.secret_none_tooltip'|trans }}">-</span>
+                                        {%- else -%}
+                                            <input type="text" class="form-control copy-secret" value="{{ client.Secret }}" data-tooltip="true" data-placement="top" title="{{ 'api.admin.oauth.copy'|trans }}" readonly>
+                                        {%- endif -%}
                                     </td>
                                     <td class="align-middle text-center ps-3">
                                         {% for scope in client.scopes %}
