@@ -69,7 +69,9 @@ class ClientType extends AbstractType
                 'data' => hash('sha512', random_bytes(32)),
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 128]),
+                    // confidential クライアントは token エンドポイントの認証材料がシークレットのみ
+                    // なので下限を設ける ({@link AgentCommerceClientType} と同条件)。
+                    new Assert\Length(['min' => 32, 'max' => 128]),
                     new Assert\Regex(['pattern' => '/^[0-9a-zA-Z]+$/']),
                 ],
             ])

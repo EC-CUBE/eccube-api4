@@ -88,6 +88,12 @@ services:
     # Symfony 標準 AccessTokenHandlerInterface を提供する。league の ResourceServer で
     # Bearer トークン (JWT) を検証 (公開鍵での署名/期限/失効) し、付与 scope を UserBadge の
     # attributes['scopes'] に載せて返す。本体は handler が無ければ 503 を返す疎結合設計。
+    #
+    # 注意: 下の alias はアプリ全体に効く (この ID で解決されるサービスは常に 1 つだけ)。
+    # 将来 access_token firewall や他プラグインが同インターフェイスを autowire / alias すると、
+    # 無言で本ハンドラに解決される、 あるいは alias が上書きされて ACP 側が壊れる。
+    # 実例: EC-CUBE 本体の app/config/eccube/services_test.yaml は同じ ID にテスト用スタブを
+    # 登録するため、 本プラグインを入れた環境では本体側テストの解決先が入れ替わる。
     Plugin\Api44\Security\AgentCommerceAccessTokenHandler:
         autowire: true
     Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface: '@Plugin\Api44\Security\AgentCommerceAccessTokenHandler'

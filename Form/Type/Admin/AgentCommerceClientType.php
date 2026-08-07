@@ -90,7 +90,9 @@ class AgentCommerceClientType extends AbstractType
                 'data' => hash('sha512', random_bytes(32)),
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 128]),
+                    // client_credentials ではシークレットが唯一の認証情報なので下限を設ける
+                    // (既定値は sha512 hex = 128 文字なので、 手で書き換えた場合にだけ効く)。
+                    new Assert\Length(['min' => 32, 'max' => 128]),
                     new Assert\Regex(['pattern' => '/^[0-9a-zA-Z]+$/']),
                 ],
             ])
@@ -101,7 +103,10 @@ class AgentCommerceClientType extends AbstractType
                 'mapped' => false,
                 'constraints' => [
                     new Assert\NotBlank(),
-                    // choices 外の scope をフォームバイパスで送っても弾く
+                    // choices 外の scope を弾いているのは実際には ChoiceType 自身である。
+                    // PRE_SUBMIT で未知値を submitted data から除去し、 POST_SUBMIT で FormError を
+                    // 積む (`ChoiceType::buildForm()`)。 本制約はその機構に依存しないための多層防御で、
+                    // 制約評価時にはデータが choices 済みに絞られているため通常は発火しない。
                     new Assert\All([new Assert\Choice(['choices' => $scopes])]),
                 ],
             ]);

@@ -26,6 +26,11 @@ use Plugin\Api44\Form\Type\Admin\AgentCommerceClientType;
  */
 class AgentCommerceClientControllerTest extends AbstractAdminWebTestCase
 {
+    /**
+     * 制約を満たす最小長 (32 文字) のシークレット。 既定値は sha512 hex (128 文字)。
+     */
+    private const VALID_SECRET = 'agentclientsecret0123456789abcde';
+
     public function testAcpFormOffersOnlyAcpScopes(): void
     {
         $crawler = $this->client->request('GET', $this->generateUrl('admin_api_oauth_acp_new'));
@@ -76,7 +81,7 @@ class AgentCommerceClientControllerTest extends AbstractAdminWebTestCase
     public function testCreateShowsSecretOnceAndNotInList(): void
     {
         $identifier = 'acpsecretclient'.random_int(1000, 9999);
-        $secret = 'acponetimesecret';
+        $secret = 'acponetimesecret0123456789abcdef';
 
         $crawler = $this->client->request('POST', $this->generateUrl('admin_api_oauth_acp_new'), [
             'api_admin_agent_commerce_client' => [
@@ -114,6 +119,17 @@ class AgentCommerceClientControllerTest extends AbstractAdminWebTestCase
         $this->assertNull($this->findClient($identifier), 'protocol を跨いだ scope では登録されない');
     }
 
+    public function testCreateRejectsTooShortSecret(): void
+    {
+        $identifier = 'acpweaksecret'.random_int(1000, 9999);
+        $this->submitCreate('admin_api_oauth_acp_new', $identifier, ['acp:checkout'], 'agent', 'short');
+
+        $this->assertNull(
+            $this->findClient($identifier),
+            'client_credentials ではシークレットが唯一の認証情報なので、 短いシークレットでは登録させない'
+        );
+    }
+
     public function testIdentityScopeIsNotGrantableFromThisFlow(): void
     {
         $identifier = 'ucpidentityclient'.random_int(1000, 9999);
@@ -138,13 +154,13 @@ class AgentCommerceClientControllerTest extends AbstractAdminWebTestCase
     /**
      * @param list<string> $scopes
      */
-    private function submitCreate(string $route, string $identifier, array $scopes, string $name = 'agent'): void
+    private function submitCreate(string $route, string $identifier, array $scopes, string $name = 'agent', string $secret = self::VALID_SECRET): void
     {
         $this->client->request('POST', $this->generateUrl($route), [
             'api_admin_agent_commerce_client' => [
                 'name' => $name,
                 'identifier' => $identifier,
-                'secret' => 'agentclientsecret',
+                'secret' => $secret,
                 'scopes' => $scopes,
                 '_token' => 'dummy',
             ],

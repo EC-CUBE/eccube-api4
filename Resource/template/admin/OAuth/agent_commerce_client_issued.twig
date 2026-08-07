@@ -74,7 +74,16 @@ file that was distributed with this source code.
         document.getElementById('agent_commerce_client_secret_copy').addEventListener('click', function () {
             const textarea = document.getElementById('agent_commerce_client_secret');
             textarea.select();
-            navigator.clipboard.writeText(textarea.value);
+            // navigator.clipboard は secure context 以外では undefined になり、
+            // そのまま呼ぶと TypeError で無言のコピー失敗になる。
+            // 一覧画面 (index.twig) と同じ document.execCommand をフォールバックに持つ。
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(textarea.value).catch(function () {
+                    document.execCommand('copy');
+                });
+            } else {
+                document.execCommand('copy');
+            }
         });
     </script>
 {% endblock %}

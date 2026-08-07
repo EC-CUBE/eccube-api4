@@ -32,6 +32,12 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
  * 付与 scope は {@link UserBadge} の attributes に `scopes` (array<string>) として載せる。
  * 本体はこの attributes から scope を取り出し ScopeRegistry で protocol×capability を照合する。
  * subject (UserBadge identifier) は OAuth2 クライアント識別子 (client_credentials のため会員は伴わない)。
+ *
+ * **`role_prefix: ROLE_OAUTH2_` による scope → role 変換は経由しない**。 返す InMemoryUser には
+ * `ROLE_OAUTH2_CLIENT` だけを載せるため、 `ROLE_OAUTH2_ACP:CHECKOUT` のようなロールは生成されない。
+ * GraphQL / MCP 経路は role ベースで認可するのに対し、 エージェントコマースは attributes の scope を
+ * 本体が直接照合する流儀になる。 `access_control` や `is_granted()` で `ROLE_OAUTH2_<SCOPE>` を
+ * 期待しないこと (認可は本体の AgentCommerceOAuth2Authenticator 側にある)。
  */
 final class AgentCommerceAccessTokenHandler implements AccessTokenHandlerInterface
 {
