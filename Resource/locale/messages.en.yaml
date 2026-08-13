@@ -27,6 +27,12 @@ api:
       'scope.mcp:order:read.description': 'Read %shop_name% order data'
       'scope.mcp:customer:read.description': 'Read %shop_name% customer data'
       'scope.mcp:plugin:read.description': 'Read %shop_name% plugin information'
+      'scope.acp:checkout.description': 'Check out at %shop_name% (create, update and complete orders)'
+      'scope.acp:catalog.description': 'Read %shop_name% catalog data'
+      'scope.ucp:checkout.description': 'Check out at %shop_name% (create, update and complete orders)'
+      'scope.ucp:cart.description': 'Operate your %shop_name% cart (add, change and remove items)'
+      'scope.ucp:catalog.description': 'Read %shop_name% catalog data'
+      'scope.ucp:identity.description': 'Link your %shop_name% member ID (identify you as a member)'
       redirect_uri: Redirect URI
       redirect_uri_tooltip: You can enter multiple URIs separated by commas
       grant_type: Grant Type
