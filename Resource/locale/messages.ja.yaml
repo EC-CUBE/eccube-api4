@@ -12,10 +12,13 @@ api:
       token_endpoint: Token endpoint
       api_endpoint: API endpoint
       management: OAuth管理
+      name: 名称
+      name_tooltip: 'このクライアントの用途がわかる名前（例: 在庫連携バッチ）'
       identifier: クライアントID
       identifier_tooltip: 32文字以下の半角英数
       secret: クライアントシークレット
       secret_tooltip: 128文字以下の半角英数
+      secret_none_tooltip: 'このクライアントはシークレットを持ちません（public client）。'
       scope: スコープ
       scope_tooltip: GraphQLのQueryにはread, Mutationにはwrite/writeのScopeが必要
       scope.read.description: '%shop_name%のデータに対する読み取り'
@@ -56,6 +59,21 @@ api:
       mcp_token.revoke__confirm_title: MCP トークンを失効します
       mcp_token.revoke__confirm_message: このトークンを失効してよろしいですか？ 失効すると即座に利用できなくなります。
       mcp_token.revoke__not_found: 失効対象のトークンが見つかりませんでした（既に失効・期限切れの可能性）。 一覧からは削除しました。
+      agent_commerce.acp_registration__new: ACP 新規追加
+      agent_commerce.ucp_registration__new: UCP 新規追加
+      agent_commerce.acp_registration: ACP クライアント登録
+      agent_commerce.ucp_registration: UCP クライアント登録
+      agent_commerce.acp_description: 'ACP (Agentic Commerce Protocol) でチェックアウトするエージェント事業者向けのクライアントを登録します。 事業者ごとに 1 つ登録してください（受注に記録される agent_id はこのクライアントIDです）。'
+      agent_commerce.ucp_description: 'UCP (Universal Commerce Protocol) でチェックアウトするエージェント事業者向けのクライアントを登録します。 事業者ごとに 1 つ登録してください（受注に記録される agent_id はこのクライアントIDです）。'
+      agent_commerce.acp_name_tooltip: 'どのエージェント事業者向けのクライアントかがわかる名前（例: ChatGPT）'
+      agent_commerce.ucp_name_tooltip: 'どのエージェント事業者向けのクライアントかがわかる名前（例: Gemini）'
+      agent_commerce.acp_scope_tooltip: 'acp:checkout はチェックアウト（注文の作成・更新・確定）、 acp:catalog はカタログデータの読み取りに必要です。'
+      agent_commerce.ucp_scope_tooltip: 'ucp:checkout はチェックアウト（注文の作成・更新・確定）、 ucp:cart はカート操作、 ucp:catalog はカタログデータの読み取りに必要です。 ucp:identity（会員 ID 連携）は会員本人の同意が必要なため、 この画面では付与できません。'
+      agent_commerce.grant_note: 'エージェントは同意画面を経由しないため、 機械間（M2M）認証の client_credentials に固定されます。 リダイレクトURIは使用しません。'
+      agent_commerce.secret_note: 'クライアントシークレットは登録完了画面で 1 度だけ表示されます。 一覧では再表示できないため、 コピーして安全に保管してください。'
+      agent_commerce.secret_hidden_tooltip: 'クライアントシークレットは登録完了画面でのみ表示されます（再表示不可）。'
+      agent_commerce.issued_title: エージェントコマース用クライアントを登録しました
+      agent_commerce.issued_warning: 'クライアントシークレットは今この画面でのみ表示されます。 コピーして安全に保管してください（再表示はできません）。'
     webhook:
       management:  WebHook管理
       registration: WebHook登録

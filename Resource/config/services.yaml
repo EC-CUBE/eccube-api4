@@ -27,7 +27,8 @@ league_oauth2_server:
         encryption_key: '%env(ECCUBE_OAUTH2_ENCRYPTION_KEY)%'
 
       # Whether to enable the client credentials grant
-        enable_client_credentials_grant: false
+      # エージェントコマース (ACP/UCP) の machine-to-machine インバウンド認証で使用する (#188)。
+        enable_client_credentials_grant: true
 
       # Whether to enable the password grant
         enable_password_grant: false
@@ -48,7 +49,8 @@ league_oauth2_server:
         # 既存の `read` / `write` は GraphQL 用。 `mcp:*:read` は MCP サーバ機能 (本体同梱) 用の領域別 read scope。
         # role 変換時はそれぞれ `ROLE_OAUTH2_MCP:PRODUCT:READ` 等 (`role_prefix: ROLE_OAUTH2_` で大文字化)。
         # GraphQL の認可と MCP の認可を独立させるため名前空間 `mcp:` で分離する。
-        available: ['read', 'write', 'mcp:product:read', 'mcp:order:read', 'mcp:customer:read', 'mcp:plugin:read']
+        # `acp:*` / `ucp:*` はエージェントコマース (#188) 用で、 `<protocol>:<capability>` 規約に従う。
+        available: ['read', 'write', 'mcp:product:read', 'mcp:order:read', 'mcp:customer:read', 'mcp:plugin:read', 'acp:checkout', 'acp:catalog', 'ucp:checkout', 'ucp:cart', 'ucp:catalog', 'ucp:identity']
         default: ['read']
 
     persistence:
@@ -81,6 +83,20 @@ services:
         autowire: true
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    # エージェントコマース (#188): EC-CUBE 本体の AgentCommerceOAuth2Authenticator が依存する
+    # Symfony 標準 AccessTokenHandlerInterface を提供する。league の ResourceServer で
+    # Bearer トークン (JWT) を検証 (公開鍵での署名/期限/失効) し、付与 scope を UserBadge の
+    # attributes['scopes'] に載せて返す。本体は handler が無ければ 503 を返す疎結合設計。
+    #
+    # 注意: 下の alias はアプリ全体に効く (この ID で解決されるサービスは常に 1 つだけ)。
+    # 将来 access_token firewall や他プラグインが同インターフェイスを autowire / alias すると、
+    # 無言で本ハンドラに解決される、 あるいは alias が上書きされて ACP 側が壊れる。
+    # 実例: EC-CUBE 本体の app/config/eccube/services_test.yaml は同じ ID にテスト用スタブを
+    # 登録するため、 本プラグインを入れた環境では本体側テストの解決先が入れ替わる。
+    Plugin\Api44\Security\AgentCommerceAccessTokenHandler:
+        autowire: true
+    Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface: '@Plugin\Api44\Security\AgentCommerceAccessTokenHandler'
 
     Plugin\Api44\EventListener\UserResolveListener:
         arguments:

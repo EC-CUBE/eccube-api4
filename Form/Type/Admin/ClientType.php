@@ -47,6 +47,14 @@ class ClientType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            // 一覧でクライアントの用途を識別できるようにする (Client::name)
+            ->add('name', TextType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),
+                ],
+            ])
             ->add('identifier', TextType::class, [
                 'mapped' => false,
                 'data' => hash('md5', random_bytes(16)),
@@ -61,10 +69,15 @@ class ClientType extends AbstractType
                 'data' => hash('sha512', random_bytes(32)),
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 128]),
+                    // confidential クライアントは token エンドポイントの認証材料がシークレットのみ
+                    // なので下限を設ける ({@link AgentCommerceClientType} と同条件)。
+                    new Assert\Length(['min' => 32, 'max' => 128]),
                     new Assert\Regex(['pattern' => '/^[0-9a-zA-Z]+$/']),
                 ],
             ])
+            // エージェントコマース (ACP/UCP) の scope はここに並べない。 grant と scope の
+            // 組み合わせが protocol ごとに決まるため、 専用の登録導線
+            // ({@link AgentCommerceClientType}) から付与する (#188)。
             ->add('scopes', ChoiceType::class, [
                 'choices' => [
                     'read' => 'read',
@@ -85,6 +98,8 @@ class ClientType extends AbstractType
                     new Assert\Url(),
                 ],
             ])
+            // client_credentials はエージェントコマース専用の登録導線で固定付与するため、
+            // 汎用フォームでは選ばせない (#188)。
             ->add('grants', ChoiceType::class, [
                 'choices' => [
                     'Authorization code' => OAuth2Grants::AUTHORIZATION_CODE,
