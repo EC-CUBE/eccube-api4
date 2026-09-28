@@ -96,7 +96,6 @@ class UpdateProductStockMutation implements Mutation
 
         /** @var ProductClass $ProductClass */
         $ProductClass = current($ProductClasses);
-        $productStock = $ProductClass->getProductStock();
 
         if ($args['stock_unlimited']) {
             // 在庫無制限の場合、在庫数の指定があればエラー
@@ -106,8 +105,8 @@ class UpdateProductStockMutation implements Mutation
 
             // 更新
             $ProductClass->setStockUnlimited(true);
+            // 在庫数は ProductStock::stock へ委譲して保存される
             $ProductClass->setStock(null);
-            $productStock->setStock(null);
         } else {
             // 在庫制限がある場合、在庫数の指定がなければエラー
             if (!array_key_exists('stock', $args)) {
@@ -119,8 +118,7 @@ class UpdateProductStockMutation implements Mutation
 
             // 更新
             $ProductClass->setStockUnlimited(false);
-            $ProductClass->setStock($args['stock']);
-            $productStock->setStock($args['stock']);
+            $ProductClass->setStock((string) $args['stock']);
         }
 
         $this->productClassRepository->save($ProductClass);

@@ -7,6 +7,9 @@ permalink: /mutation/product_stock
 updateProductStock で商品在庫の更新ができます。
 `stock_unlimited: false` の場合は `stock` が必須、`stock_unlimited: true` の場合は `stock` を指定できません。
 
+戻り値は更新後の `ProductClass` です。在庫数は `ProductStock { stock }`、在庫の有無は `in_stock` で取得します。
+`in_stock` は、在庫無制限または在庫数が 1 以上のときに `true` になります。
+
 ### スキーマ
 
 ```graphql
@@ -36,8 +39,11 @@ mutation {
     stock_unlimited: false
   ) {
     code
-    stock
+    in_stock
     stock_unlimited
+    ProductStock {
+      stock
+    }
   }
 }
 ```
@@ -49,8 +55,11 @@ mutation {
   "data": {
     "updateProductStock": {
       "code": "sand-01",
-      "stock": 10,
+      "in_stock": true,
       "stock_unlimited": false,
+      "ProductStock": {
+        "stock": 10
+      }
     }
   }
 }
@@ -65,8 +74,11 @@ mutation {
     stock_unlimited: true
   ) {
     code
-    stock
+    in_stock
     stock_unlimited
+    ProductStock {
+      stock
+    }
   }
 }
 ```
@@ -78,8 +90,11 @@ mutation {
   "data": {
     "updateProductStock": {
       "code": "sand-01",
-      "stock": null,
+      "in_stock": true,
       "stock_unlimited": true,
+      "ProductStock": {
+        "stock": null
+      }
     }
   }
 }
@@ -99,8 +114,11 @@ mutation UpdateProductStock(
     stock_unlimited: $unlimited
   ) {
     code
-    stock
+    in_stock
     stock_unlimited
+    ProductStock {
+      stock
+    }
   }
 }
 ```

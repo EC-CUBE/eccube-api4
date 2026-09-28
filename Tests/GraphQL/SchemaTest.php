@@ -321,8 +321,11 @@ class SchemaTest extends EccubeTestCase
                 stock_unlimited: $stock_unlimited
             ) {
                 code
-                stock
+                in_stock
                 stock_unlimited
+                ProductStock {
+                    stock
+                }
             }
         }';
 
@@ -334,9 +337,42 @@ class SchemaTest extends EccubeTestCase
 
         self::assertEquals([
             'data' => [
-                'updateProductStock' => $variables,
+                'updateProductStock' => [
+                    'code' => 'sand-01',
+                    'in_stock' => true,
+                    'stock_unlimited' => false,
+                    'ProductStock' => [
+                        'stock' => 10,
+                    ],
+                ],
             ],
         ], $this->executeQuery($query, $variables));
+    }
+
+    /**
+     * 在庫数を 0 にすると in_stock が false になる.
+     */
+    public function testMutationUpdateStockOutOfStock(): void
+    {
+        $query = 'mutation {
+            updateProductStock (code: "sand-01", stock: 0, stock_unlimited: false) {
+                in_stock
+                ProductStock {
+                    stock
+                }
+            }
+        }';
+
+        self::assertEquals([
+            'data' => [
+                'updateProductStock' => [
+                    'in_stock' => false,
+                    'ProductStock' => [
+                        'stock' => 0,
+                    ],
+                ],
+            ],
+        ], $this->executeQuery($query));
     }
 
     public function testMutationUpdateShipped(): void

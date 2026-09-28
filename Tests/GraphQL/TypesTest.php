@@ -17,6 +17,8 @@ use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
 use Eccube\Entity\Member;
 use Eccube\Entity\Product;
+use Eccube\Entity\ProductClass;
+use Eccube\Entity\ProductStock;
 use Eccube\Tests\EccubeTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Plugin\Api44\GraphQL\Types;
@@ -48,6 +50,10 @@ class TypesTest extends EccubeTestCase
         return [
             [Product::class, 'name', true],
             [Product::class, 'Creator', true],
+            // 在庫数は ProductStock.stock, 在庫の有無は ProductClass.in_stock で返す
+            [ProductClass::class, 'in_stock', true],
+            [ProductClass::class, 'stock', false],
+            [ProductStock::class, 'stock', true],
             [Customer::class, 'name01', true],
             [Customer::class, 'password', false],
             [Customer::class, 'reset_key', false],
