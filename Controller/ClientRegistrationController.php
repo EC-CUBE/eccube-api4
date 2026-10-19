@@ -51,6 +51,21 @@ class ClientRegistrationController extends AbstractController
      */
     public const CLIENT_NAME_PREFIX = 'DCR:';
 
+    /**
+     * 保存先 (oauth2_client.name) の列の長さ。 接頭辞を含めてこの長さに収める。
+     */
+    public const CLIENT_NAME_MAX_LENGTH = 128;
+
+    /**
+     * 1 クライアントに登録できる redirect_uri の数の上限。
+     */
+    public const REDIRECT_URIS_MAX_COUNT = 10;
+
+    /**
+     * redirect_uri 1 件あたりの長さ (バイト) の上限。
+     */
+    public const REDIRECT_URI_MAX_LENGTH = 2000;
+
     public function __construct(
         private readonly ClientManagerInterface $clientManager,
         private readonly RateLimiterFactory $mcpDcrRegisterLimiter,
@@ -80,7 +95,8 @@ class ClientRegistrationController extends AbstractController
         }
 
         $payload = json_decode((string) $request->getContent(), true);
-        if (!is_array($payload)) {
+        // RFC 7591 のクライアントメタデータは JSON オブジェクト。 配列 (JSON の list) は受け付けない
+        if (!is_array($payload) || ([] !== $payload && array_is_list($payload))) {
             return $this->error('invalid_client_metadata', 'Request body must be a JSON object');
         }
 
@@ -88,23 +104,33 @@ class ClientRegistrationController extends AbstractController
         if (!is_array($requestedRedirectUris) || [] === $requestedRedirectUris) {
             return $this->error('invalid_redirect_uri', 'redirect_uris is required');
         }
+        // 保存先 (oauth2_client.redirect_uris) は TEXT 型のため、 件数と長さを抑えて保存時の失敗と肥大化を防ぐ
+        if (count($requestedRedirectUris) > self::REDIRECT_URIS_MAX_COUNT) {
+            return $this->error('invalid_redirect_uri', sprintf('Too many redirect_uris (max %d)', self::REDIRECT_URIS_MAX_COUNT));
+        }
 
         $redirectUris = [];
         foreach ($requestedRedirectUris as $uri) {
-            if (!is_string($uri) || !$this->isAllowedRedirectUri($uri)) {
+            $redirectUri = is_string($uri) ? $this->createRedirectUri($uri) : null;
+            if (null === $redirectUri) {
                 $this->logger->notice('MCP DCR rejected: disallowed redirect_uri', [
                     'ip' => $ip,
-                    'redirect_uri' => is_string($uri) ? $uri : '(non-string)',
+                    'redirect_uri' => is_string($uri) ? mb_strcut($uri, 0, 256) : '(non-string)',
                 ]);
 
                 return $this->error('invalid_redirect_uri', 'redirect_uri not allowed');
             }
-            $redirectUris[] = new RedirectUri($uri);
+            $redirectUris[] = $redirectUri;
         }
 
-        // client_name は公開 INSERT。 長さ制限＋制御文字除去で保存先汚染・肥大化を防ぐ
+        // client_name は公開 INSERT。 長さ制限＋制御文字除去で保存先汚染・肥大化を防ぐ。
+        // 保存先の列 (varchar(128)) に接頭辞ごと収まる長さに切り詰める (超えると保存時に DB のエラーになる)
         $rawName = is_string($payload['client_name'] ?? null) ? $payload['client_name'] : 'MCP client';
-        $clientName = mb_substr((string) preg_replace('/[[:cntrl:]]+/u', '', $rawName), 0, 200);
+        $clientName = mb_substr(
+            (string) preg_replace('/[[:cntrl:]]+/u', '', $rawName),
+            0,
+            self::CLIENT_NAME_MAX_LENGTH - mb_strlen(self::CLIENT_NAME_PREFIX),
+        );
         if ('' === $clientName) {
             $clientName = 'MCP client';
         }
@@ -159,6 +185,31 @@ class ClientRegistrationController extends AbstractController
             'redirect_uris' => array_map(static fn (RedirectUri $u): string => (string) $u, $redirectUris),
             'scope' => implode(' ', McpTokenService::AVAILABLE_SCOPES),
         ], Response::HTTP_CREATED);
+    }
+
+    /**
+     * 登録を許可する redirect_uri から値オブジェクトを作る。 許可しない値は null を返す。
+     *
+     * 許可の判定 (isAllowedRedirectUri) を通っても、 RedirectUri のコンストラクタが URI として
+     * 正しくない値を例外で拒否することがある。 これはクライアントの入力の誤りのため、 例外にせず
+     * invalid_redirect_uri として扱えるよう null を返す。
+     */
+    private function createRedirectUri(string $uri): ?RedirectUri
+    {
+        // 空白・制御文字は URI に現れない (RFC 3986)。 末尾の改行は RedirectUri の正規表現 ($) を通ってしまい、
+        // NUL は PostgreSQL の TEXT 型に保存できないため、 値オブジェクトに渡す前に拒否する
+        if ('' === $uri || strlen($uri) > self::REDIRECT_URI_MAX_LENGTH || 1 === preg_match('/[\x00-\x20\x7F]/', $uri)) {
+            return null;
+        }
+        if (!$this->isAllowedRedirectUri($uri)) {
+            return null;
+        }
+
+        try {
+            return new RedirectUri($uri);
+        } catch (\RuntimeException) {
+            return null;
+        }
     }
 
     /**

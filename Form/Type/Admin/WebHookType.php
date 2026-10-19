@@ -26,6 +26,8 @@ class WebHookType extends AbstractType
     {
         $builder
             ->add('payload_url', UrlType::class, [
+                // 未送信や空の値でも null をセッター (string 型) に渡さず、NotBlank の入力エラーにする
+                'empty_data' => '',
                 'constraints' => [
                     new Assert\NotBlank(),
                 ],
